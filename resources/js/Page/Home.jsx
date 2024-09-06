@@ -41,8 +41,11 @@ const Home = () => {
             });
     }, [merchant_base,token, navigate]);
 
-    const handlePhoneChange = (event) => {
-        const { value } = event.target;
+    // const handlePhoneChange = (event) => {
+    //     const { value } = event.target;
+    //     setMobile(value); // Updates the state with the phone number
+    // };
+    const handlePhoneChange = (isValid, value, countryData, number, id) => {
         setMobile(value); // Updates the state with the phone number
     };
     const handlePhoneChange_otp = (event) => {
@@ -130,14 +133,14 @@ const Home = () => {
                             <div className='login-part-otp'>
                                 <p>Please enter your mobile number</p>
                                 <div className='login-part-input'>
-                                {/* <IntlTelInput
+                                    <IntlTelInput
                                         containerClassName="intl-tel-input"
                                         inputClassName="form-control"
                                         value={mobile}
                                         onPhoneNumberChange={handlePhoneChange}
                                         separateDialCode={true} 
-                                    /> */}
-                                    <input className='form-control' type="text" value={mobile} onChange={handlePhoneChange} placeholder="Enter Mobile Number" />
+                                    />
+                                    {/*<input className='form-control' type="text" value={mobile} onChange={handlePhoneChange} placeholder="Enter Mobile Number" />*/}
                                     <button onClick={handleButtonClick}>Get OTP</button>
 
                                     <input className='form-control' type="text" placeholder="Enter Mobile Number" value={otp} onChange={handlePhoneChange_otp}  />

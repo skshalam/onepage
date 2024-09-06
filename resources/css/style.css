@@ -175,3 +175,17 @@ body {
     color: #000;
     font-weight: 600;
 }
+.intl-tel-input.allow-dropdown.separate-dial-code .selected-flag {
+    display: flex !important;
+    width:47px !important;
+}
+.intl-tel-input.allow-dropdown.separate-dial-code .selected-dial-code {
+    right: -37px;
+    position: absolute;
+    padding-left: 0px !important;
+    /* font-size: 12px; */
+    /* font-weight: 600; */
+}
+.intl-tel-input.allow-dropdown.separate-dial-code.iti-sdc-4 .selected-flag {
+    width: 50px;
+}
