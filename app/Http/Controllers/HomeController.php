@@ -627,8 +627,8 @@ class HomeController extends Controller
     public function infodata()
     {
         $merchant_id= 15657;
-        // $user_id= 15882661; //for test
-        $user_id= 9; //for local
+        $user_id= 15882661; //for test
+        // $user_id= 9; //for local
 
         $infodata = User::select('users.image','users.name','cards.gender','users.email','users.mobile','cards.dob','cards.marital','cards.doa','cards.address','cards.gstin','cards.pan','cards.bank_name','cards.bank_account_number','users.pincode','users.country','users.state','cards.region','cards.city')
         ->join('cards', 'users.id', '=', 'cards.user_id')
@@ -646,8 +646,8 @@ class HomeController extends Controller
     public function editinfo(Request $request)
     {
         $merchant_id = 15657;
-        // $user_id = 15882661; //test userid
-        $user_id = 9;
+        $user_id = 15882661; //test userid
+        // $user_id = 9;
 
         $rules = [
             'merchant_id'=>'required',
