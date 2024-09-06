@@ -13,7 +13,7 @@ Route::get('/onepage/{m_id}', [\App\Http\Controllers\LoginController::class, 'lo
 Route::post('/websiteLogin', [\App\Http\Controllers\OtpLoginController::class, 'websiteLogin']);
 Route::post('/onePageLoginOtpVerifyNew', [\App\Http\Controllers\OtpLoginController::class, 'onePageLoginOtpVerifyNew']);
 
-Route::middleware('auth:api')->get('/user', function () {
+Route::middleware(['auth:api'])->group(function () {
     
     Route::get('/creditbalance', [\App\Http\Controllers\HomeController::class, 'creditbalance']);
     Route::get('/walletbalance', [\App\Http\Controllers\HomeController::class, 'walletbalance']);
