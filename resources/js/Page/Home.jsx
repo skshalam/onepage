@@ -5,9 +5,9 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import IntlTelInput from 'react-intl-tel-input';
-import 'react-intl-tel-input/dist/main.css';
 import AuthUser from './AuthUser';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css'
 const Home = () => {
     const { merchant_base } = useParams();
     const [data, setData] = useState([]);
@@ -15,6 +15,7 @@ const Home = () => {
     const [error, setError] = useState(null);
     const [apiResponse, setApiResponse] = useState(null);
     const [mobile, setMobile] = useState('');
+    const [dialcode, setDialcode] = useState('');
     const [otp, setOtp] = useState('');
     const { http, setToken } = AuthUser();
     const { getToken } = AuthUser();
@@ -46,7 +47,9 @@ const Home = () => {
     //     const { value } = event.target;
     //     setMobile(value); // Updates the state with the phone number
     // };
-    const handlePhoneChange = (isValid, value, countryData, number, id) => {
+    const handlePhoneChange = (value, data) => {
+        // console.log(data.dialCode);
+        setDialcode(data.dialCode)
         setMobile(value); // Updates the state with the phone number
     };
     const handlePhoneChange_otp = (event) => {
@@ -58,7 +61,8 @@ const Home = () => {
             const response = await axios.post('/api/websiteLogin', {
                 mobile,
                 merchant_id,  // Assuming this is the same as the merchant_id prop
-                merchantid
+                merchantid,
+                dialcode
             });
             setApiResponse(response.data);
             console.log('API Response:', response.data);
@@ -134,12 +138,16 @@ const Home = () => {
                             <div className='login-part-otp'>
                                 <p>Please enter your mobile number</p>
                                 <div className='login-part-input'>
-                                    <IntlTelInput
+                                    {/* <IntlTelInput
                                         containerClassName="intl-tel-input"
                                         inputClassName="form-control"
                                         value={mobile}
                                         onPhoneNumberChange={handlePhoneChange}
                                         separateDialCode={true} 
+                                    /> */}
+                                    <PhoneInput
+                                        country={'in'}
+                                        onChange={handlePhoneChange}
                                     />
                                     {/*<input className='form-control' type="text" value={mobile} onChange={handlePhoneChange} placeholder="Enter Mobile Number" />*/}
                                     <button onClick={handleButtonClick}>Get OTP</button>
