@@ -62,7 +62,7 @@ const Home = () => {
                 mobile,
                 merchant_id,  // Assuming this is the same as the merchant_id prop
                 merchantid,
-                dialcode
+                // dialcode
             });
             setApiResponse(response.data);
             console.log('API Response:', response.data);

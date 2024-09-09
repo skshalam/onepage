@@ -4,7 +4,17 @@ import { Link , useParams} from 'react-router-dom';
 import axios from 'axios';
 import AuthUser from './AuthUser';
 function About() {
-    const [data, setData] = useState([]);
+    const [data_getcoupons, setData_getcoupons] = useState({
+        active_coupon_count: 0,
+        active_rewards_count: 0,
+        active_membership_count: 0,
+    });
+    const [data_home, setData_home] = useState({
+        "cards": {
+            "current_points": 0,
+            "current_wallet_balance": 0
+        }
+    });
     const [error, setError] = useState(null);
     const { merchant_base } = useParams();
     const { http, setToken } = AuthUser();
@@ -13,7 +23,7 @@ function About() {
     const token = getToken();
     useEffect(() => {
         if (token) {
-            axios.post('/api/getDataCounts', [],{
+            axios.get('/api/getDataCounts',{
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -21,7 +31,7 @@ function About() {
             })
             .then(response => {
                 console.log('API Response:', response); 
-                setData(response.data.data);
+                setData_getcoupons(response.data.data);
             })
             .catch(error => {
                 console.error('API Error:', error);
@@ -32,14 +42,14 @@ function About() {
         }
     }, [token]);
     useEffect(() => {
-        axios.post('/api/onepagehome', [],{
+        axios.get('/api/onepagehome',{
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
         .then(response => {
-                setData(response.data.data);
+            setData_home(response.data.data);
             })
             .catch(error => {
                 setError(error);
@@ -70,7 +80,7 @@ function About() {
                         <p>Credit Balance:</p>
                         <div className="balance">
                             <img src="" alt="" />
-                            <span>1239</span>
+                            <span>{data_home.cards.current_points}</span>
                         </div>
                     </div>
                     <div className="content">
@@ -82,7 +92,7 @@ function About() {
                         <p>Wallet's Balance:</p>
                         <div className="balance">
                             <img src="" alt="" />
-                            <span>1239</span>
+                            <span>{data_home.cards.current_wallet_balance}</span>
                         </div>
                     </div>
                     <div className="content">
@@ -97,7 +107,7 @@ function About() {
                         <p>Coupon <br /> Cart</p>
                         <div className="balance">
                             <img src="" alt="" />
-                            <span>1239</span>
+                            <span>{data_getcoupons.active_coupon_count}</span>
                         </div>
                     </div>
                     <div className="content">
@@ -109,7 +119,7 @@ function About() {
                         <p>Reward <br /> Menu</p>
                         <div className="balance">
                             <img src="" alt="" />
-                            <span>1239</span>
+                            <span>{data_getcoupons.active_rewards_count}</span>
                         </div>
                     </div>
                     <div className="content">
@@ -121,7 +131,7 @@ function About() {
                         <p>Membership Package</p>
                         <div className="balance">
                             <img src="" alt="" />
-                            <span>1239</span>
+                            <span>{data_getcoupons.active_membership_count}</span>
                         </div>
                     </div>
                     <div className="content">
