@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 
-Route::get('/onepagehome/{m_id}', [\App\Http\Controllers\HomeController::class, 'homescreen']);//view
+Route::POST('/onepagehome', [\App\Http\Controllers\HomeController::class, 'homescreen']);//view
 Route::get('/onepage/{m_id}', [\App\Http\Controllers\LoginController::class, 'loginview']); //view api
 Route::post('/websiteLogin', [\App\Http\Controllers\OtpLoginController::class, 'websiteLogin']);
 Route::post('/onePageLoginOtpVerifyNew', [\App\Http\Controllers\OtpLoginController::class, 'onePageLoginOtpVerifyNew']);
@@ -36,7 +36,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/accountInfo', [\App\Http\Controllers\HomeController::class, 'accountInfo']);
     Route::get('/infodata', [\App\Http\Controllers\HomeController::class, 'infodata']);
     Route::POST('/editinfo', [\App\Http\Controllers\HomeController::class, 'editinfo']);
-    Route::post('/getDataCounts', [\App\Http\Controllers\HomeController::class, 'getDataCounts']);
+    Route::POST('/getDataCounts', [\App\Http\Controllers\HomeController::class, 'getDataCounts']);
 });
 
 

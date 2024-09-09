@@ -6,34 +6,46 @@ import AuthUser from './AuthUser';
 function About() {
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
+    const { merchant_base } = useParams();
     const { http, setToken } = AuthUser();
     // const navigate = useNavigate();
     const { getToken } = AuthUser();
     const token = getToken();
     useEffect(() => {
-        // Log the token to ensure it's set
-        console.log('Token set:', token);
-    
-        // Ensure the token exists before making the API call
         if (token) {
-            console.log("fasff");
-            axios.post('/api/getDataCounts',[], {
+            axios.post('/api/getDataCounts', [],{
                 headers: {
-                    Authorization: `Bearer ${token}` // Include token in the headers
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             })
             .then(response => {
-                console.log('API Response:', response); // Log API response to debug
-                setData(response.data.data); // Set data from response
+                console.log('API Response:', response); 
+                setData(response.data.data);
             })
             .catch(error => {
-                console.error('API Error:', error); // Log any errors
-                setError(error); // Set error state
+                console.error('API Error:', error);
+                setError(error); 
             });
         } else {
             console.log('No token available, API call skipped');
         }
     }, [token]);
+    useEffect(() => {
+        axios.post('/api/onepagehome', [],{
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+                setData(response.data.data);
+            })
+            .catch(error => {
+                setError(error);
+                setLoading(false);
+            });
+    }, [merchant_base,token,]);
     return (
         <div className='body-container'>
             <div className="body-header">
