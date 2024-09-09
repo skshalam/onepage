@@ -344,29 +344,29 @@ class OtpLoginController extends Controller
         return $sms;
     }
 
-    public function websiteOtpVerify(Request $request)
-   {
-        $rules=[
-            'otp'=>'Required',
-            'merchant_id'=>'Required',
-            'mobile'=>'required|numeric|between:1000,9999999999999999',
-            'merchantid'=>'Required'
-        ];
-        $validator=Validator::make($request->all(),$rules);
-        if($validator->fails())
-        {
-            $data = ['error'=>true,
-                'message'=>'All field are mandatory',
-                'data' => new \Illuminate\Database\Eloquent\Collection,];
-            $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-            return Response::json($data);
+//     public function websiteOtpVerify(Request $request)
+//    {
+//         $rules=[
+//             'otp'=>'Required',
+//             'merchant_id'=>'Required',
+//             'mobile'=>'required|numeric|between:1000,9999999999999999',
+//             'merchantid'=>'Required'
+//         ];
+//         $validator=Validator::make($request->all(),$rules);
+//         if($validator->fails())
+//         {
+//             $data = ['error'=>true,
+//                 'message'=>'All field are mandatory',
+//                 'data' => new \Illuminate\Database\Eloquent\Collection,];
+//             $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
+//             return Response::json($data);
 
-        }
-        $user = User::where('id', 15867532)->first();
-        if (!$token = JWTAuth::fromUser($user)) {
-            return response()->json(['error' => 'Unable to generate token'], 500);
-        }
-        return response()->json(["error"=>false,"message"=>$this->respondWithToken($token,$user)]);
+//         }
+//         $user = User::where('id', 15867532)->first();
+//         if (!$token = JWTAuth::fromUser($user)) {
+//             return response()->json(['error' => 'Unable to generate token'], 500);
+//         }
+//         return response()->json(["error"=>false,"message"=>$this->respondWithToken($token,$user)]);
         
         // else
         // {
@@ -628,7 +628,7 @@ class OtpLoginController extends Controller
         //         return Response::json($data);
         //     }
         // }
-    }
+    // }
 
     public function refresh()
     {

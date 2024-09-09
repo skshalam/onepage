@@ -881,7 +881,7 @@ class HomeController extends Controller
         $user_id=15870381;
         // $user_id=$request->user_id;
         // $merchant_id=$request->merchant_id;
-        $refercards=Cards::select('cards.name','cards.dob','cards.created_at','u2.mobile','u2.email','u2.id')
+        $refercards=Cards::select('u2.name','cards.dob','cards.created_at','u2.mobile','u2.email','u2.id')
         ->leftJoin('users','cards.refer_by','=','users.id')
         ->leftJoin('users as u2', 'cards.user_id', '=', 'u2.id')
         ->where('cards.refer_by', $user_id)
