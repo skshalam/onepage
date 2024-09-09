@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link , useNavigate, useParams} from 'react-router-dom';
 import Slider from 'react-slick';
@@ -17,6 +17,7 @@ const Home = () => {
     const [mobile, setMobile] = useState('');
     const [dialcode, setDialcode] = useState('');
     const [otp, setOtp] = useState('');
+    const [myOtp, setMyOtp] = useState(['', '', '', '', '', '']);
     const { http, setToken } = AuthUser();
     const { getToken } = AuthUser();
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Home = () => {
     const [merchantid , setMerchantid] = useState([]);
     const [bannerImages, setBannerImages] = useState([]);
     const [merchantDetails, setMerchantDetails] = useState({});
+    const inputRefs = useRef([]);
     const token = getToken();
     
     useEffect(() => {
@@ -46,6 +48,15 @@ const Home = () => {
     //     const { value } = event.target;
     //     setMobile(value); // Updates the state with the phone number
     // };
+    const handleOtpChange = (index, value) => {
+        const newOtp = [...myOtp];
+        newOtp[index] = value;
+        setMyOtp(newOtp);
+        if (index < myOtp.length - 1 && value !== '') {
+            inputRefs.current[index + 1].focus();
+          }
+    };
+    
     const handlePhoneChange = (value, data) => {
         // console.log(data.dialCode);
         setDialcode(data.dialCode)
@@ -75,12 +86,14 @@ const Home = () => {
     };
 
     const handleButtonClick_verify = async () => {
+        let otp = parseInt(myOtp.join(''));
         try {
             const response = await axios.post('/api/onePageLoginOtpVerifyNew', {
                 mobile,
                 merchant_id,  // Assuming this is the same as the merchant_id prop
                 merchantid,
-                otp
+                otp,
+                // otpString,
             });
             if (response && response.data && response.data.message && response.data.message.original) {
                 console.log('API Response:', response.data);
@@ -134,28 +147,45 @@ const Home = () => {
                                     <h4>Log In</h4>
                                 </div>
                             </div>
-                            <div className='login-part-otp'>
+                            {
+                                apiResponse === null ?
+                                <div className='login-part-otp'>
                                 <p>Please enter your mobile number</p>
                                 <div className='login-part-input'>
-                                    {/* <IntlTelInput
-                                        containerClassName="intl-tel-input"
-                                        inputClassName="form-control"
-                                        value={mobile}
-                                        onPhoneNumberChange={handlePhoneChange}
-                                        separateDialCode={true} 
-                                    /> */}
                                     <PhoneInput
                                         country={'in'}
                                         onChange={handlePhoneChange}
                                     />
-                                    {/*<input className='form-control' type="text" value={mobile} onChange={handlePhoneChange} placeholder="Enter Mobile Number" />*/}
                                     <button onClick={handleButtonClick}>Get OTP</button>
 
-                                    <input className='form-control' type="text" placeholder="Enter Mobile Number" value={otp} onChange={handlePhoneChange_otp}  />
-                                    <button onClick={handleButtonClick_verify}>Get OTP</button>
+                                    {/* <input className='form-control' type="text" placeholder="Enter Mobile Number" value={otp} onChange={handlePhoneChange_otp}  />
+                                    <button onClick={handleButtonClick_verify}>Get OTP</button> */}
                                 </div>
                                 <h5>[You will receive an OTP]</h5>
                             </div>
+                            :<div className='login-part-otp'>
+                                <p>You will receive an otp on {mobile}</p>
+                                <div className='login-part-input'>
+                                    {/* <input className='form-control' type="text" placeholder="Enter OTP " value={otp} onChange={handlePhoneChange_otp}  /> */}
+                                    <div className="otp-fields">
+                                    {myOtp.map((digit, index) => (
+                                        <input
+                                            key={index}
+                                            type="text"
+                                            value={digit}
+                                            onChange={(event) => handleOtpChange(index, event.target.value)}
+                                            placeholder=""
+                                            maxLength={1}
+                                            ref={(input) => {
+                                                if (input) inputRefs.current[index] = input;
+                                              }}
+                                            />
+                                        ))}
+                                        </div>
+                                    <button onClick={handleButtonClick_verify}>Verify OTP</button>
+                                </div>
+                                <h5>[Resend OTP]</h5>
+                            </div>}
                         </div>
                         <div className='socail-linkppart'>
                             <div className="sl-details-body">

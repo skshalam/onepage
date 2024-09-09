@@ -290,3 +290,17 @@ body {
 .rewards-content .content span{
     font-weight: bolder;
 }
+.otp-fields{
+    display: flex;
+    justify-content: space-around;
+}
+.otp-fields input{
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    border: 1px solid grey;
+    text-align: center;
+}
+.otp-fields input:focus{
+    outline: 1px solid #0B0B59;
+}
