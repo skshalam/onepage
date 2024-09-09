@@ -1,7 +1,39 @@
 // resources/js/Page/About.jsx
 import React, { useEffect, useState } from 'react';
+import { Link , useParams} from 'react-router-dom';
+import axios from 'axios';
+import AuthUser from './AuthUser';
 function About() {
+    const [data, setData] = useState([]);
+    const [error, setError] = useState(null);
+    const { http, setToken } = AuthUser();
+    // const navigate = useNavigate();
+    const { getToken } = AuthUser();
+    const token = getToken();
+    useEffect(() => {
+        // Log the token to ensure it's set
+        console.log('Token set:', token);
     
+        // Ensure the token exists before making the API call
+        if (token) {
+            console.log("fasff");
+            axios.post('/api/getDataCounts',[], {
+                headers: {
+                    Authorization: `Bearer ${token}` // Include token in the headers
+                }
+            })
+            .then(response => {
+                console.log('API Response:', response); // Log API response to debug
+                setData(response.data.data); // Set data from response
+            })
+            .catch(error => {
+                console.error('API Error:', error); // Log any errors
+                setError(error); // Set error state
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, [token]);
     return (
         <div className='body-container'>
             <div className="body-header">
@@ -30,7 +62,7 @@ function About() {
                         </div>
                     </div>
                     <div className="content">
-                        <i class="bi bi-chevron-right"></i>
+                        <i className="bi bi-chevron-right"></i>
                     </div>
                 </div>
                 <div className="wallet-content">
@@ -42,7 +74,7 @@ function About() {
                         </div>
                     </div>
                     <div className="content">
-                        <i class="bi bi-chevron-right"></i>
+                        <i className="bi bi-chevron-right"></i>
                     </div>
                 </div>
             </div>
@@ -57,7 +89,7 @@ function About() {
                         </div>
                     </div>
                     <div className="content">
-                        <i class="bi bi-chevron-right"></i>
+                        <i className="bi bi-chevron-right"></i>
                     </div>
                 </div>
                 <div className="rewards-content">
@@ -69,7 +101,7 @@ function About() {
                         </div>
                     </div>
                     <div className="content">
-                        <i class="bi bi-chevron-right"></i>
+                        <i className="bi bi-chevron-right"></i>
                     </div>
                 </div>
                 <div className="rewards-content">
@@ -81,7 +113,7 @@ function About() {
                         </div>
                     </div>
                     <div className="content">
-                        <i class="bi bi-chevron-right"></i>
+                        <i className="bi bi-chevron-right"></i>
                     </div>
                 </div>
             </div>

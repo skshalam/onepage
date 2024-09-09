@@ -30,10 +30,10 @@ const App = () => {
         const storedMerchantBase = localStorage.getItem('merchant_base');
         console.log('Stored Merchant Base:', storedMerchantBase);
         if (token) {
-            console.log('Token is available:', token);
+            // console.log('Token is available:', token);
             navigate('/About');
         } else if (storedMerchantBase) {
-            console.log('Token is not available');
+            // console.log('Token is not available');
             navigate(`/onePageWebsite/${storedMerchantBase}`);
         }
     }, [token, navigate]);
