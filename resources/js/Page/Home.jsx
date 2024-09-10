@@ -55,11 +55,16 @@ const Home = () => {
         setMyOtp(newOtp);
         if (index < myOtp.length - 1 && value !== '') {
             inputRefs.current[index + 1].focus();
-          }
+        }
+        if (value === '' && index > 0) {
+            inputRefs.current[index - 1].focus();
+        }
+        if (index === myOtp.length - 1 && value !== '') {
+            setOtp(newOtp.join(''));
+        }
     };
     
     const handlePhoneChange = (value, data) => {
-        // console.log(data.dialCode);
         setDialcode(data.dialCode)
         setMobile(value); // Updates the state with the phone number
     };
@@ -87,14 +92,12 @@ const Home = () => {
     };
 
     const handleButtonClick_verify = async () => {
-        let otp = (myOtp.join(''));
         try {
             const response = await axios.post('/api/onePageLoginOtpVerifyNew', {
                 mobile,
                 merchant_id,  // Assuming this is the same as the merchant_id prop
                 merchantid,
                 otp,
-                // otpString,
             });
             if (response && response.data && response.data.message && response.data.message.original) {
                 console.log('API Response:', response.data);
@@ -180,6 +183,11 @@ const Home = () => {
                                             ref={(input) => {
                                                 if (input) inputRefs.current[index] = input;
                                               }}
+                                            onKeyDown={(event) => {
+                                                if (event.key === 'Backspace' && digit === '' && index > 0) {
+                                                    inputRefs.current[index - 1].focus();
+                                                }
+                                            }}
                                             />
                                         ))}
                                         </div>
