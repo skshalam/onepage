@@ -69,8 +69,9 @@ const Home = () => {
     };
     const handleButtonClick = async () => {
         try {
+            const formattedMobile = mobile.slice(-10);
             const response = await axios.post('/api/websiteLogin', {
-                mobile,
+                mobile: formattedMobile,
                 merchant_id,  // Assuming this is the same as the merchant_id prop
                 merchantid,
                 // dialcode
@@ -87,10 +88,11 @@ const Home = () => {
     };
 
     const handleButtonClick_verify = async () => {
-        let otp = (myOtp.join(''));
+        let otp = parseInt(myOtp.join(''));
         try {
+            const formattedMobile = mobile.slice(-10);
             const response = await axios.post('/api/onePageLoginOtpVerifyNew', {
-                mobile,
+                mobile:formattedMobile,
                 merchant_id,  // Assuming this is the same as the merchant_id prop
                 merchantid,
                 otp,
@@ -149,8 +151,8 @@ const Home = () => {
                                 </div>
                             </div>
                             {
-                            apiResponse === null ?
-                            <div className='login-part-otp'>
+                                apiResponse === null ?
+                                <div className='login-part-otp'>
                                 <p>Please enter your mobile number</p>
                                 <div className='login-part-input'>
                                     <PhoneInput

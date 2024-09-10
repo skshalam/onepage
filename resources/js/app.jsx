@@ -33,7 +33,7 @@ const App = () => {
             // console.log('Token is available:', token);
             navigate('/About');
         } else if (storedMerchantBase) {
-            // console.log('Token is not available');
+            console.log('Token is not available');
             navigate(`/onePageWebsite/${storedMerchantBase}`);
         }
     }, [token, navigate]);

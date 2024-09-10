@@ -803,6 +803,7 @@ class HomeController extends Controller
     {
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
+        // dd($user_id);
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
 

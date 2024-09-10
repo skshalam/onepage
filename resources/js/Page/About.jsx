@@ -15,6 +15,7 @@ function About() {
             "current_wallet_balance": 0
         }
     });
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { merchant_base } = useParams();
     const { http, setToken } = AuthUser();
