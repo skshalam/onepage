@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, match
 import Home from './Page/Home';
 import About from './Page/About';
 import AuthUser from './Page/AuthUser';
+import Coupon from './Page/Coupon';
 
 const App = () => {
     const navigate = useNavigate();
@@ -31,9 +32,9 @@ const App = () => {
         console.log('Stored Merchant Base:', storedMerchantBase);
         if (token) {
             // console.log('Token is available:', token);
-            navigate('/About');
+            navigate('/Coupon');
         } else if (storedMerchantBase) {
-            // console.log('Token is not available');
+            console.log('Token is not available');
             navigate(`/onePageWebsite/${storedMerchantBase}`);
         }
     }, [token, navigate]);
@@ -43,6 +44,7 @@ const App = () => {
             {/* Route for the specific URL /onePageWebsite/15657 */}
             <Route path="/onePageWebsite/:merchant_base" element={<Home />} />
             <Route path="/About" element={<About />} />
+            <Route path="/Coupon" element={<Coupon />} />
         </Routes>
     );
 };

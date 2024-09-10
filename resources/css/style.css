@@ -304,3 +304,6 @@ body {
 .otp-fields input:focus{
     outline: 1px solid #0B0B59;
 }
+.PhoneInputCountry {
+    display: none;
+  }
