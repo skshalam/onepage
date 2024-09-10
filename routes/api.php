@@ -12,6 +12,7 @@ Route::get('/onepagehome', [\App\Http\Controllers\HomeController::class, 'homesc
 Route::get('/onepage/{m_id}', [\App\Http\Controllers\LoginController::class, 'loginview']); //view api
 Route::post('/websiteLogin', [\App\Http\Controllers\OtpLoginController::class, 'websiteLogin']);
 Route::post('/onePageLoginOtpVerifyNew', [\App\Http\Controllers\OtpLoginController::class, 'onePageLoginOtpVerifyNew']);
+Route::post('/onePageLoginResendOtp', [\App\Http\Controllers\OtpLoginController::class, 'onePageLoginResendOtp']);
 
 Route::middleware(['auth:api'])->group(function () {
     
