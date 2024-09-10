@@ -1,7 +1,51 @@
 // resources/js/Page/About.jsx
 import React, { useEffect, useState } from 'react';
+import { Link , useParams} from 'react-router-dom';
+import axios from 'axios';
+import AuthUser from './AuthUser';
 function About() {
-    
+    const [data, setData] = useState([]);
+    const [error, setError] = useState(null);
+    const { merchant_base } = useParams();
+    const { http, setToken } = AuthUser();
+    // const navigate = useNavigate();
+    const { getToken } = AuthUser();
+    const token = getToken();
+    useEffect(() => {
+        if (token) {
+            axios.post('/api/getDataCounts', [],{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('API Response:', response); 
+                setData(response.data.data);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+                setError(error); 
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, [token]);
+    useEffect(() => {
+        axios.post('/api/onepagehome', [],{
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+                setData(response.data.data);
+            })
+            .catch(error => {
+                setError(error);
+                setLoading(false);
+            });
+    }, [merchant_base,token,]);
     return (
         <div className='body-container'>
             <div className="body-header">
@@ -30,7 +74,7 @@ function About() {
                         </div>
                     </div>
                     <div className="content">
-                        <i class="bi bi-chevron-right"></i>
+                        <i className="bi bi-chevron-right"></i>
                     </div>
                 </div>
                 <div className="wallet-content">
@@ -42,7 +86,7 @@ function About() {
                         </div>
                     </div>
                     <div className="content">
-                        <i class="bi bi-chevron-right"></i>
+                        <i className="bi bi-chevron-right"></i>
                     </div>
                 </div>
             </div>
@@ -57,7 +101,7 @@ function About() {
                         </div>
                     </div>
                     <div className="content">
-                        <i class="bi bi-chevron-right"></i>
+                        <i className="bi bi-chevron-right"></i>
                     </div>
                 </div>
                 <div className="rewards-content">
@@ -69,7 +113,7 @@ function About() {
                         </div>
                     </div>
                     <div className="content">
-                        <i class="bi bi-chevron-right"></i>
+                        <i className="bi bi-chevron-right"></i>
                     </div>
                 </div>
                 <div className="rewards-content">
@@ -81,7 +125,7 @@ function About() {
                         </div>
                     </div>
                     <div className="content">
-                        <i class="bi bi-chevron-right"></i>
+                        <i className="bi bi-chevron-right"></i>
                     </div>
                 </div>
             </div>

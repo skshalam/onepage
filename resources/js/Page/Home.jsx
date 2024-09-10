@@ -29,6 +29,7 @@ const Home = () => {
     const token = getToken();
     
     useEffect(() => {
+        console.log('Merchant Base:', merchant_base);
         axios.get('/api/onepage/' + merchant_base)
             .then(response => {
                 setData(response.data.data);

@@ -16,6 +16,7 @@ use App\Models\Master;
 use App\Models\TransactionalSmsStructure;
 use Illuminate\Http\Request;
 use JWTAuth;
+use Auth;
 
 class OtpLoginController extends Controller
 {
@@ -701,6 +702,9 @@ class OtpLoginController extends Controller
                 $user = User::where('id',$curl_res->user_id)->first();
                 if (!$token = JWTAuth::fromUser($user)) {
                     return response()->json(['error' => 'Unable to generate token'], 500);
+                }
+                if($user){
+                    $token = JWTAuth::claims(['merchant_id' => $request->merchant_id])->fromUser($user);
                 }
                 return response()->json(["error"=>false,"message"=>$this->respondWithToken($token,$user,json_decode($response, true))]);
             }
