@@ -306,4 +306,143 @@ body {
 }
 .PhoneInputCountry {
     display: none;
+}
+.sticky-top{
+    position: sticky;
+    top: 0px;
+    box-shadow: 0px 7px 5px -3px rgba(0,0,0,0.1);
+}
+.fixed-bottom{
+    position: fixed;
+    bottom: 0px;
+}
+.coupon-header{
+    padding: 4px;
+    background-color: #0B0B59;
+    color: #ffffff;
+}
+.prev-btn{
+    padding: 1px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.prev-btn i{
+    padding: 1px 5px;
+}
+.prev-btn span{
+    font-size: 13px;
+    font-weight: bold;
+}
+.toggle-coupon{
+    display: flex;
+    gap: 1px;
+    background-color: #fff;
+}
+.toggle-coupon .tabs{
+    flex-basis: 50%;
+    padding: 9px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+}
+.tabs.active{
+    border-bottom: 4px solid #0B0B59;
+    transform: scale(1.001);
+    box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.1);
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.tab-content {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Optional: hide the inactive content immediately */
+.tab-content.hidden {
+    display: none;
+}
+.coupon-container{
+    height: auto;
+    overflow-y: scroll;
+    padding: 0px 30px;
+}
+.coupon-container::-webkit-scrollbar{
+    display: none;
+}
+.coupon-container .coupons{
+    position: relative;
+    height: 105px;
+    margin: 10px 0px;
+    background: url(https://i.imgur.com/ezi611N.png);
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.icon,.deatils{
+    position: relative;
+}
+.coupon-info{
+    position: relative;
+    display: grid;
+    grid-template-columns: 0.48fr 1fr;
+}
+.coupon-info .icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.icon img{
+    height: 90px;
+}
+.details{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0px 10px 5px 10px;
+}
+.coupon-expire-date{
+    font-size: 10px;
+    text-align: end;
+    font-weight: 600;
+}
+.coupon-name{
+    font-size: 12px;
+    font-weight: bold;
+}
+.coupon-limit{
+    font-size: 10px;
+}
+.coupon-limit span span{
+    font-weight: bold;
+}
+.coupon-action{
+    display: flex;
+    font-size: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+.coupon-code span{
+    font-weight: bold;
+}
+.view-coupon button{
+    background: none;
+    padding: 3px 10px;
+    border: 1px solid;
+    border-radius: 5px;
+}
+.fade-in {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .fade-in.show {
+    opacity: 1;
   }
