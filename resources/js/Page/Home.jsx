@@ -86,7 +86,7 @@ const Home = () => {
     };
 
     const handleButtonClick_verify = async () => {
-        let otp = parseInt(myOtp.join(''));
+        let otp = (myOtp.join(''));
         try {
             const response = await axios.post('/api/onePageLoginOtpVerifyNew', {
                 mobile,
@@ -148,8 +148,8 @@ const Home = () => {
                                 </div>
                             </div>
                             {
-                                apiResponse === null ?
-                                <div className='login-part-otp'>
+                            apiResponse === null ?
+                            <div className='login-part-otp'>
                                 <p>Please enter your mobile number</p>
                                 <div className='login-part-input'>
                                     <PhoneInput
