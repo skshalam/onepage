@@ -5,7 +5,6 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import AuthUser from './AuthUser';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css'
 const Home = () => {
@@ -18,15 +17,12 @@ const Home = () => {
     const [dialcode, setDialcode] = useState('');
     const [otp, setOtp] = useState('');
     const [myOtp, setMyOtp] = useState(['', '', '', '', '', '']);
-    const { http, setToken } = AuthUser();
-    const { getToken } = AuthUser();
-    const navigate = useNavigate();
     const [merchant_id , setMerchantId] = useState([]);
     const [merchantid , setMerchantid] = useState([]);
     const [bannerImages, setBannerImages] = useState([]);
     const [merchantDetails, setMerchantDetails] = useState({});
     const inputRefs = useRef([]);
-    const token = getToken();
+    const navigate = useNavigate();
     
     useEffect(() => {
         console.log('Merchant Base:', merchant_base);
@@ -43,7 +39,7 @@ const Home = () => {
                 setError(error);
                 setLoading(false);
             });
-    }, [merchant_base,token, navigate]);
+    }, [merchant_base]);
 
     // const handlePhoneChange = (event) => {
     //     const { value } = event.target;
@@ -99,10 +95,13 @@ const Home = () => {
                 // otpString,
             });
             if (response && response.data && response.data.message && response.data.message.original) {
-                console.log('API Response:', response.data);
-                setToken(response.data.message.original.access_token,'ytfty');
+                sessionStorage.setItem('access_token', response.data.message.original.access_token);
+                sessionStorage.setItem('expires_in', response.data.message.original.expires_in);
+                // Optionally, you might want to navigate or update UI state here
+                navigate('/About');
             } else {
                 console.error('Unexpected response structure:', response);
+                // Handle unexpected response structure
             }
         } catch (error) {
             console.error('Error making API call:', error);
