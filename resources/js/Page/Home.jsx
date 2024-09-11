@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link , useNavigate, useParams} from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import IntlTelInput from 'react-intl-tel-input';
-import 'react-intl-tel-input/dist/main.css';
-import AuthUser from './AuthUser';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css'
 const Home = () => {
     const { merchant_base } = useParams();
     const [data, setData] = useState([]);
@@ -15,17 +14,18 @@ const Home = () => {
     const [error, setError] = useState(null);
     const [apiResponse, setApiResponse] = useState(null);
     const [mobile, setMobile] = useState('');
+    const [dialcode, setDialcode] = useState('');
     const [otp, setOtp] = useState('');
-    const { http, setToken } = AuthUser();
-    const { getToken } = AuthUser();
-    const navigate = useNavigate();
+    const [myOtp, setMyOtp] = useState(['', '', '', '', '', '']);
     const [merchant_id , setMerchantId] = useState([]);
     const [merchantid , setMerchantid] = useState([]);
     const [bannerImages, setBannerImages] = useState([]);
     const [merchantDetails, setMerchantDetails] = useState({});
-    const token = getToken();
+    const inputRefs = useRef([]);
+    const navigate = useNavigate();
     
     useEffect(() => {
+        console.log('Merchant Base:', merchant_base);
         axios.get('/api/onepage/' + merchant_base)
             .then(response => {
                 setData(response.data.data);
@@ -39,10 +39,24 @@ const Home = () => {
                 setError(error);
                 setLoading(false);
             });
-    }, [merchant_base,token, navigate]);
+    }, [merchant_base]);
 
-    const handlePhoneChange = (event) => {
-        const { value } = event.target;
+    // const handlePhoneChange = (event) => {
+    //     const { value } = event.target;
+    //     setMobile(value); // Updates the state with the phone number
+    // };
+    const handleOtpChange = (index, value) => {
+        const newOtp = [...myOtp];
+        newOtp[index] = value;
+        setMyOtp(newOtp);
+        if (index < myOtp.length - 1 && value !== '') {
+            inputRefs.current[index + 1].focus();
+          }
+    };
+    
+    const handlePhoneChange = (value, data) => {
+        // console.log(data.dialCode);
+        setDialcode(data.dialCode)
         setMobile(value); // Updates the state with the phone number
     };
     const handlePhoneChange_otp = (event) => {
@@ -51,10 +65,12 @@ const Home = () => {
     };
     const handleButtonClick = async () => {
         try {
+            const formattedMobile = mobile.slice(-10);
             const response = await axios.post('/api/websiteLogin', {
-                mobile,
+                mobile: formattedMobile,
                 merchant_id,  // Assuming this is the same as the merchant_id prop
-                merchantid
+                merchantid,
+                // dialcode
             });
             setApiResponse(response.data);
             console.log('API Response:', response.data);
@@ -68,18 +84,24 @@ const Home = () => {
     };
 
     const handleButtonClick_verify = async () => {
+        let otp = parseInt(myOtp.join(''));
         try {
+            const formattedMobile = mobile.slice(-10);
             const response = await axios.post('/api/onePageLoginOtpVerifyNew', {
-                mobile,
+                mobile:formattedMobile,
                 merchant_id,  // Assuming this is the same as the merchant_id prop
                 merchantid,
-                otp
+                otp,
+                // otpString,
             });
             if (response && response.data && response.data.message && response.data.message.original) {
-                console.log('API Response:', response.data);
-                setToken(response.data.message.original.access_token,'ytfty');
+                sessionStorage.setItem('access_token', response.data.message.original.access_token);
+                sessionStorage.setItem('expires_in', response.data.message.original.expires_in);
+                // Optionally, you might want to navigate or update UI state here
+                navigate('/About');
             } else {
                 console.error('Unexpected response structure:', response);
+                // Handle unexpected response structure
             }
         } catch (error) {
             console.error('Error making API call:', error);
@@ -127,24 +149,45 @@ const Home = () => {
                                     <h4>Log In</h4>
                                 </div>
                             </div>
-                            <div className='login-part-otp'>
+                            {
+                                apiResponse === null ?
+                                <div className='login-part-otp'>
                                 <p>Please enter your mobile number</p>
                                 <div className='login-part-input'>
-                                {/* <IntlTelInput
-                                        containerClassName="intl-tel-input"
-                                        inputClassName="form-control"
-                                        value={mobile}
-                                        onPhoneNumberChange={handlePhoneChange}
-                                        separateDialCode={true} 
-                                    /> */}
-                                    <input className='form-control' type="text" value={mobile} onChange={handlePhoneChange} placeholder="Enter Mobile Number" />
+                                    <PhoneInput
+                                        country={'in'}
+                                        onChange={handlePhoneChange}
+                                    />
                                     <button onClick={handleButtonClick}>Get OTP</button>
 
-                                    <input className='form-control' type="text" placeholder="Enter Mobile Number" value={otp} onChange={handlePhoneChange_otp}  />
-                                    <button onClick={handleButtonClick_verify}>Get OTP</button>
+                                    {/* <input className='form-control' type="text" placeholder="Enter Mobile Number" value={otp} onChange={handlePhoneChange_otp}  />
+                                    <button onClick={handleButtonClick_verify}>Get OTP</button> */}
                                 </div>
                                 <h5>[You will receive an OTP]</h5>
                             </div>
+                            :<div className='login-part-otp'>
+                                <p>You will receive an otp on {mobile}</p>
+                                <div className='login-part-input'>
+                                    {/* <input className='form-control' type="text" placeholder="Enter OTP " value={otp} onChange={handlePhoneChange_otp}  /> */}
+                                    <div className="otp-fields">
+                                    {myOtp.map((digit, index) => (
+                                        <input
+                                            key={index}
+                                            type="text"
+                                            value={digit}
+                                            onChange={(event) => handleOtpChange(index, event.target.value)}
+                                            placeholder=""
+                                            maxLength={1}
+                                            ref={(input) => {
+                                                if (input) inputRefs.current[index] = input;
+                                              }}
+                                            />
+                                        ))}
+                                        </div>
+                                    <button onClick={handleButtonClick_verify}>Verify OTP</button>
+                                </div>
+                                <h5>[Resend OTP]</h5>
+                            </div>}
                         </div>
                         <div className='socail-linkppart'>
                             <div className="sl-details-body">
