@@ -437,17 +437,18 @@ body {
     display: none;
 }
 
-.coupon-container {
+.inner-container {
     height: auto;
     overflow-y: scroll;
     padding: 0px 30px;
 }
 
-.coupon-container::-webkit-scrollbar {
+.inner-container::-webkit-scrollbar {
     display: none;
 }
 
-.coupon-container .coupons {
+.inner-container .coupons,
+.inner-container .rewards {
     position: relative;
     height: 105px;
     margin: 10px 0px;
@@ -462,13 +463,15 @@ body {
     position: relative;
 }
 
-.coupon-info {
+.coupon-info,
+.rewards-info {
     position: relative;
     display: grid;
     grid-template-columns: 0.48fr 1fr;
 }
 
-.coupon-info .icon {
+.coupon-info .icon,
+.rewards-info .icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -535,7 +538,7 @@ body {
     position: fixed;
     bottom: 0px;
     width: 430px;
-    height: 90%;
+    height: 100%;
     transform: translateY(100%);
     transition: all 0.3s ease-in;
     display: grid;
@@ -648,14 +651,16 @@ body {
     top: -40px;
     left: 200px;
     border-radius: 50%;
-    i{
+
+    i {
         color: #FFF;
         font-size: 1.4rem;
     }
+
     cursor: pointer;
 }
 
-.card-container{
+.card-container {
     border: 2px solid #fff;
     width: 360px;
     margin: 35% auto;
@@ -665,7 +670,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    .innerCard{
+
+    .innerCard {
         border: 4px solid #fff;
         display: flex;
         flex-direction: column;
@@ -674,53 +680,63 @@ body {
         padding: 20px;
         border-radius: 20px;
     }
-    .brandName{
+
+    .brandName {
         position: relative;
         text-align: center;
     }
-    .brandName span::before{
+
+    .brandName span::before {
         content: "";
         position: absolute;
         bottom: 0;
         width: 35px;
         border: 1px solid;
     }
-    .info{
+
+    .info {
         display: flex;
         gap: 10px;
     }
-    .infoRightHalf span{
+
+    .infoRightHalf span {
         font-size: 12px;
     }
 }
-.gift-card-input{
+
+.gift-card-input {
     margin-top: 20px;
     display: flex;
     gap: 15px;
     flex-direction: column;
 }
+
 .gift-card-input input,
-.gift-card-input button{
+.gift-card-input button {
     border-radius: 20px;
     border: none;
     padding: 4px;
 }
-.gift-card-input input::placeholder{
+
+.gift-card-input input::placeholder {
     padding-left: 15px;
 }
-.gift-card-input button{
+
+.gift-card-input button {
     background: #6E52DE;
     color: #fff;
     font-size: 14px;
     font-weight: 400;
 }
-.purchase-gift-card-container{
+
+.purchase-gift-card-container {
     background-color: #fff;
     padding: 7px;
     border-radius: 30px;
     display: flex;
     align-items: center;
-    button{
+
+    button {
         border-radius: 50%;
         height: 35px;
         width: 35px;
@@ -731,10 +747,12 @@ body {
         justify-self: center;
         align-items: center;
     }
-    button i{
+
+    button i {
         font-size: 1.5rem;
     }
-    .purchase-info{
+
+    .purchase-info {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -742,10 +760,136 @@ body {
     }
 }
 
-.purchase-info span:nth-child(1){
+.purchase-info span:nth-child(1) {
     font-weight: bold;
     font-size: 0.8rem;
 }
-.purchase-info span:nth-child(2){
+
+.purchase-info span:nth-child(2) {
     font-size: 0.8rem;
+}
+
+.reward-name {
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.reward-name span {
+    font-weight: bold;
+}
+
+.reward-valid {
+    font-size: 0.8rem;
+}
+
+.rewards-info-details {
+    padding: 0px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.reward-action {
+    display: flex;
+    justify-content: space-between;
+}
+
+.reward-action button {
+    border: none;
+    border-radius: 5px;
+    padding: 3px 10px;
+    font-size: 0.8rem;
+}
+
+.reward-view-bnt button {
+    background: none;
+    border: 1px solid #0b0b59;
+    color: #0B0B59;
+}
+
+.reward-redeem-bnt button {
+    background-color: #0B0B59;
+    color: #fff;
+}
+
+.reward-pop-confirm {
+    position: fixed;
+    bottom: 0px;
+    width: 430px;
+    height: 100%;
+    transform: translateY(100%);
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+}
+
+.reward-pop-confirm.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.backdrop-cancel {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: #0000002b;
+}
+
+.pop-confirm-container {
+    position: absolute;
+    width: 350px;
+    height: auto;
+    padding: 20px;
+    border-radius: 20px;
+    background: #fff;
+    z-index: 10000;
+    margin: 210px 40px;
+}
+
+.pop-confirm-img {
+    text-align: center;
+}
+
+.pop-confirm-img img {
+    height: 120px;
+}
+
+.pop-confirm-qn {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.pop-confirm-action {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.pop-confirm-action button {
+    width: 120px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    background: none;
+}
+
+.pop-confirm-action button:nth-child(1) {
+    color: #0b0b59;
+    border: 1px solid #0b0b59;
+}
+
+.pop-confirm-action button:nth-child(2) {
+    color: #fff;
+    border: 1px solid #0b0b59;
+    background: #0b0b59;
+}
+
+.pop-confirm-onCancel {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: larger;
+    font-weight: bold;
+    cursor: pointer;
 }

@@ -114,7 +114,7 @@ function About() {
                         </div>
                     </div>
                 </Link>
-                <Link to={"/Rewards"}>
+                <Link to={"/Reward"}>
                     <div className="rewards-content">
                         <div className="content">
                             <p>Reward <br /> Menu</p>

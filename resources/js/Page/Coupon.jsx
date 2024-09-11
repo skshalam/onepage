@@ -43,7 +43,7 @@ function ActiveCoupons({ data }) {
     }
     return (
         <>
-            <div className={`coupon-container`}>
+            <div className={`inner-container`}>
                 {data.map((i, iIndex) => (
                     <div key={iIndex} className="coupons p-1">
                         <div className="coupon-info h-100">
@@ -91,7 +91,7 @@ function HoldOnCoupons({ data }) {
     }
     return (
         <>
-            <div className={`coupon-container`}>
+            <div className={`inner-container`}>
                 {data.map((i, iIndex) => (
                     <div key={iIndex} className="coupons p-1">
                         <div className="coupon-info h-100">
