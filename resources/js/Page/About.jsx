@@ -18,11 +18,8 @@ function About() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { merchant_base } = useParams();
-    const { http, setToken } = AuthUser();
-    // const navigate = useNavigate();
-    const { getToken } = AuthUser();
-    const token = getToken();
     useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
         if (token) {
             axios.get('/api/getDataCounts',{
                 headers: {
@@ -41,8 +38,9 @@ function About() {
         } else {
             console.log('No token available, API call skipped');
         }
-    }, [token]);
+    },[]);
     useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
         axios.get('/api/onepagehome',{
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -56,7 +54,7 @@ function About() {
                 setError(error);
                 setLoading(false);
             });
-    }, [merchant_base,token,]);
+    }, [merchant_base]);
     return (
         <div className='body-container'>
             <div className="body-header">
@@ -74,7 +72,9 @@ function About() {
 
                 </div>
             </div>
-
+            <Link to="/Coupon">
+                        <button>Go to Coupon Page</button>
+                    </Link>
             <div className="wallet-container">
                 <div className="wallet-content">
                     <div className="content">
