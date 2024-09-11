@@ -1,6 +1,6 @@
 // resources/js/Page/About.jsx
 import React, { useEffect, useState } from 'react';
-import { Link , Router, useParams} from 'react-router-dom';
+import { Link, Router, useParams } from 'react-router-dom';
 import axios from 'axios';
 import AuthUser from './AuthUser';
 function About() {
@@ -21,34 +21,34 @@ function About() {
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
         if (token) {
-            axios.get('/api/getDataCounts',{
+            axios.get('/api/getDataCounts', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                console.log('API Response:', response); 
-                setData_getcoupons(response.data.data);
-            })
-            .catch(error => {
-                console.error('API Error:', error);
-                setError(error); 
-            });
+                .then(response => {
+                    console.log('API Response:', response);
+                    setData_getcoupons(response.data.data);
+                })
+                .catch(error => {
+                    console.error('API Error:', error);
+                    setError(error);
+                });
         } else {
             console.log('No token available, API call skipped');
         }
-    },[]);
+    }, []);
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
-        axios.get('/api/onepagehome',{
+        axios.get('/api/onepagehome', {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => {
-            setData_home(response.data.data);
+            .then(response => {
+                setData_home(response.data.data);
             })
             .catch(error => {
                 setError(error);
@@ -72,9 +72,6 @@ function About() {
 
                 </div>
             </div>
-            <Link to="/Coupon">
-                        <button>Go to Coupon Page</button>
-                    </Link>
             <div className="wallet-container">
                 <div className="wallet-content">
                     <div className="content">
@@ -103,18 +100,20 @@ function About() {
             </div>
 
             <div className="rewards-container">
-                <div className="rewards-content">
-                    <div className="content">
-                        <p>Coupon <br /> Cart</p>
-                        <div className="balance">
-                            <img src="" alt="" />
-                            <span>{data_getcoupons.active_coupon_count}</span>
+                <Link to={"/Coupon"} style={{ textDecoration: "none", color: "#fff" }}>
+                    <div className="rewards-content">
+                        <div className="content">
+                            <p>Coupon <br /> Cart</p>
+                            <div className="balance">
+                                <img src="" alt="" />
+                                <span>{data_getcoupons.active_coupon_count}</span>
+                            </div>
+                        </div>
+                        <div className="content">
+                            <i className="bi bi-chevron-right"></i>
                         </div>
                     </div>
-                    <div className="content">
-                        <i className="bi bi-chevron-right"></i>
-                    </div>
-                </div>
+                </Link>
                 <div className="rewards-content">
                     <div className="content">
                         <p>Reward <br /> Menu</p>
