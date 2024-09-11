@@ -374,7 +374,7 @@ body {
     bottom: 0px;
 }
 
-.coupon-header {
+.navHeader {
     padding: 4px;
     background-color: #0B0B59;
     color: #ffffff;
@@ -653,4 +653,99 @@ body {
         font-size: 1.4rem;
     }
     cursor: pointer;
+}
+
+.card-container{
+    border: 2px solid #fff;
+    width: 360px;
+    margin: 35% auto;
+    background: #FFFFFF2B;
+    padding: 7px;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .innerCard{
+        border: 4px solid #fff;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        background: linear-gradient(180deg, rgba(193, 169, 245, 0.33) 0%, rgba(80, 19, 182, 0) 100%);
+        padding: 20px;
+        border-radius: 20px;
+    }
+    .brandName{
+        position: relative;
+        text-align: center;
+    }
+    .brandName span::before{
+        content: "";
+        position: absolute;
+        bottom: 0;
+        width: 35px;
+        border: 1px solid;
+    }
+    .info{
+        display: flex;
+        gap: 10px;
+    }
+    .infoRightHalf span{
+        font-size: 12px;
+    }
+}
+.gift-card-input{
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+}
+.gift-card-input input,
+.gift-card-input button{
+    border-radius: 20px;
+    border: none;
+    padding: 4px;
+}
+.gift-card-input input::placeholder{
+    padding-left: 15px;
+}
+.gift-card-input button{
+    background: #6E52DE;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 400;
+}
+.purchase-gift-card-container{
+    background-color: #fff;
+    padding: 7px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    button{
+        border-radius: 50%;
+        height: 35px;
+        width: 35px;
+        background: #6E52DE;
+        color: #fff;
+        border: none;
+        display: flex;
+        justify-self: center;
+        align-items: center;
+    }
+    button i{
+        font-size: 1.5rem;
+    }
+    .purchase-info{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: -webkit-fill-available;
+    }
+}
+
+.purchase-info span:nth-child(1){
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+.purchase-info span:nth-child(2){
+    font-size: 0.8rem;
 }

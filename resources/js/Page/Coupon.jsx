@@ -6,7 +6,7 @@ function Coupon() {
     return (
         <div className='body-container'>
             <div className="sticky-top">
-                <div className="coupon-header">
+                <div className="navHeader">
                     <div className="prev-btn">
                         <Link to={"/About"}>
                             <i className="bi bi-chevron-left"></i>
