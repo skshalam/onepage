@@ -105,7 +105,7 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm }) {
                 </div>
                 <div className="pop-confirm-onCancel" onClick={() => setOpenConfirm(false)}><i className='bi bi-x'/></div>
             </div>
-            
+            <div className="pop-confirm-success">r</div>
             <div className="backdrop-cancel" onClick={() => setOpenConfirm(false)}></div>
         </div>
     )

@@ -837,17 +837,30 @@ body {
 
 .pop-confirm-container {
     position: absolute;
-    width: 350px;
+    width: 300px;
     height: auto;
     padding: 20px;
     border-radius: 20px;
     background: #fff;
     z-index: 10000;
-    margin: 210px 40px;
+    margin: 211px 65px;
+}
+
+.pop-confirm-success{
+    position: absolute;
+    width: 300px;
+    height: auto;
+    padding: 20px;
+    border-radius: 20px;
+    background: #fff;
+    z-index: 10000;
+    margin: 211px 65px;
 }
 
 .pop-confirm-img {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pop-confirm-img img {
@@ -867,10 +880,11 @@ body {
 }
 
 .pop-confirm-action button {
-    width: 120px;
-    padding: 6px 0px;
-    border-radius: 15px;
+    width: 110px;
+    padding: 4px 0px;
+    border-radius: 6px;
     background: none;
+    font-size: 0.9rem;
 }
 
 .pop-confirm-action button:nth-child(1) {
