@@ -1,8 +1,52 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-
+import React, { useEffect, useState } from 'react';
+import { Link, Router, useParams } from 'react-router-dom';
+import axios from 'axios';
 function Coupon() {
-    const [activeTab, setActiveTab] = useState('coupon')
+    const [activeTab, setActiveTab] = useState('coupon');
+    const [couponData, setCouponData] = useState([]);
+    const [couponholdData, setCouponholdData] = useState([]);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        console.log('Token:', token);
+        if (token) {
+            axios.get('/api/couponscart', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                setCouponData(response.data.data.couponcart);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+                // setError(error);
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, []);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        console.log('Token:', token);
+        if (token) {
+            axios.get('/api/couponhold', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                setCouponholdData(response.data.data.onHoldCoupons);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+                // setError(error);
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, []);
     return (
         <div className='body-container'>
             <div className="sticky-top">
@@ -24,10 +68,10 @@ function Coupon() {
                 </div>
             </div>
             <div className={`tab-content ${activeTab === 'coupon' ? '' : 'hidden'}`}>
-                <ActiveCoupons data={tempData} />
+                <ActiveCoupons data={couponData} />
             </div>
             <div className={`tab-content ${activeTab === 'on-hold' ? '' : 'hidden'}`}>
-                <HoldOnCoupons data={tempData} />
+                <HoldOnCoupons data={couponholdData} />
             </div>
         </div>
     )
@@ -44,7 +88,41 @@ function ActiveCoupons({ data }) {
     return (
         <>
             <div className={`inner-container`}>
-                {data.map((i, iIndex) => (
+                {data.length > 0 ? (
+                    data.map((coupon, index)=>(
+                        <div key={index} className="coupons p-1">
+                            <div className="coupon-info h-100">
+                                <div className="icon">
+                                    <img src="https://i.imgur.com/3iASiG8.png" alt="Coupon" />
+                                </div>
+                                <div className="details">
+                                    <div className="coupon-expire-date">
+                                        <span>Valid till {coupon.token_valide}</span>
+                                    </div>
+                                    <div className="coupon-name">
+                                        <span>{coupon.name}</span>
+                                    </div>
+                                    <div className="coupon-limit">
+                                        <span>Uses: <span>{coupon.use_limit}</span></span>
+                                    </div>
+                                    <div className="coupon-action">
+                                        <div className="coupon-code">
+                                            CODE: <span>{coupon.token_code}</span>
+                                        </div>
+                                        <div className="view-coupon">
+                                            <button onClick={() => { handleDrawer(coupon), setOpen(!open) }}>View Details</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="no-coupons">
+                        <p>No Coupons Available</p>
+                    </div>
+                )}
+                {/* {data.map((i, iIndex) => (
                     <div key={iIndex} className="coupons p-1">
                         <div className="coupon-info h-100">
                             <div className="icon">
@@ -71,7 +149,7 @@ function ActiveCoupons({ data }) {
                             </div>
                         </div>
                     </div>
-                ))}
+                ))} */}
             </div>
             <div className="powered-ewards">
                 <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
@@ -92,6 +170,42 @@ function HoldOnCoupons({ data }) {
     return (
         <>
             <div className={`inner-container`}>
+            {data.length > 0 ? (
+                    data.map((couponhold, index)=>(
+                        <div key={index} className="coupons p-1">
+                            <div className="coupon-info h-100">
+                                <div className="icon">
+                                    <img src="https://i.imgur.com/3iASiG8.png" alt="Coupon" />
+                                </div>
+                                <div className="details">
+                                    <div className="coupon-expire-date">
+                                        <span>Valid till {couponhold.token_valide}</span>
+                                    </div>
+                                    <div className="coupon-name">
+                                        <span>{couponhold.name}</span>
+                                    </div>
+                                    <div className="coupon-limit">
+                                        <span>Uses: <span>{couponhold.use_limit}</span></span>
+                                    </div>
+                                    <div className="coupon-action">
+                                        <div className="coupon-code">
+                                            CODE: <span>{couponhold.token_code}</span>
+                                        </div>
+                                        <div className="view-coupon">
+                                            <button onClick={() => { handleDrawer(i), setOpen(!open) }}>View Details</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="no-coupons">
+                        <p>No Coupons Available</p>
+                    </div>
+                )}
+            </div>
+            {/* <div className={`inner-container`}>
                 {data.map((i, iIndex) => (
                     <div key={iIndex} className="coupons p-1">
                         <div className="coupon-info h-100">
@@ -120,7 +234,7 @@ function HoldOnCoupons({ data }) {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div> */}
             <div className="powered-ewards">
                 <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
                     <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
