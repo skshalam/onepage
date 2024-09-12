@@ -9,6 +9,8 @@ import { BrowserRouter as Router, Routes, Route, useLocation, matchPath,useNavig
 import Home from './Page/Home';
 import About from './Page/About';
 import Coupon from './Page/Coupon';
+import GiftCard from './Page/GiftCard';
+import Reward from './Page/Reward';
 
 const App = () => {
     const location = useLocation();
@@ -57,6 +59,8 @@ const App = () => {
             <Route path="/onePageWebsite/:merchant_base" element={<Home />} />
             <Route path="/About" element={<About />} />
             <Route path="/Coupon" element={<Coupon />} />
+            <Route path="/Giftcard" element={<GiftCard />} />
+            <Route path="/Reward" element={<Reward />} />
         </Routes>
     );
 };
