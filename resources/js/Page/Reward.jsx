@@ -89,23 +89,41 @@ function RewardDescDrawer(event) {
 }
 
 function RewardPopConfirm({ openConfirm, setOpenConfirm }) {
-    const [proceed,setProceed] = useState(false);
+    const [proceed, setProceed] = useState(false);
+    const handleSuccess = () => {
+        setProceed(true)
+        setTimeout(() => {
+            setProceed(false);
+            setOpenConfirm(false)
+        }, 2000);
+    }
     return (
         <div className={`reward-pop-confirm ${openConfirm ? "show" : ""}`}>
-            <div className="pop-confirm-container">
-                <div className="pop-confirm-img">
-                    <img src="https://i.imgur.com/2FOfgVm.png" alt="" />
+            {!proceed
+                ? <div className="pop-confirm-container">
+                    <div className="pop-confirm-img">
+                        <img src="https://i.imgur.com/2FOfgVm.png" alt="" />
+                    </div>
+                    <div className="pop-confirm-qn">
+                        Redeem Rewards?
+                    </div>
+                    <div className="pop-confirm-action">
+                        <button onClick={() => setOpenConfirm(false)}>Cancel</button>
+                        <button onClick={handleSuccess}>Yes Redeem</button>
+                    </div>
+                    <div className="pop-confirm-onCancel" onClick={() => setOpenConfirm(false)}><i className='bi bi-x' /></div>
                 </div>
-                <div className="pop-confirm-qn">
-                    Redeem Rewards?
+                :
+                <div className="pop-confirm-success">
+                    <div className="pop-confirm-success-img">
+                    </div>
+                    <div className="pop-confirm-success-msg">
+                        <span>
+                            You have successfully redeemed your reward!
+                        </span>
+                    </div>
                 </div>
-                <div className="pop-confirm-action">
-                    <button onClick={() => setOpenConfirm(false)}>Cancel</button>
-                    <button>Yes Redeem</button>
-                </div>
-                <div className="pop-confirm-onCancel" onClick={() => setOpenConfirm(false)}><i className='bi bi-x'/></div>
-            </div>
-            <div className="pop-confirm-success">r</div>
+            }
             <div className="backdrop-cancel" onClick={() => setOpenConfirm(false)}></div>
         </div>
     )

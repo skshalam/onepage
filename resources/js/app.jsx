@@ -11,6 +11,7 @@ import About from './Page/About';
 import Coupon from './Page/Coupon';
 import GiftCard from './Page/GiftCard';
 import Reward from './Page/Reward';
+import MemberShipPackage from './Page/MemberShipPackage';
 
 const App = () => {
     const location = useLocation();
@@ -61,6 +62,7 @@ const App = () => {
             <Route path="/Coupon" element={<Coupon />} />
             <Route path="/Giftcard" element={<GiftCard />} />
             <Route path="/Reward" element={<Reward />} />
+            <Route path="/Membership" element={<MemberShipPackage />} />
         </Routes>
     );
 };

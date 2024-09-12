@@ -448,7 +448,8 @@ body {
 }
 
 .inner-container .coupons,
-.inner-container .rewards {
+.inner-container .rewards,
+.inner-container .membership {
     position: relative;
     height: 105px;
     margin: 10px 0px;
@@ -464,14 +465,16 @@ body {
 }
 
 .coupon-info,
-.rewards-info {
+.rewards-info,
+.membership-info {
     position: relative;
     display: grid;
     grid-template-columns: 0.48fr 1fr;
 }
 
 .coupon-info .icon,
-.rewards-info .icon {
+.rewards-info .icon,
+.membership-info .icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -846,7 +849,7 @@ body {
     margin: 211px 65px;
 }
 
-.pop-confirm-success{
+.pop-confirm-success {
     position: absolute;
     width: 300px;
     height: auto;
@@ -906,4 +909,53 @@ body {
     font-size: larger;
     font-weight: bold;
     cursor: pointer;
+}
+
+.pop-confirm-success-msg {
+    text-align: center;
+}
+
+.pop-confirm-success-img {
+    height: 200px;
+    border: 1px solid;
+}
+
+.membership-info-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 2px 10px;
+
+    .membership-validity,
+    .membership-price {
+        font-size: 12px;
+    }
+
+    .membership-action {
+        text-align: end;
+    }
+
+    .membership-action button {
+        border: 1px solid;
+        font-size: 13px;
+        background: none;
+        border-radius: 5px;
+        padding: 3px 8px;
+    }
+}
+.membership-inner{
+    position: relative;
+}
+.membership-status{
+    position: absolute;
+    top: -10px;
+    left: -5px;
+}
+.membership-status img{
+    width: 80px;
+}
+.membership-status span{
+    color: #fff;
+    position: absolute;
+    left: 15px;
 }
