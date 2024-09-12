@@ -34,7 +34,9 @@ function MemberShipPackage() {
                                             <span>1000</span>
                                         </div>
                                         <div className="membership-action">
+                                            <Link to={`/Membership/:${iIndex}`}>
                                             <button>View Details</button>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>

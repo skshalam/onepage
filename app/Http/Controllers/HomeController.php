@@ -70,7 +70,7 @@ class HomeController extends Controller
         $data['brand_logo_alignment'] = $homebrandlogo->brand_logo_alignment;
         $merchant_name = MerchantDetails::select('business_name')->where('user_id', $merchant_id)->first();
         $cards=Cards::select('cards.current_points', 'cards.current_wallet_balance')->where('cards.merchant_id', $merchant_id)->where('cards.user_id', $user_id)->first();
-        $homebannersData = Onepage_Banner_Space::select('banner_image')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
+        $homebannersData = Onepage_Banner_Space::select('banner_image','hide_show')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
         if(count($homebannersData) > 0){
             $banner_images = $homebannersData->pluck('banner_image')->all();
             $data['banners'] = [

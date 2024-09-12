@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 function MembershipDetails() {
+    const [showModal, setModal] = useState(false);
+    const [title, setTitle] = useState(null);
     return (
         <div className='body-container membership-package-body'>
-            <div className="sticky-top border-0 border-bottom">
+            <div className="border-0 border-bottom">
                 <div className="navHeader">
                     <div className="prev-btn">
                         <Link to={"/About"}>
@@ -14,7 +16,7 @@ function MembershipDetails() {
                     </div>
                 </div>
             </div>
-            <div className="membership-package-details mt-3 text-light px-3">
+            <div className="membership-package-details d-flex justify-content-between mt-3 text-light px-3">
                 <div className="package-info d-flex flex-column">
                     <span className='fs-5 fw-bold text-uppercase'>Lorem ipsum dolor sit amet.</span>
                     <div className="d-flex gap-2" style={{ fontSize: "15px" }}>
@@ -30,7 +32,7 @@ function MembershipDetails() {
             <div className="bg-shape d-flex justify-content-center position-absolute w-100 one">
                 <img src="https://i.imgur.com/UTAJ31K.png" alt="" />
                 <div className="position-absolute top-0 d-flex flex-column gap-3" style={{ marginTop: "180px" }}>
-                    <div style={{ background: "#fff", width: "360px" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                    <div onClick={() => { setModal(true), setTitle("e-Wallets Issued") }} style={{ background: "#fff", width: "370px" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
                         <div className="d-flex align-item-center justify-content-center position-relative">
                             <img style={{ height: "50px" }} src="https://i.imgur.com/1CZgdmK.png" alt="" />
                             <div className="position-absolute" style={{ top: "10px" }}>
@@ -50,7 +52,7 @@ function MembershipDetails() {
                             <i className='bi bi-chevron-right fw-bold' />
                         </div>
                     </div>
-                    <div style={{ background: "#fff", width: "360px" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                    <div onClick={() => { setModal(true), setTitle("Booklets Issued") }} style={{ background: "#fff", width: "370px" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
                         <div className="d-flex align-item-center justify-content-center position-relative">
                             <img style={{ height: "50px" }} src="https://i.imgur.com/1CZgdmK.png" alt="" />
                             <div className="position-absolute" style={{ top: "10px" }}>
@@ -67,7 +69,7 @@ function MembershipDetails() {
                             <i className='bi bi-chevron-right fw-bold' />
                         </div>
                     </div>
-                    <div style={{ background: "#fff", width: "360px" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                    <div onClick={() => { setModal(true), setTitle("Coupons Redeemed") }} style={{ background: "#fff", width: "370px" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
                         <div className="d-flex align-item-center justify-content-center position-relative">
                             <img style={{ height: "50px" }} src="https://i.imgur.com/1CZgdmK.png" alt="" />
                             <div className="position-absolute" style={{ top: "10px" }}>
@@ -98,8 +100,42 @@ function MembershipDetails() {
             <div className="bg-shape position-absolute w-100 two">
                 <img src="https://i.imgur.com/6bAQtCI.png" alt="" />
             </div>
+            <ViewMemberShip showModal={showModal} setModal={setModal} title={title} />
         </div>
     )
 }
 
 export default MembershipDetails
+
+function ViewMemberShip({ showModal, setModal, title }) {
+    return (
+        <div
+            className={`position-absolute h-100 top-0 w-100 view-membership-details
+                d-flex justify-content-center align-items-center
+            ${showModal ? "show" : ""}`}
+        >
+            <div
+                className="exit-table w-100 h-100 position-absolute"
+                onClick={() => setModal(false)}
+            ></div>
+            <div className="position-absolute w-100 px-3 ">
+                <div className="border bg-light p-2 rounded-4 shadow">
+                    <div className="membership-view-header d-flex justify-content-between px-3 pb-3">
+                        <span className='fw-semibold'>{title}</span>
+                        <i className='bi bi-x fs-5' onClick={()=>setModal(false)} />
+                    </div>
+                    <table className='membership-view-table'>
+                        <thead>
+                            <th>Coupon Name</th>
+                            <th>Coupon Code</th>
+                            <th>Redeemed</th>
+                        </thead>
+                    </table>
+                    <div className="table-action px-3 mt-4">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
