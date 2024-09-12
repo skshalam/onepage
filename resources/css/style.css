@@ -259,6 +259,32 @@ body {
     margin: 0px auto;
     background: #EBECF7;
 }
+.membership-package-body{
+    background-color: #0B0B59;
+    position: relative;
+    overflow: hidden;
+}
+.membership-package-details{
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    .package-status img{
+        height: 70px;
+    }
+    .package-status span{
+        font-size: 11px;
+        top: 25px;
+    }
+}
+.bg-shape.one{
+    bottom: -100px;
+}
+.bg-shape.two{
+    top: -145px;
+    left: 170px;
+}
+.bg-shape img{
+    width: 100%;
+}
 
 .wallet-container {
     display: grid;
@@ -363,19 +389,13 @@ body {
     display: none;
 }
 
-.sticky-top {
-    position: sticky;
-    top: 0px;
-    box-shadow: 0px 7px 5px -3px rgba(0, 0, 0, 0.1);
-}
-
 .fixed-bottom {
     position: fixed;
     bottom: 0px;
 }
 
 .navHeader {
-    padding: 4px;
+    padding: 8px;
     background-color: #0B0B59;
     color: #ffffff;
 }
@@ -450,7 +470,6 @@ body {
 .inner-container .coupons,
 .inner-container .rewards,
 .inner-container .membership {
-    position: relative;
     height: 105px;
     margin: 10px 0px;
     background: url(https://i.imgur.com/ezi611N.png);
@@ -921,11 +940,7 @@ body {
 }
 
 .membership-info-details {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
     padding: 2px 10px;
-
     .membership-validity,
     .membership-price {
         font-size: 12px;

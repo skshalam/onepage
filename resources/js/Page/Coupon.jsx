@@ -5,7 +5,7 @@ function Coupon() {
     const [activeTab, setActiveTab] = useState('coupon')
     return (
         <div className='body-container'>
-            <div className="sticky-top">
+            <div className="position-sticky top-0 z-1 shadow-sm">
                 <div className="navHeader">
                     <div className="prev-btn">
                         <Link to={"/About"}>
@@ -45,7 +45,7 @@ function ActiveCoupons({ data }) {
         <>
             <div className={`inner-container`}>
                 {data.map((i, iIndex) => (
-                    <div key={iIndex} className="coupons p-1">
+                    <div key={iIndex} className="coupons position-relative p-1">
                         <div className="coupon-info h-100">
                             <div className="icon">
                                 <img src="https://i.imgur.com/3iASiG8.png" alt="" />
@@ -93,7 +93,7 @@ function HoldOnCoupons({ data }) {
         <>
             <div className={`inner-container`}>
                 {data.map((i, iIndex) => (
-                    <div key={iIndex} className="coupons p-1">
+                    <div key={iIndex} className="coupons position-relative p-1">
                         <div className="coupon-info h-100">
                             <div className="icon">
                                 <img src="https://i.imgur.com/3iASiG8.png" alt="" />

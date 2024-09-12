@@ -6,7 +6,7 @@ function Reward() {
     const [openConfirm, setOpenConfirm] = useState(false);
     return (
         <div className='body-container'>
-            <div className="sticky-top">
+            <div className="position-sticky top-0 z-1 shadow-sm">
                 <div className="navHeader">
                     <div className="prev-btn">
                         <Link to={"/About"}>
@@ -18,7 +18,7 @@ function Reward() {
             </div>
             <div className={`inner-container`}>
                 {[...new Array(14)].map((i, iIndex) => (
-                    <div key={iIndex} className="rewards p-1">
+                    <div key={iIndex} className="rewards position-relative p-1">
                         <div className="rewards-info h-100">
                             <div className="icon">
                                 <img src="https://i.imgur.com/wkYeeU3.png" alt="" />

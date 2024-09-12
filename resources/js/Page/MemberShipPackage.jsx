@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 function MemberShipPackage() {
     return (
         <div className='body-container'>
-            <div className="sticky-top">
+            <div className="position-sticky top-0 z-1 shadow-sm">
                 <div className="navHeader">
                     <div className="prev-btn">
                         <Link to={"/About"}>
@@ -17,13 +17,13 @@ function MemberShipPackage() {
             <div className={`inner-container`}>
                 {[...new Array(6)].map((i, iIndex) => (
                     <>
-                        <div className="membership p-1">
+                        <div className="membership position-relative p-1">
                             <div className="membership-inner">
                                 <div className="membership-info h-100">
                                     <div className="icon">
                                         <img src="https://i.imgur.com/wiem34R.png" alt="" />
                                     </div>
-                                    <div className="membership-info-details">
+                                    <div className="membership-info-details d-flex flex-column justify-content-around">
                                         <div className="membership-name">
                                             <h6>Super Premium Package 007</h6>
                                         </div>
