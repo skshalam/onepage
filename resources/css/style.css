@@ -232,25 +232,57 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 5px;
-    height: 45px;
     background: #0B0B59;
-    color: #ffffff;
+    position: relative;
+    .head-logo{
+        display: flex;
+        align-items: center;
+        .headlogo-img{
+            :is(img){
+                width: 42px;
+            }
+            &.ratio-3{
+                :is(img){
+                    width: 120px;
+                } 
+            }
+        }
+        .headlogo-cont{
+            :is(h4){
+                margin: 0px;
+                font-size: 12px;
+                color: #fff;
+                text-transform: uppercase;
+                padding-left: 6px;
+                font-weight: 700;
+            }
+        }
+    }
+    .head-profile{
+        width: 34px;
+        border: 2px solid #fff;
+        text-align: center;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        position: absolute;
+        right: 15px;
+        :is(i){
+            color: #fff;
+            font-size: 18px !important;
+        }
+    }
+    &.logo-center{
+         justify-content: center;
+    }
 }
-
-.body-header .profile-img,
-.body-header .profile {
-    border: 1px solid;
-    width: 35px;
-    height: 35px;
-    border-radius: 5px;
-}
-
 .body-header .profile {
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
 .body-container {
     height: 100vh;
     display: table;
@@ -265,6 +297,14 @@ body {
     padding: 10px 20px;
     gap: 10px;
     grid-template-columns: repeat(2, 1fr);
+    &.wallet-banner{
+        display: block;
+        .wallet-content{
+            &:first-child{
+                margin-bottom: 20px;
+            }
+        }
+    }
 }
 
 .wallet-container .wallet-content {
@@ -906,4 +946,16 @@ body {
     font-size: larger;
     font-weight: bold;
     cursor: pointer;
+}
+.onepage-set-body-about{
+    .banner-part-main{
+        padding-top: 0px;
+        .banner-part {
+            background: #EBECF7;
+            .slick-dots li button:before {
+                color: #0b0b59 !important;
+                /* opacity: 8 !important; */
+            }
+        }
+    }
 }
