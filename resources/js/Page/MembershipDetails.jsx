@@ -130,9 +130,16 @@ function ViewMemberShip({ showModal, setModal, title }) {
                             <th>Coupon Code</th>
                             <th>Redeemed</th>
                         </thead>
+                        <tbody>
+                            <tr>
+                                <td>Test Coupon</td>
+                                <td>Test Coupon</td>
+                                <td>Test Coupon</td>
+                            </tr>
+                        </tbody>
                     </table>
                     <div className="table-action px-3 mt-4">
-                        
+
                     </div>
                 </div>
             </div>

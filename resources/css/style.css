@@ -1043,3 +1043,6 @@ body {
     color: #fff;
     text-align: center;
 }
+.membership-view-table tbody tr td{
+    border: 1px solid;
+}
