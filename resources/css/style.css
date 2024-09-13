@@ -1032,7 +1032,6 @@ body {
     transform: translateY(0);
 }
 .membership-view-table{
-    border: 1px solid;
     width: 100%;
     table-layout: auto;
 }
@@ -1042,7 +1041,78 @@ body {
     border: 1px solid #fff;
     color: #fff;
     text-align: center;
+    font-weight: 400;
+    padding: 7px 0px;
 }
 .membership-view-table tbody tr td{
-    border: 1px solid;
+    text-align: center;
+    font-weight: 400;
+    color: #7A7680;
+    padding: 5px 0px;
+    border-bottom: 1px solid #7A7680;
+}
+.membership-view-table tbody tr td:nth-child(1){
+    border-right: 1px solid #7A7680;
+}
+.membership-view-table tbody tr td:nth-child(2){
+    border-right: 1px solid #7A7680;
+}
+
+.wallet-credit-info{
+    h6{
+        color: #7A7680;
+        font-size: smaller;
+        font-size: 16px;
+    }
+    span{
+        color: #312E37;
+        font-size: 32px;
+        font-weight: bold;
+    }
+}
+
+.wallet-balance-table{
+    background: #fff;
+    .wallet-detail-container{
+        border-bottom: 3px solid #EBECF7;
+        padding-top: 7px;
+    }
+    .wallet-filter-header{
+        border-bottom: 2px solid #d0d0d0;
+        color: #312E37;
+    }
+    .filter-header-left{
+        font-weight: 500;
+    }
+    .filter-header-right i{
+        color: #0B0B59;
+        border: 1px solid #0B0B59;
+        cursor: pointer;
+    }
+    .wallet-expire{
+        font-size: 13px;
+        font-weight: 500;
+    }
+    .wallet-balance p{
+        font-size: 13px;
+        color: #7A7680;
+    }
+    .wallet-balance p span {
+        font-weight: 600;
+        color: #000;
+    }
+    .wallet-transaction-value p{
+        color: #389A15;
+        font-weight: 600;
+        font-size: 18px;
+    }
+    .wallet-detail-container-middle .invoice-number{
+        font-size: 13px;
+        color: #7A7680;
+    }
+    .invoice-number span{
+        color: #0B0B59;
+        font-weight: 400;
+        text-decoration: underline
+    };
 }

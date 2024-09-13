@@ -13,6 +13,8 @@ import GiftCard from './Page/GiftCard';
 import Reward from './Page/Reward';
 import MemberShipPackage from './Page/MemberShipPackage';
 import MembershipDetails from './Page/MembershipDetails';
+import Wallet from './Page/Wallet';
+import CreditWallet from './Page/CreditWallet';
 
 const App = () => {
     const location = useLocation();
@@ -65,6 +67,8 @@ const App = () => {
             <Route path="/Reward" element={<Reward />} />
             <Route path="/Membership" element={<MemberShipPackage />} />
             <Route path="/Membership/:packageID" element={<MembershipDetails />} />
+            <Route path="/Wallet" element={<Wallet />} />
+            <Route path="/Creditwallet" element={<CreditWallet />} />
         </Routes>
     );
 };

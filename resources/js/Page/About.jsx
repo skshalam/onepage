@@ -106,6 +106,7 @@ function About() {
                     </div>
                 )}
                 <div className={`wallet-container ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
+                    <Link to={"/Wallet"}>
                     <div className="wallet-content">
                         <div className="content">
                             <p>Credit Balance:</p>
@@ -118,6 +119,8 @@ function About() {
                             <i className="bi bi-chevron-right"></i>
                         </div>
                     </div>
+                    </Link>
+                    <Link to={"/Creditwallet"}>
                     <div className="wallet-content">
                         <div className="content">
                             <p>Wallet's Balance:</p>
@@ -130,6 +133,7 @@ function About() {
                             <i className="bi bi-chevron-right"></i>
                         </div>
                     </div>
+                    </Link>
                 </div>
                 <div className="rewards-container">
                     <Link to={"/Coupon"} style={{ textDecoration: "none", color: "#fff" }}>

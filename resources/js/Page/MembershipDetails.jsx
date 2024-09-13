@@ -32,7 +32,7 @@ function MembershipDetails() {
             <div className="bg-shape d-flex justify-content-center position-absolute w-100 one">
                 <img src="https://i.imgur.com/UTAJ31K.png" alt="" />
                 <div className="position-absolute top-0 d-flex flex-column gap-3" style={{ marginTop: "180px" }}>
-                    <div onClick={() => { setModal(true), setTitle("e-Wallets Issued") }} style={{ background: "#fff", width: "370px" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                    <div onClick={() => { setModal(true), setTitle("e-Wallets Issued") }} style={{ background: "#fff", width: "370px",cursor:"pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
                         <div className="d-flex align-item-center justify-content-center position-relative">
                             <img style={{ height: "50px" }} src="https://i.imgur.com/1CZgdmK.png" alt="" />
                             <div className="position-absolute" style={{ top: "10px" }}>
@@ -52,7 +52,7 @@ function MembershipDetails() {
                             <i className='bi bi-chevron-right fw-bold' />
                         </div>
                     </div>
-                    <div onClick={() => { setModal(true), setTitle("Booklets Issued") }} style={{ background: "#fff", width: "370px" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                    <div onClick={() => { setModal(true), setTitle("Booklets Issued") }} style={{ background: "#fff", width: "370px",cursor:"pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
                         <div className="d-flex align-item-center justify-content-center position-relative">
                             <img style={{ height: "50px" }} src="https://i.imgur.com/1CZgdmK.png" alt="" />
                             <div className="position-absolute" style={{ top: "10px" }}>
@@ -69,7 +69,7 @@ function MembershipDetails() {
                             <i className='bi bi-chevron-right fw-bold' />
                         </div>
                     </div>
-                    <div onClick={() => { setModal(true), setTitle("Coupons Redeemed") }} style={{ background: "#fff", width: "370px" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                    <div onClick={() => { setModal(true), setTitle("Coupons Redeemed") }} style={{ background: "#fff", width: "370px",cursor:"pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
                         <div className="d-flex align-item-center justify-content-center position-relative">
                             <img style={{ height: "50px" }} src="https://i.imgur.com/1CZgdmK.png" alt="" />
                             <div className="position-absolute" style={{ top: "10px" }}>
@@ -120,9 +120,9 @@ function ViewMemberShip({ showModal, setModal, title }) {
             ></div>
             <div className="position-absolute w-100 px-3 ">
                 <div className="border bg-light p-2 rounded-4 shadow">
-                    <div className="membership-view-header d-flex justify-content-between px-3 pb-3">
+                    <div className="membership-view-header d-flex justify-content-between align-items-center px-3 pb-3">
                         <span className='fw-semibold'>{title}</span>
-                        <i className='bi bi-x fs-5' onClick={()=>setModal(false)} />
+                        <i className='bi bi-x fs-5' onClick={() => setModal(false)} />
                     </div>
                     <table className='membership-view-table'>
                         <thead>
@@ -131,15 +131,24 @@ function ViewMemberShip({ showModal, setModal, title }) {
                             <th>Redeemed</th>
                         </thead>
                         <tbody>
-                            <tr>
+                            {[...new Array(6)].map(() => (<tr>
                                 <td>Test Coupon</td>
                                 <td>Test Coupon</td>
                                 <td>Test Coupon</td>
-                            </tr>
+                            </tr>))}
                         </tbody>
                     </table>
-                    <div className="table-action px-3 mt-4">
-
+                    <div className="table-action px-3 mt-3 mb-2 d-flex justify-content-between">
+                        <span className='d-flex'>
+                            <i className='bi bi-chevron-left' />prev
+                        </span>
+                        <div className="">
+                            <span className='border px-3 rounded-2 pb-1 me-1'>1</span>
+                            <span className='fw-semibold'>/2</span>
+                        </div>
+                        <span>
+                            next<i className='bi bi-chevron-right' />
+                        </span>
                     </div>
                 </div>
             </div>
