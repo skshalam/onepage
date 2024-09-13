@@ -302,7 +302,7 @@ class HomeController extends Controller
             'rewards.name',
             'rewards.valid_till',
             'coupon.coupon_code',
-            'coupon.foreign_id',
+            'coupon.foreign_id as rewards_id ',
 
         ];
         if(!empty($rewards_id)){
@@ -311,6 +311,7 @@ class HomeController extends Controller
                 'rewards.valid_on',
                 'rewards.timing',
                 'rewards.terms',
+                'coupon.coupon_code',
                 'rewards.valid_till',
             ];
         }
@@ -324,6 +325,9 @@ class HomeController extends Controller
                 $rewards->where('rewards.id', $rewards_id);
             }
             $rewards = $rewards->get();
+            if(!empty($rewards_id)){
+                $rewards[0]['token_valid_on'] = $this->getDaysAccoToValidon($rewards[0]['valid_on']);
+            }
             if(count($rewards)>0){
                 $data['rewards'] = $rewards;
             }
