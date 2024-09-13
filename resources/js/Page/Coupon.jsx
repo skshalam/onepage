@@ -349,8 +349,8 @@ function CouponDescDrawer({ open, couponCartData, onHoldCouponData, setOpen }) {
                 <div className="drawer-middle">
                     <div className="cLimit">Uses <span>{coupon?.use_limit || 'No Limit Available'}</span></div>
                     <div className="cDateDesc">
-                        <div className="dateLeft">Sun, Mon, Tue, Wed, Fri</div>
-                        <div className="dateRight">12:00 A.M to 5:00 P.M</div>
+                        <div className="dateLeft">{coupon?.token_valid_on || ''}</div>
+                        <div className="dateRight">{coupon?.timing || ''}</div>
                     </div>
                 </div>
                 <div className="drawer-below">
