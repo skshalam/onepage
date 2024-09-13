@@ -1,9 +1,31 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { Link, Router, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 function Reward() {
     const [open, setOpen] = useState(false);
     const [openConfirm, setOpenConfirm] = useState(false);
+    const [rewardsData, setrewardsData] = useState([]);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        console.log('Token:', token);
+        if (token) {
+            axios.post('/api/rewards', [], {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                setrewardsData(response.data.data.rewards);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, []);
     return (
         <div className='body-container'>
             <div className="sticky-top">
