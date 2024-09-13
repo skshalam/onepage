@@ -480,7 +480,7 @@ body {
 .inner-container {
     height: auto;
     overflow-y: scroll;
-    padding: 0px 30px;
+    padding: 0px 20px;
 }
 
 .inner-container::-webkit-scrollbar {
@@ -666,7 +666,7 @@ body {
     }
 
     .cDateDesc {
-        padding: 3px;
+        padding: 3px 8px;
         font-size: 13px;
         display: flex;
         justify-content: space-between;
@@ -678,6 +678,17 @@ body {
 .drawer-below {
     margin-top: 15px;
     font-size: 14px;
+    :is(p){
+        margin: 0px;
+        color: #949699;
+        font-size: 10px;
+    }
+    :is(h4){
+        margin: 0px;
+        color: rgba(0, 0, 0, 0.70);
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
 }
 
 .exit-btn {

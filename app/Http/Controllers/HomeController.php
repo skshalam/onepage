@@ -158,6 +158,8 @@ class HomeController extends Controller
                 'tokens.valid_on',
                 'tokens.timing',
                 'tokens.terms',
+                'user_token.use_limit',
+                'user_token.token_code',
                 'user_token.token_valide'
             ];
         }

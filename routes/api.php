@@ -17,8 +17,8 @@ Route::middleware(['auth:api'])->group(function () {
     
     Route::get('/creditbalance', [\App\Http\Controllers\HomeController::class, 'creditbalance']);
     Route::get('/walletbalance', [\App\Http\Controllers\HomeController::class, 'walletbalance']);
-    Route::get('/couponscart', [\App\Http\Controllers\HomeController::class, 'couponscart']);
-    Route::get('/couponhold', [\App\Http\Controllers\HomeController::class, 'couponhold']);
+    Route::post('/couponscart', [\App\Http\Controllers\HomeController::class, 'couponscart']);
+    Route::post('/couponhold', [\App\Http\Controllers\HomeController::class, 'couponhold']);
     Route::POST('/rewards', [\App\Http\Controllers\HomeController::class, 'rewards']);
     Route::POST('/memebership', [\App\Http\Controllers\HomeController::class, 'memebershippackage']);
     Route::POST('/eWalletissue',[\App\Http\Controllers\HomeController::class, 'eWalletissue']);
