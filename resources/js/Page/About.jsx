@@ -106,7 +106,7 @@ function About() {
                     </div>
                 )}
                 <div className={`wallet-container ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
-                    <Link to={"/Wallet"}>
+                    <Link to={"/Creditwallet"}>
                     <div className="wallet-content">
                         <div className="content">
                             <p>Credit Balance:</p>
@@ -120,7 +120,7 @@ function About() {
                         </div>
                     </div>
                     </Link>
-                    <Link to={"/Creditwallet"}>
+                    <Link to={"/Wallet"}>
                     <div className="wallet-content">
                         <div className="content">
                             <p>Wallet's Balance:</p>
