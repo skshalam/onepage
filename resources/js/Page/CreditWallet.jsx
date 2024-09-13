@@ -72,10 +72,10 @@ function CreditWallet() {
                     </div>
                     <div className="filter-by-date-select-container px-3 py-4 d-flex flex-column gap-2">
                         <div className="filter-start-date d-flex justify-content-between gap-2">
-                            To: <DatePicker />
+                            To: <DatePicker className='filter-date-input'/>
                         </div>
                         <div className="filter-end-date d-flex justify-content-between gap-2">
-                            From: <DatePicker />
+                            From: <DatePicker className='filter-date-input'/>
                         </div>
                     </div>
                     <div className="filter-by-date-actions">

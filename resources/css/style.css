@@ -1230,3 +1230,14 @@ body {
 .credit-filter-tab.active{
     border-bottom: 2px solid #0b0b59;
 }
+.filter-date-input{
+    border: 1px solid #0B0B59;
+    padding: 0px 0px 0px 5px;
+    overflow: hidden;
+    border-radius: 4px;
+}
+.filter-date-input .ant-picker-input .ant-picker-suffix{
+    padding: 7px;
+    background-color: #EBECF7;
+    color: #0b0b59;
+}
