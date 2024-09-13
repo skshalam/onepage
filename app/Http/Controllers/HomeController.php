@@ -158,6 +158,8 @@ class HomeController extends Controller
                 'tokens.valid_on',
                 'tokens.timing',
                 'tokens.terms',
+                'user_token.use_limit',
+                'user_token.token_code',
                 'user_token.token_valide'
             ];
         }
@@ -173,6 +175,9 @@ class HomeController extends Controller
         }
 
         $couponcart = $couponcart->get();
+        if(!empty($token_id)){
+            $couponcart[0]['token_valid_on'] = $this->getDaysAccoToValidon($couponcart[0]['valid_on']);
+        }
         if(count($couponcart)>0){
             $data['couponcart'] = $couponcart;
         }
@@ -183,6 +188,43 @@ class HomeController extends Controller
         ]);
 
 
+    }
+    private function getDaysAccoToValidon($validOn){
+        $days = '';
+        if(!empty($validOn)){
+            $days_arr = [];
+            $validOn = explode(',', $validOn);
+            foreach ($validOn as $key => $value) {
+                switch ($value) {
+                    case '1':
+                        $days_arr[] = 'Sun';
+                        break;
+                    case '2':
+                        $days_arr[] = 'Mon';
+                        break;
+                    case '3':
+                        $days_arr[] = 'Tue';
+                        break;
+                    case '4':
+                        $days_arr[] = 'Wed';
+                        break;
+                    case '5':
+                        $days_arr[] = 'Thu';
+                        break;
+                    case '6':
+                        $days_arr[] = 'Fri';
+                        break;
+                    case '7':
+                        $days_arr[] = 'Sat';
+                        break;
+                    default:
+                        break;
+                }
+            }
+            $days = implode(', ', $days_arr);
+        }
+        
+        return $days;
     }
     public function couponhold(Request $request)
     {
@@ -208,6 +250,8 @@ class HomeController extends Controller
             $select = [
                 'tokens.name',
                 'tokens.valid_on',
+                'user_token.token_code',
+                'user_token.use_limit',
                 'tokens.timing',
                 'tokens.terms',
                 'user_token.token_valide'
@@ -228,6 +272,9 @@ class HomeController extends Controller
         }
 
         $onHoldCoupons = $onHoldCoupons->get();
+        if(!empty($token_id)){
+            $onHoldCoupons[0]['token_valid_on'] = $this->getDaysAccoToValidon($onHoldCoupons[0]['valid_on']);
+        }
         if (count($onHoldCoupons) > 0) {
             $data['onHoldCoupons'] = $onHoldCoupons;
         }
