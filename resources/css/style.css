@@ -1241,3 +1241,19 @@ body {
     background-color: #EBECF7;
     color: #0b0b59;
 }
+.profile-navigation-container{
+    background: #fff;
+}
+.profile-info-content{
+    background-color: #fff;
+    label{
+        width: 80px;
+        font-size: 13px;
+        color: #7A7680;
+    }
+    div span{
+        font-size: 14px;
+        color: #312E37;
+        font-weight: 400;
+    }
+}

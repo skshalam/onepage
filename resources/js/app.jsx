@@ -15,6 +15,8 @@ import MemberShipPackage from './Page/MemberShipPackage';
 import MembershipDetails from './Page/MembershipDetails';
 import Wallet from './Page/Wallet';
 import CreditWallet from './Page/CreditWallet';
+import Profile from './Page/Profile';
+import MyAcount from './Page/MyAcount';
 
 const App = () => {
     const location = useLocation();
@@ -69,6 +71,8 @@ const App = () => {
             <Route path="/Membership/:packageID" element={<MembershipDetails />} />
             <Route path="/Wallet" element={<Wallet />} />
             <Route path="/Creditwallet" element={<CreditWallet />} />
+            <Route path="/Profile" element={<Profile />} />
+            <Route path="/Myaccount" element={<MyAcount />} />
         </Routes>
     );
 };
