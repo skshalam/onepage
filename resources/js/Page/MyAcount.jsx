@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
+    const [form] = Form.useForm();
     return (
         <div className='body-container'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -32,7 +33,12 @@ function MyAcount() {
                 isEditable
                     ?
                     <div className="edit-profile h-100 p-3">
-
+                        <Form
+                            form={form}
+                            layout='vertical'
+                        >
+                            
+                        </Form>
                     </div>
                     :
                     <div className="profile-info m-3">

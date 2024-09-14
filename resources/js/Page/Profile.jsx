@@ -15,10 +15,9 @@ function Profile() {
           </div>
         </div>
       </div>
-      <div className="border my-4 text-center">
+      <div className="my-4 text-center">
         <Avatar size={80} icon={<i class="bi bi-person-fill" />} />
       </div>
-
       <div className="mx-4 p-4 profile-navigation-container rounded-4">
         <Link to={"/Myaccount"}>
         <div className="navigaiton-container d-flex justify-content-between p-3">
