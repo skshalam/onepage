@@ -316,7 +316,7 @@ class HomeController extends Controller
             'rewards.name',
             'rewards.valid_till',
             'coupon.coupon_code',
-            'coupon.foreign_id as rewards_id ',
+            'coupon.foreign_id as rewards_id',
 
         ];
         if(!empty($rewards_id)){
