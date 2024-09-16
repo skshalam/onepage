@@ -158,6 +158,8 @@ class HomeController extends Controller
                 'tokens.valid_on',
                 'tokens.timing',
                 'tokens.terms',
+                'user_token.use_limit',
+                'user_token.token_code',
                 'user_token.token_valide'
             ];
         }
@@ -173,6 +175,12 @@ class HomeController extends Controller
         }
 
         $couponcart = $couponcart->get();
+        if(!empty($token_id)){
+            $couponcart[0]['token_valid_on'] = $this->getDaysAccoToValidon($couponcart[0]['valid_on']);
+        }
+        if (!empty($couponcart[0]['timing'])) {
+            $couponcart[0]['timing_on'] = $this->formatTiming($couponcart[0]['timing']);
+        }
         if(count($couponcart)>0){
             $data['couponcart'] = $couponcart;
         }
@@ -183,6 +191,51 @@ class HomeController extends Controller
         ]);
 
 
+    }
+    private function getDaysAccoToValidon($validOn){
+        $days = '';
+        if(!empty($validOn)){
+            $days_arr = [];
+            $validOn = explode(',', $validOn);
+            foreach ($validOn as $key => $value) {
+                switch ($value) {
+                    case '1':
+                        $days_arr[] = 'Sun';
+                        break;
+                    case '2':
+                        $days_arr[] = 'Mon';
+                        break;
+                    case '3':
+                        $days_arr[] = 'Tue';
+                        break;
+                    case '4':
+                        $days_arr[] = 'Wed';
+                        break;
+                    case '5':
+                        $days_arr[] = 'Thu';
+                        break;
+                    case '6':
+                        $days_arr[] = 'Fri';
+                        break;
+                    case '7':
+                        $days_arr[] = 'Sat';
+                        break;
+                    default:
+                        break;
+                }
+            }
+            $days = implode(', ', $days_arr);
+        }
+        
+        return $days;
+    }
+    private function formatTiming($timing)
+    {
+        $times = explode(',', $timing);
+        $formattedTimes = array_map(function($time) {
+            return date('h:i A', strtotime(str_replace('.', ':', $time)));
+        }, $times);
+        return implode(' to ', $formattedTimes);
     }
     public function couponhold(Request $request)
     {
@@ -208,6 +261,8 @@ class HomeController extends Controller
             $select = [
                 'tokens.name',
                 'tokens.valid_on',
+                'user_token.token_code',
+                'user_token.use_limit',
                 'tokens.timing',
                 'tokens.terms',
                 'user_token.token_valide'
@@ -228,6 +283,12 @@ class HomeController extends Controller
         }
 
         $onHoldCoupons = $onHoldCoupons->get();
+        if(!empty($token_id)){
+            $onHoldCoupons[0]['token_valid_on'] = $this->getDaysAccoToValidon($onHoldCoupons[0]['valid_on']);
+        }
+        if (!empty($onHoldCoupons[0]['timing'])) {
+            $onHoldCoupons[0]['timing_on'] = $this->formatTiming($onHoldCoupons[0]['timing']);
+        }
         if (count($onHoldCoupons) > 0) {
             $data['onHoldCoupons'] = $onHoldCoupons;
         }
@@ -255,7 +316,7 @@ class HomeController extends Controller
             'rewards.name',
             'rewards.valid_till',
             'coupon.coupon_code',
-            'coupon.foreign_id',
+            'coupon.foreign_id as rewards_id ',
 
         ];
         if(!empty($rewards_id)){
@@ -264,6 +325,7 @@ class HomeController extends Controller
                 'rewards.valid_on',
                 'rewards.timing',
                 'rewards.terms',
+                'coupon.coupon_code',
                 'rewards.valid_till',
             ];
         }
@@ -277,6 +339,12 @@ class HomeController extends Controller
                 $rewards->where('rewards.id', $rewards_id);
             }
             $rewards = $rewards->get();
+            if(!empty($rewards_id)){
+                $rewards[0]['token_valid_on'] = $this->getDaysAccoToValidon($rewards[0]['valid_on']);
+            }
+            if (!empty($rewards[0]['timing'])) {
+                $rewards[0]['timing_on'] = $this->formatTiming($rewards[0]['timing']);
+            }
             if(count($rewards)>0){
                 $data['rewards'] = $rewards;
             }
@@ -317,7 +385,8 @@ class HomeController extends Controller
         $membership=MembershipLog::select($select)
         ->leftJoin('users', 'membership_log.user_id', '=', 'users.id')
         ->leftJoin('membership_structure', 'membership_log.membership_id', '=', 'membership_structure.id')
-        ->where('membership_log.user_id', $user_id);
+        ->where('membership_log.user_id', $user_id)
+        ->where('membership_structure.merchant_id', $merchant_id);    
         if(!empty($membership_id)){
             $membership->where('membership_log.membership_id', $membership_id);
         }
@@ -346,6 +415,7 @@ class HomeController extends Controller
         // $user_id = 9;
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $membership_id = $request->membership_id;
         $ewallet_issued = DB::table('membership_log')
             ->where('user_id', $user_id)
@@ -357,6 +427,7 @@ class HomeController extends Controller
         $ewallet_ids = array_map('trim', explode(',', $ewallet_issued));
         $ewallet = Ebooklets::select('ebooklets.name', 'ebooklets.credit', 'ebooklets.credit_validity')
             ->whereIn('ebooklets.id', $ewallet_ids)
+            ->where('ebooklets.merchant_id', $merchant_id)
             ->get();
         
         return response()->json([
@@ -371,6 +442,7 @@ class HomeController extends Controller
         // $user_id = 9;
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $membership_id = $request->membership_id;
         $booklet_issued= DB::table('membership_log')
             ->where('user_id', $user_id)
@@ -381,6 +453,7 @@ class HomeController extends Controller
         $booklet_ids = array_map('trim', explode(',', $booklet_issued));
         $booklet = Booklets::select('booklets.name','booklets.id')
             ->whereIn('booklets.id', $booklet_ids)
+            ->where('booklets.merchant_id', $merchant_id)
             ->get();
         
         return response()->json([
@@ -396,6 +469,7 @@ class HomeController extends Controller
         // $user_id = 9;
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $membership_id = $request->membership_id;
         $booklets_id = $request->booklets_id;
         $token_id =$request->token_id;
@@ -427,12 +501,21 @@ class HomeController extends Controller
             })
             ->join('tokens', 'tokens.id', '=', 'booklet_content.tokenid')
             ->join('user_token', 'booklet_content.tokenid', '=', 'user_token.token_id')
-            ->where('booklet_content.bookletid', $booklets_id);
+            ->where('booklet_content.bookletid', $booklets_id)
+            ->where('user_token.user_id', $user_id)
+            ->where('user_token.merchant_id', $merchant_id);
+
            
         if(!empty($token_id)){
             $booklet_coupon->where('tokens.id', $token_id);
         }
         $booklet_coupon = $booklet_coupon->get();
+        if(!empty($token_id)){
+            $booklet_coupon[0]['token_valid_on'] = $this->getDaysAccoToValidon($booklet_coupon[0]['valid_on']);
+        }
+        if (!empty($booklet_coupon[0]['timing'])) {
+            $booklet_coupon[0]['timing_on'] = $this->formatTiming($booklet_coupon[0]['timing']);
+        }
         if(count($booklet_coupon)>0){
             $data['booklet_coupon'] = $booklet_coupon;
         }
@@ -450,12 +533,13 @@ class HomeController extends Controller
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         $membership_id=$request->membership_id;
-
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $coupon_redeem = TokenRedeem::select('token_redeem.token_code', 'tokens.name', DB::raw('count(token_redeem.token_code) as redeem_count'))
         ->join('membership_log', 'token_redeem.user_id', '=', 'membership_log.user_id')
         ->join('tokens', 'token_redeem.token_id', '=', 'tokens.id')
         ->where('membership_log.user_id', $user_id)
         ->where('membership_log.membership_id', $membership_id)
+        ->where('token_redeem.merchant_id', $merchant_id)
         ->groupBy('token_redeem.token_code', 'tokens.name')
         ->get();
         $data = [];

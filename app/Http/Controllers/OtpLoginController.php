@@ -636,13 +636,14 @@ class OtpLoginController extends Controller
         return $this->respondWithToken(auth()->refresh());
     }
 
-    protected function respondWithToken($token,$user=null,$curl_res_data=null)
+    protected function respondWithToken($token,$otp=null,$user=null,$curl_res_data=null)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60,
             'user' => $user,
+            'otp' => $otp,
             'curl_res_data' => $curl_res_data
         ]);
     }
@@ -706,7 +707,7 @@ class OtpLoginController extends Controller
                 if($user){
                     $token = JWTAuth::claims(['merchant_id' => $request->merchant_id])->fromUser($user);
                 }
-                return response()->json(["error"=>false,"message"=>$this->respondWithToken($token,$user,json_decode($response, true))]);
+                return response()->json(["error"=>false,"message"=>$this->respondWithToken($token,'',$user,json_decode($response, true))]);
             }
 
             return response()->json([
@@ -720,5 +721,86 @@ class OtpLoginController extends Controller
             ], $httpCode);
         }
 
+    }
+
+    public function onePageLoginResendOtp(Request $request)
+    {
+        $rules = [
+            'merchant_id'=>'Required',
+            'mobile'=>'required|numeric|between:1000,9999999999999999',
+            'otp_msg'=>'Required'
+        ];
+
+        $validator = Validator::make($request->input(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $master = Master::where('id',1)->first();
+        $ewards_url = $master->ewards_url;
+
+        $url = $ewards_url.'onepagewebsite/websiteResendOtp';
+
+        $data = [
+            'merchant_id'=> $request->merchant_id,
+            'mobile'=> $request->mobile,
+            'otp_msg'=> $request->otp_msg
+        ];
+
+        $otp_msg = base64_decode($request->otp_msg);
+        $otp = preg_match('/\d{6}/', $otp_msg, $matches);
+        $otp = $matches[0];
+
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data,
+        ));
+
+        //Execute the request
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+        if ($httpCode == 200) {
+            $curl_res = json_decode($response);
+            if($curl_res->error == false){
+                echo"<pre>";
+                print_r($curl_res);
+                exit;
+                $user = User::where('id',$curl_res->user_id)->first();
+                if (!$token = JWTAuth::fromUser($user)) {
+                    return response()->json(['error' => 'Unable to generate token'], 500);
+                }
+                if($user){
+                    $token = JWTAuth::claims(['merchant_id' => $request->merchant_id])->fromUser($user);
+                }
+                return response()->json(["error"=>false,"message"=>$this->respondWithToken($token,$otp,$user,json_decode($response, true))]);
+            }
+
+            return response()->json([
+                "error"=>true,"message"=> 'Somthing Went Worng'
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to verify OTP',
+                'error_code' => $httpCode
+            ], $httpCode);
+        }
     }
 }
