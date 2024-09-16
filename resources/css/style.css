@@ -715,12 +715,14 @@ body {
 .drawer-below {
     margin-top: 15px;
     font-size: 14px;
-    :is(p){
+
+    :is(p) {
         margin: 0px;
         color: #949699;
         font-size: 10px;
     }
-    :is(h4){
+
+    :is(h4) {
         margin: 0px;
         color: rgba(0, 0, 0, 0.70);
         font-size: 12px;
@@ -1260,13 +1262,38 @@ body {
 
 .profile-navigation-container {
     background: #fff;
+    .navigaiton-container{
+        cursor: pointer;
+    }
 }
 
-.profile-delete{
+.bg-layer-main{
+    background-color: #0b0b59;
+}
+.bg-overlay{
+    opacity: 20%;
+}
+
+.bg-layer-1 {
+    width: -webkit-fill-available;
+    height: 300px;
+    border-radius: 49px 49px 0px 0px;
+    background: #0b0b59;
+    box-shadow: inset 0px 9px 4px -3px rgb(255 255 255 / 28%);
+}
+.bg-layer-2{
+    width: -webkit-fill-available;
+    height: 255px;
+    border-radius: 49px 49px 0px 0px;
+    background: #0b0b59;
+    box-shadow: 0px -10px 5px -3px rgb(0 0 0 / 29%);
+}
+.profile-delete {
     transform: translateX(100%);
     transition: all 0.5s ease-in-out;
 }
-.profile-delete.show{
+
+.profile-delete.show {
     transform: translateX(0%);
 }
 
@@ -1286,40 +1313,107 @@ body {
     }
 }
 
-.edit-profile{
+.edit-profile {
     background-color: #fff;
 }
-.edit-input-div label{
+
+.edit-input-div label {
     top: -13px;
     left: 20px;
     padding: 0px 5px;
     background-color: #ffffff;
 }
+
 /* Css For Ant_d component of Edit Profile section */
-.cust-css-ant-avatar{
+.cust-css-ant-avatar {
     border: 1px solid #0b0b59;
     background-color: #fff;
     color: #0b0b59;
 }
-.cust-css-ant-input{
+
+.cust-css-ant-input {
     border: 1px solid #0b0b59;
     line-height: 1.7rem;
 }
-.cust-css-ant{
-    .ant-select-selector{
+
+.cust-css-ant {
+    .ant-select-selector {
         border-radius: 20px;
         border: 1px solid #0b0b59 !important;
     }
 }
-.cust-css-ant-date{
+
+.cust-css-ant-date {
     border: 1px solid #0b0b59;
 }
-/* Css For Ant_d component of Edit Profile section */
+
+.cust-css-ant-deleteModal {
+    .ant-modal-content {
+
+        width: 200px;
+    }
+}
 
 /* Css For Ant_d Delete Pop Over */
-.delete-pop-over{
-    .ant-popover-content .ant-popover-inner{
+.delete-pop-over {
+    .ant-popover-content .ant-popover-inner {
         padding: 5px 10px;
     }
 }
-/* Css For Ant_d Delete Pop Over */
+
+/* Modal */
+.cust-css-ant-modal {
+    .ant-modal-mask {
+        position: absolute;
+    }
+
+    .modal-txt p {
+        font-size: 13px;
+    }
+
+    .ant-modal-content {
+        border-radius: 20px;
+    }
+
+    .ant-modal-footer button:nth-child(1) {
+        background-color: #CCC8C5;
+        color: #34393D;
+    }
+
+    .modal-icon {
+        width: 100%;
+        top: 5px;
+        text-align: center;
+
+        i {
+            font-size: 3.2rem;
+        }
+
+        span {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+    }
+
+    .ant-modal-footer button:nth-child(1):hover {
+        background-color: #CCC8C5;
+        color: #34393D;
+        border: none;
+    }
+
+    .ant-modal-footer button:nth-child(2) {
+        background-color: #0b0b59;
+    }
+
+    .ant-modal-footer button:nth-child(2):hover {
+        background-color: #00306b;
+    }
+}
+
+.del-ac-modal-content {
+    img {
+        width: 100%;
+        transform: rotate(5deg) scale(1.4);
+    }
+}

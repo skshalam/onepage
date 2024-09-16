@@ -1,11 +1,14 @@
-import { Avatar, Button, Col, DatePicker, Form, Input, Popover, Row, Select } from 'antd';
-import React, { useState } from 'react';
+import { Avatar, Button, Col, DatePicker, Form, Input, Modal, Popover, Row, Select } from 'antd';
+import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
+    const [openDelPop, setOpenDelPop] = useState(false);
+    const targetDiv = useRef(null);
+
     return (
         <div className='body-container position-relative overflow-hidden'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -27,11 +30,11 @@ function MyAcount() {
                                     <Button onClick={() => setIsEditable(true)} className='rounded-5' icon={<i className='bi bi-pen' />}>Edit</Button>
                                     <Popover
                                         rootClassName='delete-pop-over'
-                                        content={<a onClick={()=>setDeleteModal(true)}>Delete Account</a>}
-                                        trigger="click"
+                                        content={<a onClick={() => { setDeleteModal(true), setOpenDelPop(false) }}>Delete Account</a>}
                                         placement='bottomRight'
+                                        open={openDelPop}
                                     >
-                                        <Button type='ghost' icon={<i className='bi bi-three-dots-vertical text-light fs-5' />} />
+                                        <Button type='ghost' onClick={() => setOpenDelPop(true)} icon={<i className='bi bi-three-dots-vertical text-light fs-5' />} />
                                     </Popover>
 
                                 </div>
@@ -52,7 +55,7 @@ function MyAcount() {
                         <ProfileEditForm />
                     </motion.div>
                     :
-                    <div className="profile-info m-3">
+                    <div className="profile-info m-3" ref={targetDiv}>
                         <div className="d-flex gap-2 flex-column">
                             <div className="profile-pic text-center mb-3">
                                 <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
@@ -142,7 +145,40 @@ function MyAcount() {
                         </div>
                     </div>
             }
-
+            <Modal
+                open={deleteModal}
+                onCancel={() => setDeleteModal(false)}
+                closable={false}
+                centered
+                getContainer={targetDiv.current}
+                width={300}
+                rootClassName='cust-css-ant-modal'
+                styles={{
+                    footer: {
+                        display: "grid",
+                        margin:"20px 10px",
+                        padding: "0px 20px",
+                        gridTemplateColumns: "1fr 1fr"
+                    },
+                    content:{
+                        padding:"0px",
+                        overflow:"hidden",
+                    }
+                }}
+            >
+                <div className="del-ac-modal-content position-relative">
+                    <div className="modal-bg position absolute">
+                        <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726480398/xdbtbbvmgyt91wxi3dj6.png" alt="" />
+                    </div>
+                    <div className="position-absolute modal-icon d-flex flex-column gap-0">
+                        <i className='bi bi-exclamation-circle text-light'/>
+                        <span>Delete ?</span>
+                    </div>
+                    <div className="text-center fw-semibold modal-txt">
+                        <p className='mb-0'>Your account will be permanently deleted. Proceed?</p>
+                    </div>
+                </div>
+            </Modal>
         </div>
     )
 }
