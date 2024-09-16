@@ -32,7 +32,9 @@ use App\Models\Booklets;
 use App\Models\BookletContent;
 use App\Models\TokenRedeem;
 use DB;
+use Auth;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 class HomeController extends Controller
@@ -48,8 +50,12 @@ class HomeController extends Controller
 
     public function homescreen()
     {
-        $merchant_id= 15657;
-        $user_id= 9;
+        // $merchant_id= 15657;
+        // $user_id= 9;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $homebrandlogo = Onepage_WebsiteTheme::select('brand_logo_image','display_brand_logo_name','brand_logo_alignment')->where('merchant_id', $merchant_id)->first();
         if (!$homebrandlogo) {
             return response()->json([
@@ -64,7 +70,7 @@ class HomeController extends Controller
         $data['brand_logo_alignment'] = $homebrandlogo->brand_logo_alignment;
         $merchant_name = MerchantDetails::select('business_name')->where('user_id', $merchant_id)->first();
         $cards=Cards::select('cards.current_points', 'cards.current_wallet_balance')->where('cards.merchant_id', $merchant_id)->where('cards.user_id', $user_id)->first();
-        $homebannersData = Onepage_Banner_Space::select('banner_image')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
+        $homebannersData = Onepage_Banner_Space::select('banner_image','hide_show')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
         if(count($homebannersData) > 0){
             $banner_images = $homebannersData->pluck('banner_image')->all();
             $data['banners'] = [
@@ -82,8 +88,12 @@ class HomeController extends Controller
     }
     public function creditbalance()
     {
-        $merchant_id= 15657;
-        $user_id= 9;
+        // $merchant_id= 15657;
+        // $user_id= 9;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $balance =Cards::select('cards.current_points','user_points.valid_till','user_points.original_points','user_points.original_bill_date','user_points.bill_amount','user_points.transaction_id','user_points.M_account')
         ->leftJoin('users', 'cards.user_id', '=', 'users.id')
         ->leftJoin('user_points', function ($join) {
@@ -101,8 +111,12 @@ class HomeController extends Controller
     }
     public function walletbalance()
     {
-        $merchant_id= 15657;
-        $user_id= 9;
+        // $merchant_id= 15657;
+        // $user_id= 9;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $waletbalance = Cards::select('cards.current_wallet_balance', 'user_wallet.validity', 'user_wallet.original_points', 'wallet_structure.name')
         ->leftJoin('users', 'cards.user_id', '=', 'users.id')
         ->leftJoin('user_wallet', 'user_wallet.user_id', '=', 'cards.user_id')
@@ -121,9 +135,13 @@ class HomeController extends Controller
     }
     public function couponscart(Request $request)
     {
-        $merchant_id= 15657;
-        // $user_id= 9;//local
-        $user_id =15867532;//test
+        // $merchant_id= 15657;
+        // // $user_id= 9;//local
+        // $user_id =15867532;//test
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $token_id= $request->token_id;
         
         $select = [
@@ -140,6 +158,8 @@ class HomeController extends Controller
                 'tokens.valid_on',
                 'tokens.timing',
                 'tokens.terms',
+                'user_token.use_limit',
+                'user_token.token_code',
                 'user_token.token_valide'
             ];
         }
@@ -155,6 +175,12 @@ class HomeController extends Controller
         }
 
         $couponcart = $couponcart->get();
+        if(!empty($token_id)){
+            $couponcart[0]['token_valid_on'] = $this->getDaysAccoToValidon($couponcart[0]['valid_on']);
+        }
+        if (!empty($couponcart[0]['timing'])) {
+            $couponcart[0]['timing_on'] = $this->formatTiming($couponcart[0]['timing']);
+        }
         if(count($couponcart)>0){
             $data['couponcart'] = $couponcart;
         }
@@ -166,11 +192,60 @@ class HomeController extends Controller
 
 
     }
+    private function getDaysAccoToValidon($validOn){
+        $days = '';
+        if(!empty($validOn)){
+            $days_arr = [];
+            $validOn = explode(',', $validOn);
+            foreach ($validOn as $key => $value) {
+                switch ($value) {
+                    case '1':
+                        $days_arr[] = 'Sun';
+                        break;
+                    case '2':
+                        $days_arr[] = 'Mon';
+                        break;
+                    case '3':
+                        $days_arr[] = 'Tue';
+                        break;
+                    case '4':
+                        $days_arr[] = 'Wed';
+                        break;
+                    case '5':
+                        $days_arr[] = 'Thu';
+                        break;
+                    case '6':
+                        $days_arr[] = 'Fri';
+                        break;
+                    case '7':
+                        $days_arr[] = 'Sat';
+                        break;
+                    default:
+                        break;
+                }
+            }
+            $days = implode(', ', $days_arr);
+        }
+        
+        return $days;
+    }
+    private function formatTiming($timing)
+    {
+        $times = explode(',', $timing);
+        $formattedTimes = array_map(function($time) {
+            return date('h:i A', strtotime(str_replace('.', ':', $time)));
+        }, $times);
+        return implode(' to ', $formattedTimes);
+    }
     public function couponhold(Request $request)
     {
-        $merchant_id= 15657;
-        // $user_id= 9;
-        $user_id= 15867532;
+        // $merchant_id= 15657;
+        // // $user_id= 9;
+        // $user_id= 15867532;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $token_id= $request->token_id;
 
         $select = [
@@ -186,6 +261,8 @@ class HomeController extends Controller
             $select = [
                 'tokens.name',
                 'tokens.valid_on',
+                'user_token.token_code',
+                'user_token.use_limit',
                 'tokens.timing',
                 'tokens.terms',
                 'user_token.token_valide'
@@ -206,6 +283,12 @@ class HomeController extends Controller
         }
 
         $onHoldCoupons = $onHoldCoupons->get();
+        if(!empty($token_id)){
+            $onHoldCoupons[0]['token_valid_on'] = $this->getDaysAccoToValidon($onHoldCoupons[0]['valid_on']);
+        }
+        if (!empty($onHoldCoupons[0]['timing'])) {
+            $onHoldCoupons[0]['timing_on'] = $this->formatTiming($onHoldCoupons[0]['timing']);
+        }
         if (count($onHoldCoupons) > 0) {
             $data['onHoldCoupons'] = $onHoldCoupons;
         }
@@ -221,15 +304,19 @@ class HomeController extends Controller
     
     public function rewards(Request $request)
     {
-        $merchant_id = 15657;
-        // $user_id = 9;//local
-        $user_id =15867532;//test
+        // $merchant_id = 15657;
+        // // $user_id = 9;//local
+        // $user_id =15867532;//test
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $rewards_id =$request->rewards_id;
         $select=[
             'rewards.name',
             'rewards.valid_till',
             'coupon.coupon_code',
-            'coupon.foreign_id',
+            'coupon.foreign_id as rewards_id ',
 
         ];
         if(!empty($rewards_id)){
@@ -238,6 +325,7 @@ class HomeController extends Controller
                 'rewards.valid_on',
                 'rewards.timing',
                 'rewards.terms',
+                'coupon.coupon_code',
                 'rewards.valid_till',
             ];
         }
@@ -251,6 +339,12 @@ class HomeController extends Controller
                 $rewards->where('rewards.id', $rewards_id);
             }
             $rewards = $rewards->get();
+            if(!empty($rewards_id)){
+                $rewards[0]['token_valid_on'] = $this->getDaysAccoToValidon($rewards[0]['valid_on']);
+            }
+            if (!empty($rewards[0]['timing'])) {
+                $rewards[0]['timing_on'] = $this->formatTiming($rewards[0]['timing']);
+            }
             if(count($rewards)>0){
                 $data['rewards'] = $rewards;
             }
@@ -262,9 +356,14 @@ class HomeController extends Controller
     }
     public function memebershippackage(Request $request)
     {
-        $merchant_id=15657;
-        // $user_id=9;
-        $user_id =15867532;//test
+        // $merchant_id=15657;
+        // $user_id =15867532;//test
+
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+
         $membership_id=$request->membership_id;
         $select=[
             'membership_structure.name',
@@ -286,7 +385,8 @@ class HomeController extends Controller
         $membership=MembershipLog::select($select)
         ->leftJoin('users', 'membership_log.user_id', '=', 'users.id')
         ->leftJoin('membership_structure', 'membership_log.membership_id', '=', 'membership_structure.id')
-        ->where('membership_log.user_id', $user_id);
+        ->where('membership_log.user_id', $user_id)
+        ->where('membership_structure.merchant_id', $merchant_id);    
         if(!empty($membership_id)){
             $membership->where('membership_log.membership_id', $membership_id);
         }
@@ -312,7 +412,10 @@ class HomeController extends Controller
 
     public function eWalletissue(Request $request)
     {
-        $user_id = 9;
+        // $user_id = 9;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $membership_id = $request->membership_id;
         $ewallet_issued = DB::table('membership_log')
             ->where('user_id', $user_id)
@@ -324,6 +427,7 @@ class HomeController extends Controller
         $ewallet_ids = array_map('trim', explode(',', $ewallet_issued));
         $ewallet = Ebooklets::select('ebooklets.name', 'ebooklets.credit', 'ebooklets.credit_validity')
             ->whereIn('ebooklets.id', $ewallet_ids)
+            ->where('ebooklets.merchant_id', $merchant_id)
             ->get();
         
         return response()->json([
@@ -335,7 +439,10 @@ class HomeController extends Controller
 
     public function bookletissue(Request $request)
     {
-        $user_id = 9;
+        // $user_id = 9;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $membership_id = $request->membership_id;
         $booklet_issued= DB::table('membership_log')
             ->where('user_id', $user_id)
@@ -346,6 +453,7 @@ class HomeController extends Controller
         $booklet_ids = array_map('trim', explode(',', $booklet_issued));
         $booklet = Booklets::select('booklets.name','booklets.id')
             ->whereIn('booklets.id', $booklet_ids)
+            ->where('booklets.merchant_id', $merchant_id)
             ->get();
         
         return response()->json([
@@ -358,7 +466,10 @@ class HomeController extends Controller
     
     public function bookletcoupon(Request $request)
     {
-        $user_id = 9;
+        // $user_id = 9;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $membership_id = $request->membership_id;
         $booklets_id = $request->booklets_id;
         $token_id =$request->token_id;
@@ -390,12 +501,21 @@ class HomeController extends Controller
             })
             ->join('tokens', 'tokens.id', '=', 'booklet_content.tokenid')
             ->join('user_token', 'booklet_content.tokenid', '=', 'user_token.token_id')
-            ->where('booklet_content.bookletid', $booklets_id);
+            ->where('booklet_content.bookletid', $booklets_id)
+            ->where('user_token.user_id', $user_id)
+            ->where('user_token.merchant_id', $merchant_id);
+
            
         if(!empty($token_id)){
             $booklet_coupon->where('tokens.id', $token_id);
         }
         $booklet_coupon = $booklet_coupon->get();
+        if(!empty($token_id)){
+            $booklet_coupon[0]['token_valid_on'] = $this->getDaysAccoToValidon($booklet_coupon[0]['valid_on']);
+        }
+        if (!empty($booklet_coupon[0]['timing'])) {
+            $booklet_coupon[0]['timing_on'] = $this->formatTiming($booklet_coupon[0]['timing']);
+        }
         if(count($booklet_coupon)>0){
             $data['booklet_coupon'] = $booklet_coupon;
         }
@@ -409,14 +529,17 @@ class HomeController extends Controller
 
     public function couponsRedeem(Request $request)
     {
-        $user_id =9;
+        // $user_id =9;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
         $membership_id=$request->membership_id;
-
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $coupon_redeem = TokenRedeem::select('token_redeem.token_code', 'tokens.name', DB::raw('count(token_redeem.token_code) as redeem_count'))
         ->join('membership_log', 'token_redeem.user_id', '=', 'membership_log.user_id')
         ->join('tokens', 'token_redeem.token_id', '=', 'tokens.id')
         ->where('membership_log.user_id', $user_id)
         ->where('membership_log.membership_id', $membership_id)
+        ->where('token_redeem.merchant_id', $merchant_id)
         ->groupBy('token_redeem.token_code', 'tokens.name')
         ->get();
         $data = [];
@@ -431,7 +554,8 @@ class HomeController extends Controller
     }
     public function about()
     {
-        $merchant_id= 15657;
+        // $merchant_id= 15657;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $homebannersData = Onepage_Banner_Space::select('banner_image')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
         if(count($homebannersData) > 0){
             $banner_images = $homebannersData->pluck('banner_image')->all();
@@ -490,7 +614,8 @@ class HomeController extends Controller
     
     public function contact()
     {
-        $merchant_id= 15657;
+        // $merchant_id= 15657;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $contact =OnepageContactView::select('heading')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show', 1)->first();
         if($contact){
             $contact = [
@@ -508,7 +633,8 @@ class HomeController extends Controller
     public function contactsubmit(Request $request)
     {
         // $merchant_id=$request->merchant_id;
-        $merchant_id= 15657;
+        // $merchant_id= 15657;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $name=$request->name;
         $mobile=$request->mobile;
         $email=$request->email;
@@ -534,7 +660,8 @@ class HomeController extends Controller
     }
     public function termscondition()
     {
-        $merchant_id= 15657;
+        // $merchant_id= 15657;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $termscondition =OnepageTermsCondition::select('heading', 'description')->where('merchant_id', $merchant_id)->where('status', 1)->first(); 
         if($termscondition){
             $termscondition = [
@@ -551,7 +678,8 @@ class HomeController extends Controller
     }
     public function accountInfo()
     {
-        $merchant_id = 15657;
+        // $merchant_id = 15657;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $accountheading = OnepageProfileSetting::where('merchant_id', $merchant_id)->where('status', 1)->first();
 
         if (is_null($accountheading)) {
@@ -626,9 +754,16 @@ class HomeController extends Controller
     }
     public function infodata()
     {
-        $merchant_id= 15657;
-        $user_id= 15882661; //for test
+        // $merchant_id= 15657;
+        // $user_id= 15882661; //for test
         // $user_id= 9; //for local
+
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+
+
 
         $infodata = User::select('users.image','users.name','cards.gender','users.email','users.mobile','cards.dob','cards.marital','cards.doa','cards.address','cards.gstin','cards.pan','cards.bank_name','cards.bank_account_number','users.pincode','users.country','users.state','cards.region','cards.city')
         ->join('cards', 'users.id', '=', 'cards.user_id')
@@ -645,10 +780,14 @@ class HomeController extends Controller
     
     public function editinfo(Request $request)
     {
-        $merchant_id = 15657;
-        $user_id = 15882661; //test userid
+        // $merchant_id = 15657;
+        // $user_id = 15882661; //test userid
         // $user_id = 9;
-
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        
         $rules = [
             'merchant_id'=>'required',
             'name' => 'required',
@@ -746,9 +885,12 @@ class HomeController extends Controller
     //count homescreen coouponcart,rewardsmenu,memebership package
     public function getDataCounts(Request $request)
     {
-        $merchant_id = 15657;
-        // $user_id = 9; //local
-        $user_id =15867532;//test
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // dd($user_id);
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+
         $rewards_id = $request->rewards_id;
         $membership_id = $request->membership_id;
         
@@ -877,11 +1019,15 @@ class HomeController extends Controller
 
     public function referral_programview(Request $request)
     {
-        $merchant_id=1644378;
-        $user_id=15870381;
+        // $merchant_id=1644378;
+        // $user_id=15870381;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         // $user_id=$request->user_id;
         // $merchant_id=$request->merchant_id;
-        $refercards=Cards::select('cards.name','cards.dob','cards.created_at','u2.mobile','u2.email','u2.id')
+        $refercards=Cards::select('u2.name','cards.dob','cards.created_at','u2.mobile','u2.email','u2.id')
         ->leftJoin('users','cards.refer_by','=','users.id')
         ->leftJoin('users as u2', 'cards.user_id', '=', 'u2.id')
         ->where('cards.refer_by', $user_id)
@@ -902,7 +1048,11 @@ class HomeController extends Controller
     }
     public function referErn(Request $request)
     {
-        $merchant_id=$request->merchant_id;
+        // $merchant_id=$request->merchant_id;
+        // $user = JWTAuth::parseToken()->authenticate();
+        // $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $refer =OnepageProfileSetting::select('referral_permission', 'referral_dynamic_name')->where('merchant_id', $merchant_id)->where('referral_permission', 1)->where('status', 1)->first();
         if($refer){
             $refer = [
