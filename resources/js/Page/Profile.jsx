@@ -67,6 +67,7 @@ function Profile() {
           </div>
         </div>
         <Divider className='m-0' />
+        <Link to={"/T&c"}>
         <div className="navigaiton-container d-flex justify-content-between p-3">
           <div className="d-flex gap-2">
             <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
@@ -76,6 +77,7 @@ function Profile() {
             <i className='bi bi-chevron-right' />
           </div>
         </div>
+        </Link>
         <Divider className='m-0' />
         <div className="navigaiton-container d-flex justify-content-between p-3" onClick={()=>setDeleteModal(true)}>
           <div className="d-flex gap-2">
