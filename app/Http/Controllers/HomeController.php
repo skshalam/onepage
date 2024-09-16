@@ -31,10 +31,12 @@ use App\Models\Ebooklets;
 use App\Models\Booklets;
 use App\Models\BookletContent;
 use App\Models\TokenRedeem;
+use App\Models\WalletRedeem;
 use DB;
 use Auth;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use DateTime;
 
 
 class HomeController extends Controller
@@ -86,7 +88,7 @@ class HomeController extends Controller
         ]);
         
     }
-    public function creditbalance()
+    public function creditbalance(Request $request)
     {
         // $merchant_id= 15657;
         // $user_id= 9;
@@ -94,14 +96,42 @@ class HomeController extends Controller
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-        $balance =Cards::select('cards.current_points','user_points.valid_till','user_points.original_points','user_points.original_bill_date','user_points.bill_amount','user_points.transaction_id','user_points.M_account')
+        $balance =Cards::select('cards.current_points','user_points.valid_till','user_points.original_points','user_points.original_bill_date','user_points.bill_amount','user_points.transaction_id','user_points.M_account','user_points.bill_no as invoice_no')
         ->leftJoin('users', 'cards.user_id', '=', 'users.id')
         ->leftJoin('user_points', function ($join) {
             $join->on('cards.user_id', '=', 'user_points.user_id')
                  ->on('cards.merchant_id', '=', 'user_points.merchant_id');
         })
         ->where('cards.merchant_id', $merchant_id)
-        ->where('cards.user_id', $user_id)->get();
+        ->where('cards.user_id', $user_id);
+
+        if(!empty($request->to_date) && !empty($request->from_date)){
+            $balance = $balance->whereBetween('user_points.original_bill_date', [$request->to_date, $request->from_date]);
+        }
+        $balance = $balance->get();
+        $currentDate = date('Y-m-d');
+        $balance = $balance->map(function ($item) use ($currentDate) {
+            $item['is_expired'] = $currentDate > $item->valid_till;
+            if (preg_match('/\d{2}:\d{2}:\d{2}/', $item->invoice_no, $matches)) {
+                $timePart = $matches[0]; 
+                $dateTime = DateTime::createFromFormat('H:i:s', $timePart);
+                if ($dateTime) {
+                    $formattedTime = $dateTime->format('g:i A'); // Format to 12-hour time with AM/PM
+                    $item['original_time'] = $timePart; // 24-hour format
+                    $item['formatted_time'] = $formattedTime; // 12-hour format
+                }
+            } else {
+                $item['original_time'] = '';
+                $item['formatted_time'] = '';
+            }
+            return $item;
+        });
+        if(!empty($request->is_expired)){
+            $isExpiredFilter = filter_var($request->input('is_expired'), FILTER_VALIDATE_BOOLEAN);
+            $balance = $balance->filter(function ($item) use ($isExpiredFilter) {
+                return $item['is_expired'] === $isExpiredFilter;
+            });
+        }
         return response()->json([
             'error' => false,
             'message' => 'Balance',
@@ -109,7 +139,7 @@ class HomeController extends Controller
         ]); 
 
     }
-    public function walletbalance()
+    public function walletbalance(Request $request)
     {
         // $merchant_id= 15657;
         // $user_id= 9;
@@ -122,9 +152,31 @@ class HomeController extends Controller
         ->leftJoin('user_wallet', 'user_wallet.user_id', '=', 'cards.user_id')
         ->leftJoin('wallet_structure', 'user_wallet.structure_foreign_id', '=', 'wallet_structure.id')
         ->where('cards.merchant_id', $merchant_id)
-        ->where('cards.user_id', $user_id)
-        ->get();
-        
+        ->where('cards.user_id', $user_id);
+        if(!empty($request->redem_chk) && $request->redem_chk == 1){
+            $waletbalance = $waletbalance->leftJoin('wallet_redeem', 'wallet_redeem.temp_wallet_redeem_id', '=', 'wallet_structure.id')
+        ->leftJoin('wallet_structure as ws2', 'wallet_redeem.temp_wallet_redeem_id', '=', 'ws2.id');
+        }
+        if(!empty($request->to_date) && !empty($request->from_date)){
+            $waletbalance = $waletbalance->whereBetween('user_wallet.validity', [$request->to_date, $request->from_date]);
+        }
+        $waletbalance= $waletbalance->get();
+        $currentDate = date('Y-m-d');
+        $waletbalance = $waletbalance->map(function ($item) use ($currentDate) {
+            $item['is_expired'] = $currentDate > $item->validity;
+            $combinedValue = $item->current_wallet_balance + $item->original_points;
+            $item['value'] = $combinedValue;
+            return $item;
+        });
+        if(!empty($request->is_expired)){
+            $isExpiredFilter = filter_var($request->input('is_expired'), FILTER_VALIDATE_BOOLEAN);
+            $waletbalance = $waletbalance->filter(function ($item) use ($isExpiredFilter) {
+                return $item['is_expired'] === $isExpiredFilter;
+            });
+        }
+
+    
+
         return response()->json([
             'error' => false,
             'message' => 'Balance',
@@ -316,7 +368,7 @@ class HomeController extends Controller
             'rewards.name',
             'rewards.valid_till',
             'coupon.coupon_code',
-            'coupon.foreign_id as rewards_id ',
+            'coupon.foreign_id as rewards_id',
 
         ];
         if(!empty($rewards_id)){
@@ -1025,8 +1077,6 @@ class HomeController extends Controller
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-        // $user_id=$request->user_id;
-        // $merchant_id=$request->merchant_id;
         $refercards=Cards::select('u2.name','cards.dob','cards.created_at','u2.mobile','u2.email','u2.id')
         ->leftJoin('users','cards.refer_by','=','users.id')
         ->leftJoin('users as u2', 'cards.user_id', '=', 'u2.id')
