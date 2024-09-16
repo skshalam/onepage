@@ -1183,15 +1183,17 @@ body {
 .filter-by-date-select-container input {
     width: 115px;
 }
-.filter-by-select-container input{
+
+.filter-by-select-container input {
     height: 25px;
 }
 
 .filter-by-date-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    box-shadow: 0px -8px 10px -5px rgba(0,0,0,0.1);
-    button{
+    box-shadow: 0px -8px 10px -5px rgba(0, 0, 0, 0.1);
+
+    button {
         background: #fff;
     }
 }
@@ -1223,37 +1225,90 @@ body {
 .filter-by-type-modal.show {
     transform: translateX(0%);
 }
-.credit-filter-tab{
+
+.credit-filter-tab {
     cursor: pointer;
 }
 
-.credit-filter-tab.active{
+.credit-filter-tab.active {
     border-bottom: 2px solid #0b0b59;
 }
-.filter-date-input{
+
+.filter-date-input {
     border: 1px solid #0B0B59;
     padding: 0px 0px 0px 5px;
     overflow: hidden;
     border-radius: 4px;
 }
-.filter-date-input .ant-picker-input .ant-picker-suffix{
+
+.filter-date-input .ant-picker-input .ant-picker-suffix {
     padding: 7px;
     background-color: #EBECF7;
     color: #0b0b59;
 }
-.profile-navigation-container{
+
+.profile-navigation-container {
     background: #fff;
 }
-.profile-info-content{
+
+.profile-delete{
+    transform: translateX(100%);
+    transition: all 0.5s ease-in-out;
+}
+.profile-delete.show{
+    transform: translateX(0%);
+}
+
+.profile-info-content {
     background-color: #fff;
-    label{
+
+    label {
         width: 80px;
         font-size: 13px;
         color: #7A7680;
     }
-    div span{
+
+    div span {
         font-size: 14px;
         color: #312E37;
         font-weight: 400;
     }
 }
+
+.edit-profile{
+    background-color: #fff;
+}
+.edit-input-div label{
+    top: -13px;
+    left: 20px;
+    padding: 0px 5px;
+    background-color: #ffffff;
+}
+/* Css For Ant_d component of Edit Profile section */
+.cust-css-ant-avatar{
+    border: 1px solid #0b0b59;
+    background-color: #fff;
+    color: #0b0b59;
+}
+.cust-css-ant-input{
+    border: 1px solid #0b0b59;
+    line-height: 1.7rem;
+}
+.cust-css-ant{
+    .ant-select-selector{
+        border-radius: 20px;
+        border: 1px solid #0b0b59 !important;
+    }
+}
+.cust-css-ant-date{
+    border: 1px solid #0b0b59;
+}
+/* Css For Ant_d component of Edit Profile section */
+
+/* Css For Ant_d Delete Pop Over */
+.delete-pop-over{
+    .ant-popover-content .ant-popover-inner{
+        padding: 5px 10px;
+    }
+}
+/* Css For Ant_d Delete Pop Over */
