@@ -18,6 +18,7 @@ import CreditWallet from './Page/CreditWallet';
 import Profile from './Page/Profile';
 import MyAcount from './Page/MyAcount';
 import TermsAndCondition from './Page/TermsAndCondition';
+import Contact from './Page/Contact';
 
 const App = () => {
     const location = useLocation();
@@ -75,6 +76,7 @@ const App = () => {
             <Route path="/Profile" element={<Profile />} />
             <Route path="/Myaccount" element={<MyAcount />} />
             <Route path="/T&c" element={<TermsAndCondition />} />
+            <Route path="/Contact" element={<Contact />} />
         </Routes>
     );
 };
