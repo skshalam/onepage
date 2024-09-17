@@ -16,8 +16,8 @@ Route::post('/onePageLoginResendOtp', [\App\Http\Controllers\OtpLoginController:
 
 Route::middleware(['auth:api'])->group(function () {
     
-    Route::get('/creditbalance', [\App\Http\Controllers\HomeController::class, 'creditbalance']);
-    Route::get('/walletbalance', [\App\Http\Controllers\HomeController::class, 'walletbalance']);
+    Route::post('/creditbalance', [\App\Http\Controllers\HomeController::class, 'creditbalance']);
+    Route::post('/walletbalance', [\App\Http\Controllers\HomeController::class, 'walletbalance']);
     Route::post('/couponscart', [\App\Http\Controllers\HomeController::class, 'couponscart']);
     Route::post('/couponhold', [\App\Http\Controllers\HomeController::class, 'couponhold']);
     Route::POST('/rewards', [\App\Http\Controllers\HomeController::class, 'rewards']);

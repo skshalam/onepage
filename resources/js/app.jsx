@@ -22,6 +22,7 @@ import Contact from './Page/Contact';
 import Referal from './Page/Referal';
 import ReferalList from './Page/ReferalList';
 import AboutUs from './Page/AboutUs';
+import Bookletissue_details from './Page/Bookletissue_details';
 
 const App = () => {
     const location = useLocation();
@@ -73,7 +74,7 @@ const App = () => {
             <Route path="/Giftcard" element={<GiftCard />} />
             <Route path="/Reward" element={<Reward />} />
             <Route path="/Membership" element={<MemberShipPackage />} />
-            <Route path="/Membership/:packageID" element={<MembershipDetails />} />
+            <Route path="/Membership/:membership_id" element={<MembershipDetails />} />
             <Route path="/Wallet" element={<Wallet />} />
             <Route path="/Creditwallet" element={<CreditWallet />} />
             <Route path="/Profile" element={<Profile />} />
@@ -83,6 +84,7 @@ const App = () => {
             <Route path="/Referal" element={<Referal />} />
             <Route path="/Referallist" element={<ReferalList />} />
             <Route path="/Aboutus" element={<AboutUs />} />
+            <Route path="/Bookletissue_details/:membership_id/:bookletissue_id" element={<Bookletissue_details />} />
         </Routes>
     );
 };

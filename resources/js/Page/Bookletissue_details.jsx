@@ -2,32 +2,49 @@ import React, { useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
 import axios from 'axios';
 
-function Reward() {
+function coupon_booklet() {
     const [open, setOpen] = useState(false);
     const [openConfirm, setOpenConfirm] = useState(false);
     const [rewardsData, setrewardsData] = useState([]);
     const [rewardsDesc, setRewardsDesc] = useState({});
-    const calculateValidity = (validTill) => {
-        const currentDate = new Date();
-        const validTillDate = new Date(validTill);
+    const formatDate = (dateStr) => {
+        if (!dateStr) return 'No Date Available';
         
-        const timeDifference = validTillDate - currentDate;
-        const dayDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // Convert ms to days
-        
-        return dayDifference > 0 ? `${dayDifference} days` : 'Expired';
+        const date = new Date(dateStr);
+        const day = date.getDate();
+        const month = date.toLocaleString('default', { month: 'long' });
+        const year = date.getFullYear();
+        const daySuffix = (d) => {
+            if (d > 3 && d < 21) return 'th';
+            switch (d % 10) {
+                case 1: return 'st';
+                case 2: return 'nd';
+                case 3: return 'rd';
+                default: return 'th';
+            }
+        };
+
+        return `${day}${daySuffix(day)} ${month}, ${year}`;
     };
+    const { membership_id } = useParams();
+    const { bookletissue_id } = useParams();
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/rewards', [], {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axios.post('/api/bookletcoupon', 
+                {
+                    membership_id: membership_id,
+                    booklets_id: bookletissue_id
+                }, 
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
             .then(response => {
-                setrewardsData(response.data.data.rewards);
+                setrewardsData(response.data.data.booklet_coupon);
             })
             .catch(error => {
                 console.error('API Error:', error);
@@ -37,12 +54,14 @@ function Reward() {
         }
     }, []);
 
-    const handleDrawer = (reward) => {
+    const handleDrawer = (coupon_booklet) => {
         const token = sessionStorage.getItem('access_token');
         if (token) {
-            axios.post('/api/rewards', 
+            axios.post('/api/bookletcoupon', 
             {
-                rewards_id: reward.rewards_id // Send rewards_id in the payload
+                membership_id: membership_id,
+                booklets_id: bookletissue_id,
+                token_id: coupon_booklet.id
             }, 
             {
                 headers: {
@@ -76,24 +95,27 @@ function Reward() {
             <div className={`inner-container`}>
             {rewardsData.length > 0 ? (
                 rewardsData.map((reward, index) => (
-                    <div className="rewards p-1">
-                        <div className="rewards-info h-100">
+                    <div key={index} className="coupons p-1">
+                        <div className="coupon-info h-100">
                             <div className="icon">
-                                <img src="https://i.imgur.com/wkYeeU3.png" alt="" />
+                                <img src="https://i.imgur.com/3iASiG8.png" alt="Coupon" />
                             </div>
-                            <div className="rewards-info-details">
-                                <div className="reward-name">
-                                    <span>{reward.name}</span>
-                                    <div className="reward-valid">
-                                        validity <span>{calculateValidity(reward.valid_till)}</span>
-                                    </div>
+                            <div className="details">
+                                <div className="coupon-expire-date">
+                                    <span>Valid till {formatDate(reward.token_valide)}</span>
                                 </div>
-                                <div className="reward-action">
-                                    <div className="reward-view-bnt">
-                                        <button  onClick={() => { handleDrawer(reward), setOpen(!open) }}>view details</button>
+                                <div className="coupon-name">
+                                    <span>{reward.name}</span>
+                                </div>
+                                <div className="coupon-limit">
+                                    <span>Uses: <span>{reward.use_limit}</span></span>
+                                </div>
+                                <div className="coupon-action">
+                                    <div className="coupon-code">
+                                        CODE: <span>{reward.token_code}</span>
                                     </div>
-                                    <div className="reward-redeem-bnt">
-                                        <button onClick={() => { setOpenConfirm(!openConfirm) }}><span>{reward.coupon_code} |</span> redeem</button>
+                                    <div className="view-coupon">
+                                        <button onClick={() => { handleDrawer(reward), setOpen(!open) }}>View Details</button>
                                     </div>
                                 </div>
                             </div>
@@ -114,10 +136,11 @@ function Reward() {
     )
 }
 
-export default Reward
+export default coupon_booklet
 
 function RewardDescDrawer({ open, rewardsCartData, setOpen }) {
-    const rewards = rewardsCartData?.rewards?.[0] || {};
+    const bookletsCoupon = rewardsCartData?.booklet_coupon?.[0] || {};
+    console.log(bookletsCoupon);
     const formatDate = (dateStr) => {
         if (!dateStr) return 'No Date Available';
         
@@ -153,22 +176,22 @@ function RewardDescDrawer({ open, rewardsCartData, setOpen }) {
                 <div className="drawer-upper">
                     <div className="drawer-upper-left">
                         <img src="https://i.imgur.com/wkYeeU3.png" alt="" />
-                        <div className="code">{rewards?.coupon_code || 'No Code Available'}</div>
+                        <div className="code">{bookletsCoupon?.token_code || 'No Code Available'}</div>
                     </div>
                     <div className="drawer-upper-right">
-                        <div className="cDate">Validity <span>{calculateValidity(rewards.valid_till)}</span></div>
-                        <div className="cName">{rewards?.name || 'No Code Available'}</div>
+                        <div className="cDate">Validity <span>{calculateValidity(bookletsCoupon.token_valide)}</span></div>
+                        <div className="cName">{bookletsCoupon?.name || 'No Code Available'}</div>
                     </div>
                 </div>
                 <div className="drawer-middle">
                     <div className="cDateDesc">
-                        <div className="dateLeft">{rewards?.token_valid_on || ''}</div>
-                        <div className="dateRight">{rewards?.timing || ''}</div>
+                        <div className="dateLeft">{bookletsCoupon?.token_valid_on || ''}</div>
+                        <div className="dateRight">{bookletsCoupon?.timing || ''}</div>
                     </div>
                 </div>
                 <div className="drawer-below">
                     <h4>Terms & Conditions</h4>
-                    <p>{rewards?.terms || 'No Date Available'}</p>
+                    <p>{bookletsCoupon?.terms || 'No Date Available'}</p>
                 </div>
                 <div className="exit-btn" onClick={() => setOpen(false)}>
                     <i className='bi bi-x' />
