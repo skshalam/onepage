@@ -96,7 +96,7 @@ class HomeController extends Controller
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-        $balance =Cards::select('cards.current_points','user_points.valid_till','user_points.original_points','user_points.original_bill_date','user_points.bill_amount','user_points.transaction_id','user_points.M_account','user_points.bill_no as invoice_no')
+        $balance =Cards::select('cards.current_points','user_points.valid_till','user_points.original_points','user_points.original_bill_date','user_points.bill_amount','user_points.transaction_id','user_points.M_account','user_points.bill_no as invoice_no','user_points.custom_ewallet_marker','user_points.ebooklet_report_id','user_points.usefor','user_points.pos_billing_dump_new_id','user_points.feedback_id')
         ->leftJoin('users', 'cards.user_id', '=', 'users.id')
         ->leftJoin('user_points', function ($join) {
             $join->on('cards.user_id', '=', 'user_points.user_id')
@@ -124,6 +124,21 @@ class HomeController extends Controller
                 $item['original_time'] = '';
                 $item['formatted_time'] = '';
             }
+
+            // dd($item->custom_ewallet_marker);
+            if ($item->custom_ewallet_marker == 1 && !empty($item->ebooklet_report_id) &&       $item->ebooklet_report_id != 0) {
+                $item['name'] = 'eWallet Credits';
+            } elseif (!empty($item->usefor) && $item->usefor != 0 && $item->pos_billing_dump_new_id == 0) {
+                $item['name'] = 'Loyalty Credits';
+            } elseif (!empty($item->feedback_id) && $item->feedback_id != 0) {
+                $item['name'] = 'Feedback Credits';
+            } elseif (!empty($item->pos_billing_dump_new_id) && $item->pos_billing_dump_new_id != 0) {
+                $item['name'] = 'Bonus Credits';
+            }
+             else {
+                $item['name'] = 'Unknown Credits'; 
+            }
+
             return $item;
         });
         if(!empty($request->is_expired)){
@@ -162,9 +177,14 @@ class HomeController extends Controller
         }
         $waletbalance= $waletbalance->get();
         $currentDate = date('Y-m-d');
-        $waletbalance = $waletbalance->map(function ($item) use ($currentDate) {
+        $waletbalance = $waletbalance->map(function ($item) use ($currentDate,$request) {
             $item['is_expired'] = $currentDate > $item->validity;
-            $combinedValue = $item->current_wallet_balance + $item->original_points;
+            // $combinedValue = $item->current_wallet_balance + $item->original_points;
+            if (!empty($request->redem_chk) && $request->redem_chk == 1) {
+                $combinedValue = $item->current_wallet_balance - $item->original_points;
+            } else {
+                $combinedValue = $item->current_wallet_balance + $item->original_points;
+            }
             $item['value'] = $combinedValue;
             return $item;
         });
@@ -174,9 +194,6 @@ class HomeController extends Controller
                 return $item['is_expired'] === $isExpiredFilter;
             });
         }
-
-    
-
         return response()->json([
             'error' => false,
             'message' => 'Balance',
