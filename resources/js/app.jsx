@@ -19,6 +19,7 @@ import Profile from './Page/Profile';
 import MyAcount from './Page/MyAcount';
 import TermsAndCondition from './Page/TermsAndCondition';
 import Contact from './Page/Contact';
+import Bookletissue_details from './Page/Bookletissue_details';
 
 const App = () => {
     const location = useLocation();
@@ -70,13 +71,14 @@ const App = () => {
             <Route path="/Giftcard" element={<GiftCard />} />
             <Route path="/Reward" element={<Reward />} />
             <Route path="/Membership" element={<MemberShipPackage />} />
-            <Route path="/Membership/:packageID" element={<MembershipDetails />} />
+            <Route path="/Membership/:membership_id" element={<MembershipDetails />} />
             <Route path="/Wallet" element={<Wallet />} />
             <Route path="/Creditwallet" element={<CreditWallet />} />
             <Route path="/Profile" element={<Profile />} />
             <Route path="/Myaccount" element={<MyAcount />} />
             <Route path="/T&c" element={<TermsAndCondition />} />
             <Route path="/Contact" element={<Contact />} />
+            <Route path="/Bookletissue_details/:membership_id/:bookletissue_id" element={<Bookletissue_details />} />
         </Routes>
     );
 };

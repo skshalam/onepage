@@ -75,9 +75,9 @@ function MemberShipPackage() {
                                         <span>{member.selling_price}</span>
                                     </div>
                                     <div className="membership-action">
-                                        <Link to={`/Membership/:${member.membership_id}`}>
+                                     <Link to={`/Membership/${member.membership_id}`}>   
                                         <button>View Details</button>
-                                        </Link>
+                                    </Link>
                                     </div>
                                 </div>
                             </div>

@@ -1,9 +1,87 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { Link, Router, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 function MembershipDetails() {
     const [showModal, setModal] = useState(false);
     const [title, setTitle] = useState(null);
+    const [eWalletissueDesc, seteWalletissueDesc] = useState({});
+    const [bookletissueDesc, setbookletissueDesc] = useState({});
+    const [couponsredeemDesc, setcouponsredeemDesc] = useState({});
+    
+    const { membership_id } = useParams();
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        console.log('Token:', token);
+        if (token) {
+            axios.post('/api/eWalletissue', 
+            {
+                membership_id: membership_id
+            }, 
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                seteWalletissueDesc(response.data.data);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, []);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        console.log('Token:', token);
+        if (token) {
+            axios.post('/api/bookletissue', 
+            {
+                membership_id: membership_id
+            }, 
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                setbookletissueDesc(response.data.data);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, []);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        console.log('Token:', token);
+        if (token) {
+            axios.post('/api/couponsredeem', 
+            {
+                membership_id: membership_id
+            }, 
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                setcouponsredeemDesc(response.data.data.coupon_redeem);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, []);
     return (
         <div className='body-container membership-package-body'>
             <div className="border-0 border-bottom">
@@ -100,14 +178,14 @@ function MembershipDetails() {
             <div className="bg-shape position-absolute w-100 two">
                 <img src="https://i.imgur.com/6bAQtCI.png" alt="" />
             </div>
-            <ViewMemberShip showModal={showModal} setModal={setModal} title={title} />
+            <ViewMemberShip showModal={showModal} setModal={setModal} title={title} eWalletissueDesc={eWalletissueDesc} bookletissueDesc={bookletissueDesc} couponsredeemDesc={couponsredeemDesc} membership_id={membership_id} />
         </div>
     )
 }
 
 export default MembershipDetails
 
-function ViewMemberShip({ showModal, setModal, title }) {
+function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookletissueDesc, couponsredeemDesc, membership_id }) {
     return (
         <div
             className={`position-absolute h-100 top-0 w-100 view-membership-details
@@ -124,34 +202,75 @@ function ViewMemberShip({ showModal, setModal, title }) {
                         <span className='fw-semibold'>{title}</span>
                         <i className='bi bi-x fs-5' onClick={() => setModal(false)} />
                     </div>
-                    <table className='membership-view-table'>
-                        <thead>
-                            <th>Coupon Name</th>
-                            <th>Coupon Code</th>
-                            <th>Redeemed</th>
-                        </thead>
-                        <tbody>
-                            {[...new Array(6)].map(() => (<tr>
-                                <td>Test Coupon</td>
-                                <td>Test Coupon</td>
-                                <td>Test Coupon</td>
-                            </tr>))}
-                        </tbody>
-                    </table>
-                    <div className="table-action px-3 mt-3 mb-2 d-flex justify-content-between">
-                        <span className='d-flex'>
-                            <i className='bi bi-chevron-left' />prev
-                        </span>
-                        <div className="">
-                            <span className='border px-3 rounded-2 pb-1 me-1'>1</span>
-                            <span className='fw-semibold'>/2</span>
+
+                    {title === "e-Wallets Issued" && (
+                        <div className='ewallet-issue'>
+                            <table className='membership-view-table'>
+                                <thead>
+                                    <tr>
+                                        <th>e-Wallet Name</th>
+                                        <th>Top-up Value</th>
+                                        <th>Validity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {eWalletissueDesc.map((wallet, index) => (
+                                        <tr key={index}>
+                                            <td>{wallet.name}</td>
+                                            <td>{wallet.credit}</td>
+                                            <td>{wallet.credit_validity}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
-                        <span>
-                            next<i className='bi bi-chevron-right' />
-                        </span>
-                    </div>
+                    )}
+
+                    {title === "Booklets Issued" && (
+                        <div className='booklet-issue'>
+                            <table className='membership-view-table'>
+                                <thead>
+                                    <tr>
+                                        <th>Booklet Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {bookletissueDesc.map((booklet, index) => (
+                                        <tr key={index}>
+                                            <td><Link to={`/Bookletissue_details/${membership_id}/${booklet.id}/`}>
+                                {booklet.name}
+                            </Link></td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+
+                    {title === "Coupons Redeemed" && (
+                        <div className='coupon-redeem'>
+                            <table className='membership-view-table'>
+                                <thead>
+                                    <tr>
+                                        <th>Coupon Name</th>
+                                        <th>Coupon Code</th>
+                                        <th>Redeemed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {couponsredeemDesc.map((coupon, index) => (
+                                        <tr key={index}>
+                                            <td>{coupon.name}</td>
+                                            <td>{coupon.token_code}</td>
+                                            <td>{coupon.redeem_count}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
-    )
+    );
 }
