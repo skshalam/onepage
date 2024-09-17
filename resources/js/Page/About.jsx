@@ -72,7 +72,7 @@ function About() {
         slidesToScroll: 1,
         autoplay: true,
         autoplaySpeed: 3000,
-        arrows: false 
+        arrows: false
     };
     return (
         <div className='onepage-main-body'>
@@ -95,17 +95,18 @@ function About() {
                 {data_home.banners?.banner_image?.length > 0 && (
                     <div className='banner-part-main'>
                         <div className='banner-part'>
-                        <Slider {...settings}>
-                            {data_home.banners.banner_image.map((banner, index) => (
-                                <div key={index}>
-                                    <img src={banner} alt={`Banner ${index + 1}`} />
-                                </div>
-                            ))}
-                        </Slider>
+                            <Slider {...settings}>
+                                {data_home.banners.banner_image.map((banner, index) => (
+                                    <div key={index}>
+                                        <img src={banner} alt={`Banner ${index + 1}`} />
+                                    </div>
+                                ))}
+                            </Slider>
                         </div>
                     </div>
                 )}
                 <div className={`wallet-container ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
+                    <Link to={"/Creditwallet"}>
                     <div className="wallet-content">
                         <div className="content">
                             <p>Credit Balance:</p>
@@ -118,6 +119,8 @@ function About() {
                             <i className="bi bi-chevron-right"></i>
                         </div>
                     </div>
+                    </Link>
+                    <Link to={"/Wallet"}>
                     <div className="wallet-content">
                         <div className="content">
                             <p>Wallet's Balance:</p>
@@ -130,6 +133,7 @@ function About() {
                             <i className="bi bi-chevron-right"></i>
                         </div>
                     </div>
+                    </Link>
                 </div>
                 <div className="rewards-container">
                     <Link to={"/Coupon"} style={{ textDecoration: "none", color: "#fff" }}>
@@ -160,18 +164,20 @@ function About() {
                             </div>
                         </div>
                     </Link>
-                    <div className="rewards-content">
-                        <div className="content">
-                            <p>Membership Package</p>
-                            <div className="balance">
-                                <img src="" alt="" />
-                                <span>{data_getcoupons.active_membership_count}</span>
+                    <Link to={"/Membership"}>
+                        <div className="rewards-content">
+                            <div className="content">
+                                <p>Membership Package</p>
+                                <div className="balance">
+                                    <img src="" alt="" />
+                                    <span>{data_getcoupons.active_membership_count}</span>
+                                </div>
+                            </div>
+                            <div className="content">
+                                <i className="bi bi-chevron-right"></i>
                             </div>
                         </div>
-                        <div className="content">
-                            <i className="bi bi-chevron-right"></i>
-                        </div>
-                    </div>
+                    </Link>
                 </div>
                 <Link to={"/Giftcard"}>
                     <div className="gift-container">

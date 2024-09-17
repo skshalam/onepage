@@ -75,30 +75,30 @@ function Reward() {
             </div>
             <div className={`inner-container`}>
             {rewardsData.length > 0 ? (
-                    rewardsData.map((reward, index) => (
-                <div className="rewards p-1">
-                    <div className="rewards-info h-100">
-                        <div className="icon">
-                            <img src="https://i.imgur.com/wkYeeU3.png" alt="" />
-                        </div>
-                        <div className="rewards-info-details">
-                            <div className="reward-name">
-                                <span>{reward.name}</span>
-                                <div className="reward-valid">
-                                    validity <span>{calculateValidity(reward.valid_till)}</span>
-                                </div>
+                rewardsData.map((reward, index) => (
+                    <div className="rewards p-1">
+                        <div className="rewards-info h-100">
+                            <div className="icon">
+                                <img src="https://i.imgur.com/wkYeeU3.png" alt="" />
                             </div>
-                            <div className="reward-action">
-                                <div className="reward-view-bnt">
-                                    <button  onClick={() => { handleDrawer(reward), setOpen(!open) }}>view details</button>
+                            <div className="rewards-info-details">
+                                <div className="reward-name">
+                                    <span>{reward.name}</span>
+                                    <div className="reward-valid">
+                                        validity <span>{calculateValidity(reward.valid_till)}</span>
+                                    </div>
                                 </div>
-                                <div className="reward-redeem-bnt">
-                                    <button onClick={() => { setOpenConfirm(!openConfirm) }}><span>{reward.coupon_code} |</span> redeem</button>
+                                <div className="reward-action">
+                                    <div className="reward-view-bnt">
+                                        <button  onClick={() => { handleDrawer(reward), setOpen(!open) }}>view details</button>
+                                    </div>
+                                    <div className="reward-redeem-bnt">
+                                        <button onClick={() => { setOpenConfirm(!openConfirm) }}><span>{reward.coupon_code} |</span> redeem</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                  ))
                 ) : (
                     <p>No rewards available</p>

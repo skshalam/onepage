@@ -234,21 +234,25 @@ body {
     padding: 5px;
     background: #0B0B59;
     position: relative;
-    .head-logo{
+
+    .head-logo {
         display: flex;
         align-items: center;
-        .headlogo-img{
-            :is(img){
+
+        .headlogo-img {
+            :is(img) {
                 width: 42px;
             }
-            &.ratio-3{
-                :is(img){
+
+            &.ratio-3 {
+                :is(img) {
                     width: 120px;
-                } 
+                }
             }
         }
-        .headlogo-cont{
-            :is(h4){
+
+        .headlogo-cont {
+            :is(h4) {
                 margin: 0px;
                 font-size: 12px;
                 color: #fff;
@@ -258,7 +262,8 @@ body {
             }
         }
     }
-    .head-profile{
+
+    .head-profile {
         width: 34px;
         border: 2px solid #fff;
         text-align: center;
@@ -269,20 +274,24 @@ body {
         border-radius: 8px;
         position: absolute;
         right: 15px;
-        :is(i){
+
+        :is(i) {
             color: #fff;
             font-size: 18px !important;
         }
     }
-    &.logo-center{
-         justify-content: center;
+
+    &.logo-center {
+        justify-content: center;
     }
 }
+
 .body-header .profile {
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .body-container {
     height: 100vh;
     display: table;
@@ -292,15 +301,47 @@ body {
     background: #EBECF7;
 }
 
+.membership-package-body {
+    background-color: #0B0B59;
+    position: relative;
+    overflow: hidden;
+}
+
+.membership-package-details {
+    .package-status img {
+        height: 70px;
+    }
+
+    .package-status span {
+        font-size: 11px;
+        top: 25px;
+    }
+}
+
+.bg-shape.one {
+    bottom: -70px;
+}
+
+.bg-shape.two {
+    top: -145px;
+    left: 170px;
+}
+
+.bg-shape img {
+    width: 100%;
+}
+
 .wallet-container {
     display: grid;
     padding: 10px 20px;
     gap: 10px;
     grid-template-columns: repeat(2, 1fr);
-    &.wallet-banner{
+
+    &.wallet-banner {
         display: block;
-        .wallet-content{
-            &:first-child{
+
+        .wallet-content {
+            &:first-child {
                 margin-bottom: 20px;
             }
         }
@@ -403,19 +444,13 @@ body {
     display: none;
 }
 
-.sticky-top {
-    position: sticky;
-    top: 0px;
-    box-shadow: 0px 7px 5px -3px rgba(0, 0, 0, 0.1);
-}
-
 .fixed-bottom {
     position: fixed;
     bottom: 0px;
 }
 
 .navHeader {
-    padding: 4px;
+    padding: 8px;
     background-color: #0B0B59;
     color: #ffffff;
 }
@@ -488,8 +523,8 @@ body {
 }
 
 .inner-container .coupons,
-.inner-container .rewards {
-    position: relative;
+.inner-container .rewards,
+.inner-container .membership {
     height: 105px;
     margin: 10px 0px;
     background: url(https://i.imgur.com/ezi611N.png);
@@ -504,14 +539,16 @@ body {
 }
 
 .coupon-info,
-.rewards-info {
+.rewards-info,
+.membership-info {
     position: relative;
     display: grid;
     grid-template-columns: 0.48fr 1fr;
 }
 
 .coupon-info .icon,
-.rewards-info .icon {
+.rewards-info .icon,
+.membership-info .icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -897,7 +934,7 @@ body {
     margin: 211px 65px;
 }
 
-.pop-confirm-success{
+.pop-confirm-success {
     position: absolute;
     width: 300px;
     height: auto;
@@ -958,11 +995,64 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
-.onepage-set-body-about{
-    .banner-part-main{
+
+.pop-confirm-success-msg {
+    text-align: center;
+}
+
+.pop-confirm-success-img {
+    height: 200px;
+    border: 1px solid;
+}
+
+.membership-info-details {
+    padding: 2px 10px;
+
+    .membership-validity,
+    .membership-price {
+        font-size: 12px;
+    }
+
+    .membership-action {
+        text-align: end;
+    }
+
+    .membership-action button {
+        border: 1px solid;
+        font-size: 13px;
+        background: none;
+        border-radius: 5px;
+        padding: 3px 8px;
+    }
+}
+
+.membership-inner {
+    position: relative;
+}
+
+.membership-status {
+    position: absolute;
+    top: -10px;
+    left: -5px;
+}
+
+.membership-status img {
+    width: 80px;
+}
+
+.membership-status span {
+    color: #fff;
+    position: absolute;
+    left: 15px;
+}
+
+.onepage-set-body-about {
+    .banner-part-main {
         padding-top: 0px;
+
         .banner-part {
             background: #EBECF7;
+
             .slick-dots li button:before {
                 color: #0b0b59 !important;
                 /* opacity: 8 !important; */
@@ -970,3 +1060,266 @@ body {
         }
     }
 }
+
+.view-membership-details {
+    transform: translateY(100%);
+    transition: all 0.5s ease-in-out;
+}
+
+.view-membership-details.show {
+    transform: translateY(0);
+}
+
+.membership-view-table {
+    width: 100%;
+    table-layout: auto;
+}
+
+.membership-view-table thead th {
+    background: #0b0b59;
+    border: 1px solid #fff;
+    color: #fff;
+    text-align: center;
+    font-weight: 400;
+    padding: 7px 0px;
+}
+
+.membership-view-table tbody tr td {
+    text-align: center;
+    font-weight: 400;
+    color: #7A7680;
+    padding: 5px 0px;
+    border-bottom: 1px solid #7A7680;
+}
+
+.membership-view-table tbody tr td:nth-child(1) {
+    border-right: 1px solid #7A7680;
+}
+
+.membership-view-table tbody tr td:nth-child(2) {
+    border-right: 1px solid #7A7680;
+}
+
+.wallet-credit-info {
+    h6 {
+        color: #7A7680;
+        font-size: smaller;
+        font-size: 16px;
+    }
+
+    span {
+        color: #312E37;
+        font-size: 32px;
+        font-weight: bold;
+    }
+}
+
+.wallet-balance-table {
+    background: #fff;
+
+    .wallet-detail-container {
+        border-bottom: 3px solid #EBECF7;
+        padding-top: 7px;
+    }
+
+    .wallet-filter-header {
+        border-bottom: 2px solid #d0d0d0;
+        color: #312E37;
+    }
+
+    .filter-header-left {
+        font-weight: 500;
+    }
+
+    .filter-header-right i {
+        color: #0B0B59;
+        border: 1px solid #0B0B59;
+        cursor: pointer;
+    }
+
+    .wallet-expire {
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .wallet-balance p {
+        font-size: 13px;
+        color: #7A7680;
+    }
+
+    .wallet-balance p span {
+        font-weight: 600;
+        color: #000;
+    }
+
+    .wallet-transaction-value p {
+        color: #389A15;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .wallet-detail-container-middle .invoice-number {
+        font-size: 13px;
+        color: #7A7680;
+    }
+
+    .invoice-number span {
+        color: #0B0B59;
+        font-weight: 400;
+        text-decoration: underline
+    }
+
+    ;
+}
+
+.filter-by-date-modal {
+    transform: translateX(100%);
+    transition: all 0.4s ease-in-out;
+}
+
+.filter-by-container {
+    top: 25%;
+    right: 10px;
+    width: 200px;
+    background-color: #ffffff;
+}
+
+.filter-by-date-header {
+    color: #312E37;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 10px 10px;
+}
+
+.filter-by-date-select-container input {
+    width: 115px;
+}
+
+.filter-by-select-container input {
+    height: 25px;
+}
+
+.filter-by-date-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    box-shadow: 0px -8px 10px -5px rgba(0, 0, 0, 0.1);
+
+    button {
+        background: #fff;
+    }
+}
+
+.filter-by-date-actions button:nth-child(2) {
+    background-color: #0B0B59;
+    color: #fff;
+}
+
+.filter-by-date-modal.show {
+    transform: translateX(0%);
+}
+
+.filter-cancel-container {
+    background: #00000028;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.filter-cancel-container.show {
+    opacity: 1;
+}
+
+.filter-by-type-modal {
+    transform: translateX(100%);
+    transition: all 0.4s ease-in-out;
+}
+
+.filter-by-type-modal.show {
+    transform: translateX(0%);
+}
+
+.credit-filter-tab {
+    cursor: pointer;
+}
+
+.credit-filter-tab.active {
+    border-bottom: 2px solid #0b0b59;
+}
+
+.filter-date-input {
+    border: 1px solid #0B0B59;
+    padding: 0px 0px 0px 5px;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.filter-date-input .ant-picker-input .ant-picker-suffix {
+    padding: 7px;
+    background-color: #EBECF7;
+    color: #0b0b59;
+}
+
+.profile-navigation-container {
+    background: #fff;
+}
+
+.profile-delete{
+    transform: translateX(100%);
+    transition: all 0.5s ease-in-out;
+}
+.profile-delete.show{
+    transform: translateX(0%);
+}
+
+.profile-info-content {
+    background-color: #fff;
+
+    label {
+        width: 80px;
+        font-size: 13px;
+        color: #7A7680;
+    }
+
+    div span {
+        font-size: 14px;
+        color: #312E37;
+        font-weight: 400;
+    }
+}
+
+.edit-profile{
+    background-color: #fff;
+}
+.edit-input-div label{
+    top: -13px;
+    left: 20px;
+    padding: 0px 5px;
+    background-color: #ffffff;
+}
+/* Css For Ant_d component of Edit Profile section */
+.cust-css-ant-avatar{
+    border: 1px solid #0b0b59;
+    background-color: #fff;
+    color: #0b0b59;
+}
+.cust-css-ant-input{
+    border: 1px solid #0b0b59;
+    line-height: 1.7rem;
+}
+.cust-css-ant{
+    .ant-select-selector{
+        border-radius: 20px;
+        border: 1px solid #0b0b59 !important;
+    }
+}
+.cust-css-ant-date{
+    border: 1px solid #0b0b59;
+}
+/* Css For Ant_d component of Edit Profile section */
+
+/* Css For Ant_d Delete Pop Over */
+.delete-pop-over{
+    .ant-popover-content .ant-popover-inner{
+        padding: 5px 10px;
+    }
+}
+/* Css For Ant_d Delete Pop Over */
