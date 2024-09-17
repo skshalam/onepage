@@ -1,9 +1,66 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { Link, Router, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 function Reward() {
     const [open, setOpen] = useState(false);
     const [openConfirm, setOpenConfirm] = useState(false);
+    const [rewardsData, setrewardsData] = useState([]);
+    const [rewardsDesc, setRewardsDesc] = useState({});
+    const calculateValidity = (validTill) => {
+        const currentDate = new Date();
+        const validTillDate = new Date(validTill);
+        
+        const timeDifference = validTillDate - currentDate;
+        const dayDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // Convert ms to days
+        
+        return dayDifference > 0 ? `${dayDifference} days` : 'Expired';
+    };
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        console.log('Token:', token);
+        if (token) {
+            axios.post('/api/rewards', [], {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                setrewardsData(response.data.data.rewards);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, []);
+
+    const handleDrawer = (reward) => {
+        const token = sessionStorage.getItem('access_token');
+        if (token) {
+            axios.post('/api/rewards', 
+            {
+                rewards_id: reward.rewards_id // Send rewards_id in the payload
+            }, 
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                setRewardsDesc(response.data.data); // Assuming response contains coupon details
+                setOpen(true); // Open the details drawer
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    };
     return (
         <div className='body-container'>
             <div className="sticky-top">
@@ -17,37 +74,41 @@ function Reward() {
                 </div>
             </div>
             <div className={`inner-container`}>
-                {[...new Array(14)].map((i, iIndex) => (
-                    <div key={iIndex} className="rewards p-1">
+            {rewardsData.length > 0 ? (
+                rewardsData.map((reward, index) => (
+                    <div className="rewards p-1">
                         <div className="rewards-info h-100">
                             <div className="icon">
                                 <img src="https://i.imgur.com/wkYeeU3.png" alt="" />
                             </div>
                             <div className="rewards-info-details">
                                 <div className="reward-name">
-                                    <span>Lorem ipsum dolor sit amet.</span>
+                                    <span>{reward.name}</span>
                                     <div className="reward-valid">
-                                        validity<span>5days</span>
+                                        validity <span>{calculateValidity(reward.valid_till)}</span>
                                     </div>
                                 </div>
                                 <div className="reward-action">
                                     <div className="reward-view-bnt">
-                                        <button onClick={() => { setOpen(!open) }}>view details</button>
+                                        <button  onClick={() => { handleDrawer(reward), setOpen(!open) }}>view details</button>
                                     </div>
                                     <div className="reward-redeem-bnt">
-                                        <button onClick={() => { setOpenConfirm(!openConfirm) }}><span>Cr11 |</span> redeem</button>
+                                        <button onClick={() => { setOpenConfirm(!openConfirm) }}><span>{reward.coupon_code} |</span> redeem</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                ))}
+                 ))
+                ) : (
+                    <p>No rewards available</p>
+                )}
             </div>
             <div className="powered-ewards">
                 <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
                     <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
             </div>
-            <RewardDescDrawer open={open} setOpen={setOpen} />
+            <RewardDescDrawer open={open} rewardsCartData={rewardsDesc} setOpen={setOpen} />
             <RewardPopConfirm openConfirm={openConfirm} setOpenConfirm={setOpenConfirm} />
         </div>
     )
@@ -55,32 +116,61 @@ function Reward() {
 
 export default Reward
 
-function RewardDescDrawer(event) {
+function RewardDescDrawer({ open, rewardsCartData, setOpen }) {
+    const rewards = rewardsCartData?.rewards?.[0] || {};
+    const formatDate = (dateStr) => {
+        if (!dateStr) return 'No Date Available';
+        
+        const date = new Date(dateStr);
+        const day = date.getDate();
+        const month = date.toLocaleString('default', { month: 'long' });
+        const year = date.getFullYear();
+        const daySuffix = (d) => {
+            if (d > 3 && d < 21) return 'th';
+            switch (d % 10) {
+                case 1: return 'st';
+                case 2: return 'nd';
+                case 3: return 'rd';
+                default: return 'th';
+            }
+        };
+
+        return `${day}${daySuffix(day)} ${month}, ${year}`;
+    };
+    const calculateValidity = (validTill) => {
+        const currentDate = new Date();
+        const validTillDate = new Date(validTill);
+        
+        const timeDifference = validTillDate - currentDate;
+        const dayDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // Convert ms to days
+        
+        return dayDifference > 0 ? `${dayDifference} days` : 'Expired';
+    };
     return (
-        <div className={`cust-drawer ${event.open ? "show" : ""}`}>
-            <div className={`exit-drawer ${event.open ? "" : "hide"}`} onClick={() => event.setOpen(false)} />
+        <div className={`cust-drawer ${open ? "show" : ""}`}>
+            <div className={`exit-drawer ${open ? "" : "hide"}`} onClick={() => setOpen(false)} />
             <div className="drawer-content">
                 <div className="drawer-upper">
                     <div className="drawer-upper-left">
                         <img src="https://i.imgur.com/wkYeeU3.png" alt="" />
-                        <div className="code">{event?.cData?.couponCode}</div>
+                        <div className="code">{rewards?.coupon_code || 'No Code Available'}</div>
                     </div>
                     <div className="drawer-upper-right">
-                        <div className="cDate">valid till <span>{event?.cData?.couponExpiry}</span></div>
-                        <div className="cName">{event?.cData?.couponName}</div>
+                        <div className="cDate">Validity <span>{calculateValidity(rewards.valid_till)}</span></div>
+                        <div className="cName">{rewards?.name || 'No Code Available'}</div>
                     </div>
                 </div>
                 <div className="drawer-middle">
-                    <div className="cLimit">Uses <span>2/4</span></div>
                     <div className="cDateDesc">
-                        <div className="dateLeft">Sun, Mon, Tue, Wed, Fri</div>
-                        <div className="dateRight">12:00 A.M to 5:00 P.M</div>
+                        <div className="dateLeft">{rewards?.token_valid_on || ''}</div>
+                        <div className="dateRight">{rewards?.timing || ''}</div>
                     </div>
                 </div>
                 <div className="drawer-below">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero, culpa quod. Quia velit deserunt quidem voluptatibus obcaecati maxime nulla molestias!
+                    <h4>Terms & Conditions</h4>
+                    <p>{rewards?.terms || 'No Date Available'}</p>
                 </div>
-                <div className="exit-btn" onClick={() => event.setOpen(false)}>
+                <div className="exit-btn" onClick={() => setOpen(false)}>
                     <i className='bi bi-x' />
                 </div>
             </div>

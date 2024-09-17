@@ -12,7 +12,9 @@
     },
     "dependencies": {
         "@vitejs/plugin-react": "^4.3.1",
+        "antd": "^5.20.6",
         "bootstrap": "^5.3.3",
+        "framer-motion": "^11.5.4",
         "jquery": "^3.7.1",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
