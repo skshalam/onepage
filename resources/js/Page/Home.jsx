@@ -11,11 +11,11 @@ import { Input } from 'antd';
 const Home = () => {
     const { merchant_base } = useParams();
     const [data, setData] = useState([]);
+    const [cCode, setcCode] = useState('in');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [apiResponse, setApiResponse] = useState(null);
     const [mobile, setMobile] = useState('');
-    const [dialcode, setDialcode] = useState('');
     const [otp, setOtp] = useState('');
     const [merchant_id, setMerchantId] = useState([]);
     const [merchantid, setMerchantid] = useState([]);
@@ -42,8 +42,12 @@ const Home = () => {
 
 
     const handlePhoneChange = (value, data) => {
-        setDialcode(data.dialCode)
-        setMobile(value); // Updates the state with the phone number
+        if (value === '') {
+            setMobile(data.dialCode); // set dial code of the selected country
+        } else {
+            setMobile(value); // set the phone value
+        }
+        setcCode(data.countryCode);
     };
     const handlePhoneChange_otp = (value) => {
         setOtp(value);
@@ -133,8 +137,9 @@ const Home = () => {
                                         <p>Please enter your mobile number</p>
                                         <div className='login-part-input'>
                                             <PhoneInput
-                                                country={'in'}
+                                                country={cCode}
                                                 onChange={handlePhoneChange}
+                                                value={mobile}
                                             />
                                             <button onClick={handleButtonClick}>Get OTP</button>
 
