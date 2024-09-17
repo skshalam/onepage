@@ -125,10 +125,10 @@ class HomeController extends Controller
                 $item['formatted_time'] = '';
             }
 
-            // dd($item->custom_ewallet_marker);
-            if ($item->custom_ewallet_marker == 1 && !empty($item->ebooklet_report_id) &&       $item->ebooklet_report_id != 0) {
+            // dd($item->ebooklet_report_id);
+            if ($item->custom_ewallet_marker == 1 &&  $item->ebooklet_report_id == 0) {
                 $item['name'] = 'eWallet Credits';
-            } elseif (!empty($item->usefor) && $item->usefor != 0 && $item->pos_billing_dump_new_id == 0) {
+            } elseif (empty($item->usefor) && $item->usefor == 0 && $item->pos_billing_dump_new_id == 0) {
                 $item['name'] = 'Loyalty Credits';
             } elseif (!empty($item->feedback_id) && $item->feedback_id != 0) {
                 $item['name'] = 'Feedback Credits';
