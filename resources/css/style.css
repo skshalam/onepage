@@ -1328,7 +1328,7 @@ body {
     background-color: #ffffff;
 }
 
-.edit-input-div.contact-us label{
+.edit-input-div.contact-us label {
     color: #7A7680;
 }
 
@@ -1453,19 +1453,125 @@ body {
     background-color: #fff;
 }
 
-.cust-css-ant-input.contact-info{
+.referal_form_contact {
+    margin: 0px 20px 20px 20px;
+    background-color: #ffffff;
+}
+
+.route_to_referal_list {
+    background-color: #0b0b59;
+
+    span,
+    i {
+        font-size: 12px;
+    }
+}
+
+.referal_list_content {
+    background-color: #ffffff;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+
+    .referal_inner_left img {
+        width: 15px;
+    }
+
+    .referal_details {
+        display: flex;
+        gap: 7px;
+    }
+
+    .referal_details p {
+        color: #0b0b59;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .referal_details span {
+        color: #7A7680;
+        font-size: 13px;
+    }
+}
+
+.cust-css-ant-input.contact-info {
     border: 1px solid #EBECF7;
     line-height: 35px;
 }
+
 .edit-input-div.contact-us {
-    .react-tel-input input{
+    .react-tel-input input {
         border: 1px solid #EBECF7;
         width: 100%;
         padding-left: 60px;
     }
-    .react-tel-input .flag-dropdown  {
+
+    .react-tel-input .flag-dropdown {
         background-color: #fff;
         width: 45px;
         border: 1px solid #EBECF7;
     }
+}
+
+.cust_text_primary {
+    color: #0b0b59 !important;
+}
+
+.cust_text_secondary {
+    color: #7A7680;
+}
+
+.cust_text_secondary.small {
+    font-size: 14px
+}
+
+.locate_btn {
+    background-color: #0b0b59;
+    color: #fff;
+    padding: 7px 0px;
+    border-radius: 5px;
+
+    span {
+        font-size: 14px;
+    }
+}
+
+.cust-css-ant-button{
+    background: #0b0b59 !important;
+}
+.cust-css-ant-button:hover{
+    background: #0b0b59 !important;
+    border: none;
+    outline: none;
+}
+
+.locate_btn:hover {
+    background: #0b0b59 !important;
+    border: none;
+    color: #fff !important;
+}
+
+.about_location_card {
+    width: 250px;
+    padding: 12px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.location_img_content {
+    height: 130px;
+    border-radius: 7px;
+    background-position: center;
+    overflow: hidden;
+
+    img {
+        background-position: center;
+    }
+}
+
+.about_location_card .slick-slide img {
+    width: 20px;
+}
+
+.slick-slide button img {
+    height: 10px;
 }

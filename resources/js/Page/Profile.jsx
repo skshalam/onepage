@@ -25,7 +25,7 @@ function Profile() {
         <Avatar className='z-3 bg-light' size={80} icon={<i class="bi bi-person-fill text-dark" />} />
       </div>
       <div className="mx-4 p-4 profile-navigation-container z-3 position-relative rounded-4">
-        <Link to={"/Myaccount"}>
+        <Link to={"/Myaccount"} className='cust_text_primary text-decoration-none'>
           <div className="navigaiton-container d-flex justify-content-between p-3">
             <div className="d-flex gap-2">
               <img className='' src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/tpakyx8irfmmosxuxma9.svg" alt="" />
@@ -46,40 +46,44 @@ function Profile() {
             <i className='bi bi-chevron-right' />
           </div>
         </div>
-        <Divider className='m-0' />
-        <div className="navigaiton-container d-flex justify-content-between p-3">
-          <div className="d-flex gap-2">
-            <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/t0avoukmt5fscuolt8w9.svg" alt="" />
-            <p className='mb-0'>Refer & Earn</p>
+        <Link to={"/Referal"} className='cust_text_primary text-decoration-none'>
+          <Divider className='m-0' />
+          <div className="navigaiton-container d-flex justify-content-between p-3">
+            <div className="d-flex gap-2">
+              <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/t0avoukmt5fscuolt8w9.svg" alt="" />
+              <p className='mb-0'>Refer & Earn</p>
+            </div>
+            <div className="">
+              <i className='bi bi-chevron-right' />
+            </div>
           </div>
-          <div className="">
-            <i className='bi bi-chevron-right' />
+        </Link>
+        <Link to={"/Contact"} className='cust_text_primary text-decoration-none'>
+          <Divider className='m-0' />
+          <div className="navigaiton-container d-flex justify-content-between p-3">
+            <div className="d-flex gap-2">
+              <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
+              <p className='mb-0'>Contact Us</p>
+            </div>
+            <div className="">
+              <i className='bi bi-chevron-right' />
+            </div>
           </div>
-        </div>
-        <Divider className='m-0' />
-        <div className="navigaiton-container d-flex justify-content-between p-3">
-          <div className="d-flex gap-2">
-            <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
-            <p className='mb-0'>Contact Us</p>
-          </div>
-          <div className="">
-            <i className='bi bi-chevron-right' />
-          </div>
-        </div>
-        <Divider className='m-0' />
-        <Link to={"/T&c"}>
-        <div className="navigaiton-container d-flex justify-content-between p-3">
-          <div className="d-flex gap-2">
-            <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
-            <p className='mb-0'>Terms & Conditions</p>
-          </div>
-          <div className="">
-            <i className='bi bi-chevron-right' />
-          </div>
-        </div>
         </Link>
         <Divider className='m-0' />
-        <div className="navigaiton-container d-flex justify-content-between p-3" onClick={()=>setDeleteModal(true)}>
+        <Link to={"/T&c"} className='cust_text_primary text-decoration-none'>
+          <div className="navigaiton-container d-flex justify-content-between p-3">
+            <div className="d-flex gap-2">
+              <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
+              <p className='mb-0'>Terms & Conditions</p>
+            </div>
+            <div className="">
+              <i className='bi bi-chevron-right' />
+            </div>
+          </div>
+        </Link>
+        <Divider className='m-0' />
+        <div className="navigaiton-container d-flex justify-content-between p-3" onClick={() => setDeleteModal(true)}>
           <div className="d-flex gap-2">
             <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/n4iyfs8cuetah8i9rryu.svg" alt="" />
             <p className='mb-0'>Log Out</p>
@@ -127,7 +131,7 @@ function Profile() {
           </div>
           <div className="text-center fw-semibold modal-txt px-4">
             <p className='mb-0'>You will be logged out of your account.
-            Do you wish to proceed?</p>
+              Do you wish to proceed?</p>
           </div>
         </div>
       </Modal>

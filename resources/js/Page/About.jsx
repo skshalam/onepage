@@ -89,7 +89,9 @@ function About() {
                         )}
                     </div>
                     <div className="head-profile">
+                        <Link className='text-decoration-none' to={"/Profile"}>
                         <i className='bi bi-person-fill fs-5'></i>
+                        </Link>
                     </div>
                 </div>
                 {data_home.banners?.banner_image?.length > 0 && (
@@ -106,7 +108,7 @@ function About() {
                     </div>
                 )}
                 <div className={`wallet-container ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
-                    <Link to={"/Creditwallet"}>
+                    <Link className='text-decoration-none' to={"/Creditwallet"}>
                     <div className="wallet-content">
                         <div className="content">
                             <p>Credit Balance:</p>
@@ -120,7 +122,7 @@ function About() {
                         </div>
                     </div>
                     </Link>
-                    <Link to={"/Wallet"}>
+                    <Link className='text-decoration-none' to={"/Wallet"}>
                     <div className="wallet-content">
                         <div className="content">
                             <p>Wallet's Balance:</p>
@@ -136,7 +138,7 @@ function About() {
                     </Link>
                 </div>
                 <div className="rewards-container">
-                    <Link to={"/Coupon"} style={{ textDecoration: "none", color: "#fff" }}>
+                    <Link className='text-decoration-none' to={"/Coupon"}>
                         <div className="rewards-content">
                             <div className="content">
                                 <p>Coupon <br /> Cart</p>
@@ -150,7 +152,7 @@ function About() {
                             </div>
                         </div>
                     </Link>
-                    <Link to={"/Reward"}>
+                    <Link className='text-decoration-none' to={"/Reward"}>
                         <div className="rewards-content">
                             <div className="content">
                                 <p>Reward <br /> Menu</p>
@@ -164,7 +166,7 @@ function About() {
                             </div>
                         </div>
                     </Link>
-                    <Link to={"/Membership"}>
+                    <Link className='text-decoration-none' to={"/Membership"}>
                         <div className="rewards-content">
                             <div className="content">
                                 <p>Membership Package</p>
@@ -179,7 +181,7 @@ function About() {
                         </div>
                     </Link>
                 </div>
-                <Link to={"/Giftcard"}>
+                <Link className='text-decoration-none' to={"/Giftcard"}>
                     <div className="gift-container">
                         <div className="gift-content">
                             <img src="https://i.imgur.com/ZoluTbe.png" alt="" />
