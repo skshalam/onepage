@@ -123,7 +123,12 @@ function About() {
                             <p>Credit Balance:</p>
                             <div className="balance">
                                 <img src="" alt="" />
-                                <span>{data_home.cards.current_points}</span>
+                                <span>
+                                    {
+                                        loading?<div className="cust-skeleton-loader header-img"></div>
+                                    :data_home.cards.current_points
+                                    }
+                                </span>
                             </div>
                         </div>
                         <div className="content">
