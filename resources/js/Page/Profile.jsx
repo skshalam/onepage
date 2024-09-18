@@ -101,7 +101,7 @@ function Profile() {
           <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
             <Col span={3}>
               <div className="text-center">
-                <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
+                <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726655651/Frame_277132298_m6wxf0.svg" alt="" />
               </div>
             </Col>
             <Col span={21}>
@@ -139,7 +139,7 @@ function Profile() {
       </div>
       <div className="powered-ewards z-3 position-relative text-light">
         <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
-          <span>e<span className="ewards-color-set text-light">W</span>ards</span></a></p>
+          <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
       </div>
       {/* Modal */}
       <Modal
