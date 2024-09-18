@@ -191,7 +191,7 @@ function About() {
                     </Link>
                 </div>
                 <Link className='text-decoration-none' to={"/Giftcard"}>
-                    <div className="gift-container m-3 d-flex align-items-center justify-content-center text-light rounded-3">
+                    <div className="gift-container overflow-hidden position-relative m-3 d-flex align-items-center justify-content-center text-light rounded-3">
                         <div className="gift-content d-flex align-items-center gap-2">
                             <img src="https://i.imgur.com/ZoluTbe.png" alt="" />
                             <span className='text-uppercase'>Gift Card</span>
@@ -200,6 +200,7 @@ function About() {
                                 <path fillRule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
                             </svg>
                         </div>
+                        <img className='position-absolute' src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726655119/wv60wfj43xim17pv52j_kzmkbo.svg" alt="" />
                     </div>
                 </Link>
                 <div className="powered-ewards">
