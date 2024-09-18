@@ -377,6 +377,7 @@ body {
     padding: 9px;
     display: flex;
     justify-content: space-between;
+    gap: 3px;
 }
 
 .gift-container {
