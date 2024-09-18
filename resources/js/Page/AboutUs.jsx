@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -58,6 +58,7 @@ function AboutUs() {
         })
             .then(response => {
                 setData_home(response.data.data);
+                setLoading(false)
             })
             .catch(error => {
                 setError(error);
@@ -89,31 +90,45 @@ function AboutUs() {
                 <div className={`body-header ${data_home.display_brand_logo_name === 1 ? (data_home.brand_logo_alignment === 1 ? 'logo-left' : 'logo-center') : ''}`}>
                     <div className='head-logo'>
                         <div className={`headlogo-img ${data_home.display_brand_logo_name === 1 ? 'ratio-3' : 'ratio-1'}`}>
-                            <img src={data_home.homebrandlogo} alt="" />
+                            <Link to={"/about"}>
+                                {
+                                    loading
+                                        ? <div className="cust-skeleton-loader header-img"></div>
+                                        : <img src={data_home.homebrandlogo} alt="" />
+                                }
+                            </Link>
                         </div>
                         {data_home.display_brand_logo_name === 2 && (
                             <div className="headlogo-cont">
-                                <h4>{data_home.merchant_name}</h4>
+                                <Link to={"/"} className='text-decoration-none'>
+                                    <h4>{data_home.merchant_name}</h4>
+                                </Link>
                             </div>
                         )}
                     </div>
                     <div className="head-profile">
-                        <i className='bi bi-person-fill fs-5'></i>
+                        <Link to={"/Profile"}>
+                            <i className='bi bi-person-fill fs-5'></i>
+                        </Link>
                     </div>
                 </div>
-                {data_home.banners?.banner_image?.length > 0 && (
-                    <div className='banner-part-main'>
-                        <div className='banner-part'>
-                            <Slider {...settings}>
-                                {data_home.banners.banner_image.map((banner, index) => (
-                                    <div key={index}>
-                                        <img src={banner} alt={`Banner ${index + 1}`} />
-                                    </div>
-                                ))}
-                            </Slider>
+                {data_home.banners?.banner_image?.length > 0
+
+                    ? (
+                        <div className='banner-part-main'>
+                            <div className='banner-part'>
+                                <Slider {...settings}>
+                                    {data_home.banners.banner_image.map((banner, index) => (
+                                        <div key={index}>
+                                            <img src={banner} alt={`Banner ${index + 1}`} />
+                                        </div>
+                                    ))}
+                                </Slider>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )
+                    : <div className="cust-skeleton-loader banner-skl"></div>
+                }
                 <p className='fw-bold fs-4 cust_text_primary text-center'>ABOUT US</p>
                 <div className="about_desc_content py-2 mb-4">
                     <p className='mx-5 text-center'>
@@ -165,19 +180,23 @@ function AboutUs() {
                     </Slider>
                 </div>
                 <p className='fw-bold fs-4 cust_text_primary text-center mb-0'>OUR MENU | GALLERY</p>
-                {data_home.banners?.banner_image?.length > 0 && (
-                    <div className='banner-part-main'>
-                        <div className='banner-part'>
-                            <Slider {...settings}>
-                                {data_home.banners.banner_image.map((banner, index) => (
-                                    <div key={index}>
-                                        <img src={banner} alt={`Banner ${index + 1}`} />
-                                    </div>
-                                ))}
-                            </Slider>
+                {data_home.banners?.banner_image?.length > 0
+
+                    ? (
+                        <div className='banner-part-main'>
+                            <div className='banner-part'>
+                                <Slider {...settings}>
+                                    {data_home.banners.banner_image.map((banner, index) => (
+                                        <div key={index}>
+                                            <img src={banner} alt={`Banner ${index + 1}`} />
+                                        </div>
+                                    ))}
+                                </Slider>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )
+                    : <div className="cust-skeleton-loader banner-skl"></div>
+                }
                 <div className="powered-ewards">
                     <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
                         <span>e<span className="ewards-color-set">W</span>ards</span></a></p>

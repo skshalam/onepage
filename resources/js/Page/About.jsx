@@ -58,6 +58,7 @@ function About() {
         })
             .then(response => {
                 setData_home(response.data.data);
+                setLoading(false);
             })
             .catch(error => {
                 setError(error);
@@ -80,7 +81,11 @@ function About() {
                 <div className={`body-header ${data_home.display_brand_logo_name === 1 ? (data_home.brand_logo_alignment === 1 ? 'logo-left' : 'logo-center') : ''}`}>
                     <div className='head-logo'>
                         <div className={`headlogo-img ${data_home.display_brand_logo_name === 1 ? 'ratio-3' : 'ratio-1'}`}>
-                            <img src={data_home.homebrandlogo} alt="" />
+                            {
+                                loading
+                                ? <div className="cust-skeleton-loader header-img"></div>
+                                :<img src={data_home.homebrandlogo} alt="" />
+                            }
                         </div>
                         {data_home.display_brand_logo_name === 2 && (
                             <div className="headlogo-cont">
@@ -94,7 +99,9 @@ function About() {
                         </Link>
                     </div>
                 </div>
-                {data_home.banners?.banner_image?.length > 0 && (
+                {data_home.banners?.banner_image?.length > 0 
+                
+                ? (
                     <div className='banner-part-main'>
                         <div className='banner-part'>
                             <Slider {...settings}>
@@ -106,7 +113,9 @@ function About() {
                             </Slider>
                         </div>
                     </div>
-                )}
+                )
+                :<div className="cust-skeleton-loader banner-skl"></div>
+            }
                 <div className={`wallet-container gap-2 m-3 ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
                     <Link className='text-decoration-none' to={"/Creditwallet"}>
                     <div className="wallet-content">

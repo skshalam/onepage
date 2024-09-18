@@ -1,4 +1,4 @@
-import { Avatar, Divider, Modal } from 'antd'
+import { Avatar, Col, Divider, Modal, Row } from 'antd'
 import React, { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -21,83 +21,125 @@ function Profile() {
           </div>
         </div>
       </div>
-      <div className="my-4 text-center z-3">
+      <div className="my-5 text-center z-3">
         <Avatar className='z-3 bg-light' size={80} icon={<i class="bi bi-person-fill text-dark" />} />
       </div>
       <div className="mx-4 p-4 profile-navigation-container z-3 position-relative rounded-4">
         <Link to={"/Myaccount"} className='cust_text_primary text-decoration-none'>
-          <div className="navigaiton-container d-flex justify-content-between p-3">
-            <div className="d-flex gap-2">
-              <img className='' src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/tpakyx8irfmmosxuxma9.svg" alt="" />
-              <p className='mb-0'>My Account</p>
-            </div>
-            <div className="">
-              <i className='bi bi-chevron-right' />
-            </div>
-          </div>
+          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+            <Col span={3}>
+              <div className="text-center">
+                <img className='' src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/tpakyx8irfmmosxuxma9.svg" alt="" />
+              </div>
+            </Col>
+            <Col span={21}>
+              <div className="d-flex justify-content-between align-items-center">
+                <span className='cust_text_primary fw-semibold'>My Account</span>
+                <span>
+                  <i className='bi bi-chevron-right fs-5' />
+                </span>
+              </div>
+            </Col>
+          </Row>
         </Link>
-        <Divider className='m-0' />
-        <div className="navigaiton-container d-flex justify-content-between p-3">
-          <div className="d-flex gap-2">
-            <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/zvdgbkljkuhvcaqdmxo6.svg" alt="" />
-            <p className='mb-0'>About Us</p>
-          </div>
-          <div className="">
-            <i className='bi bi-chevron-right' />
-          </div>
-        </div>
+        <Link to={"/Aboutus"} className='cust_text_primary text-decoration-none'>
+          <Divider className='m-0' />
+          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+            <Col span={3}>
+              <div className="text-center">
+                <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/zvdgbkljkuhvcaqdmxo6.svg" alt="" />
+              </div>
+            </Col>
+            <Col span={21}>
+              <div className="d-flex justify-content-between align-items-center">
+                <span className='cust_text_primary fw-semibold'>About Us</span>
+                <span>
+                  <i className='bi bi-chevron-right fs-5' />
+                </span>
+              </div>
+            </Col>
+          </Row>
+        </Link>
         <Link to={"/Referal"} className='cust_text_primary text-decoration-none'>
           <Divider className='m-0' />
-          <div className="navigaiton-container d-flex justify-content-between p-3">
-            <div className="d-flex gap-2">
-              <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/t0avoukmt5fscuolt8w9.svg" alt="" />
-              <p className='mb-0'>Refer & Earn</p>
-            </div>
-            <div className="">
-              <i className='bi bi-chevron-right' />
-            </div>
-          </div>
+          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+            <Col span={3}>
+              <div className="text-center">
+                <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/t0avoukmt5fscuolt8w9.svg" alt="" />
+              </div>
+            </Col>
+            <Col span={21}>
+              <div className="d-flex justify-content-between align-items-center">
+                <span className='cust_text_primary fw-semibold'>Refer & Earn</span>
+                <span>
+                  <i className='bi bi-chevron-right fs-5' />
+                </span>
+              </div>
+            </Col>
+          </Row>
         </Link>
         <Link to={"/Contact"} className='cust_text_primary text-decoration-none'>
           <Divider className='m-0' />
-          <div className="navigaiton-container d-flex justify-content-between p-3">
-            <div className="d-flex gap-2">
-              <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
-              <p className='mb-0'>Contact Us</p>
-            </div>
-            <div className="">
-              <i className='bi bi-chevron-right' />
-            </div>
-          </div>
+          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+            <Col span={3}>
+              <div className="text-center">
+                <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
+              </div>
+            </Col>
+            <Col span={21}>
+              <div className="d-flex justify-content-between align-items-center">
+                <span className='cust_text_primary fw-semibold'>Contact Us</span>
+                <span>
+                  <i className='bi bi-chevron-right fs-5' />
+                </span>
+              </div>
+            </Col>
+          </Row>
         </Link>
-        <Divider className='m-0' />
         <Link to={"/T&c"} className='cust_text_primary text-decoration-none'>
-          <div className="navigaiton-container d-flex justify-content-between p-3">
-            <div className="d-flex gap-2">
-              <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
-              <p className='mb-0'>Terms & Conditions</p>
-            </div>
-            <div className="">
-              <i className='bi bi-chevron-right' />
-            </div>
-          </div>
+          <Divider className='m-0' />
+          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+            <Col span={3}>
+              <div className="text-center">
+                <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
+              </div>
+            </Col>
+            <Col span={21}>
+              <div className="d-flex justify-content-between align-items-center">
+                <span className='cust_text_primary fw-semibold'>Terms And Conditions</span>
+                <span>
+                  <i className='bi bi-chevron-right fs-5' />
+                </span>
+              </div>
+            </Col>
+          </Row>
         </Link>
         <Divider className='m-0' />
-        <div className="navigaiton-container d-flex justify-content-between p-3" onClick={() => setDeleteModal(true)}>
-          <div className="d-flex gap-2">
-            <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/n4iyfs8cuetah8i9rryu.svg" alt="" />
-            <p className='mb-0'>Log Out</p>
-          </div>
-          <div className="">
-            <i className='bi bi-chevron-right' />
-          </div>
-        </div>
+        <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"} onClick={() => setDeleteModal(true)}>
+          <Col span={3}>
+            <div className="text-center">
+              <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/n4iyfs8cuetah8i9rryu.svg" alt="" />
+            </div>
+          </Col>
+          <Col span={21}>
+            <div className="d-flex justify-content-between align-items-center">
+              <span className='cust_text_primary fw-semibold'>Logout</span>
+              <span>
+                <i className='bi bi-chevron-right fs-5' />
+              </span>
+            </div>
+          </Col>
+        </Row>
       </div>
       <div className="bg-layer-1 position-absolute bottom-0 z-2">
 
       </div>
       <div className="bg-layer-2 position-absolute bottom-0 z-2 overflow-hidden">
         <img width={"100%"} src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726483722/Group_1286_izipw4.png" alt="" />
+      </div>
+      <div className="powered-ewards z-3 position-relative text-light">
+        <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
+          <span>e<span className="ewards-color-set text-light">W</span>ards</span></a></p>
       </div>
       {/* Modal */}
       <Modal
