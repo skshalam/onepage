@@ -56,7 +56,7 @@ function MemberShipPackage() {
                 </div>
             </div>
             <div className={`inner-container`}>
-            {membershipsDesc.length > 0 ? (
+            {membershipsDesc?.length > 0 ? (
                 membershipsDesc.map((member, index) => (
                     <div className="membership position-relative p-1">
                         <div className="membership-inner">
