@@ -38,6 +38,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/infodata', [\App\Http\Controllers\HomeController::class, 'infodata']);
     Route::POST('/editinfo', [\App\Http\Controllers\HomeController::class, 'editinfo']);
     Route::get('/getDataCounts', [\App\Http\Controllers\HomeController::class, 'getDataCounts']);
+    Route::get('/getTotalCreditBalance', [\App\Http\Controllers\HomeController::class, 'getTotalCreditBalance']);
 });
 
 

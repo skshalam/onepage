@@ -31,6 +31,7 @@ use App\Models\Ebooklets;
 use App\Models\Booklets;
 use App\Models\BookletContent;
 use App\Models\TokenRedeem;
+use App\Models\RedeemPoints;
 use App\Models\WalletRedeem;
 use DB;
 use Auth;
@@ -88,6 +89,25 @@ class HomeController extends Controller
         ]);
         
     }
+
+    public function getTotalCreditBalance(){
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+
+        $total_bal = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->get('current_points');
+        // $total_bal = $total_bal->current_points;
+        
+        // dd($total_bal);
+
+        return response()->json([
+            'error' => false,
+            'message' => 'total_bal',
+            'total_bal' => $total_bal,
+        ]); 
+    }
+
     public function creditbalance(Request $request)
     {
         // $merchant_id= 15657;
@@ -96,19 +116,19 @@ class HomeController extends Controller
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-        $balance =Cards::select('cards.current_points','user_points.valid_till','user_points.original_points','user_points.original_bill_date','user_points.bill_amount','user_points.transaction_id','user_points.M_account','user_points.bill_no as invoice_no','user_points.custom_ewallet_marker','user_points.ebooklet_report_id','user_points.usefor','user_points.pos_billing_dump_new_id','user_points.feedback_id')
-        ->leftJoin('users', 'cards.user_id', '=', 'users.id')
-        ->leftJoin('user_points', function ($join) {
-            $join->on('cards.user_id', '=', 'user_points.user_id')
-                 ->on('cards.merchant_id', '=', 'user_points.merchant_id');
-        })
-        ->where('cards.merchant_id', $merchant_id)
-        ->where('cards.user_id', $user_id);
-
+        $balance =UserPoints::select('user_points.valid_till','user_points.original_points','user_points.original_bill_date','user_points.bill_amount','user_points.transaction_id','user_points.M_account','user_points.bill_no as invoice_no','user_points.custom_ewallet_marker','user_points.ebooklet_report_id','user_points.usefor','user_points.pos_billing_dump_new_id','user_points.feedback_id')
+        ->where('user_points.merchant_id', $merchant_id)
+        ->where('user_points.user_id', $user_id);
+        // ->leftJoin('redeem_points', function ($join) {
+        //     $join->on('user_points.user_id', '=', 'redeem_points.user_id')
+        //          ->on('user_points.merchant_id', '=', 'redeem_points.merchant_id');
+        // });
         if(!empty($request->to_date) && !empty($request->from_date)){
             $balance = $balance->whereBetween('user_points.original_bill_date', [$request->to_date, $request->from_date]);
         }
-        $balance = $balance->get();
+        $balance = $balance->limit(10)->get();
+        $redeem_data = RedeemPoints::select('bill_no')->where('user_id', $user_id)->where('merchant_id', $merchant_id)->get();
+        dd($redeem_data);
         $currentDate = date('Y-m-d');
         $balance = $balance->map(function ($item) use ($currentDate) {
             $item['is_expired'] = $currentDate > $item->valid_till;
@@ -125,28 +145,42 @@ class HomeController extends Controller
                 $item['formatted_time'] = '';
             }
 
-            // dd($item->ebooklet_report_id);
-            if ($item->custom_ewallet_marker == 1 &&  $item->ebooklet_report_id == 0) {
+            if ($item->custom_ewallet_marker == 1 && (empty($item->ebooklet_report_id) || $item->ebooklet_report_id == 0)) {
                 $item['name'] = 'eWallet Credits';
-            } elseif (empty($item->usefor) && $item->usefor == 0 && $item->pos_billing_dump_new_id == 0) {
+            } elseif (!empty($item->usefor) && $item->usefor != 0 && $item->pos_billing_dump_new_id == 0) {
                 $item['name'] = 'Loyalty Credits';
             } elseif (!empty($item->feedback_id) && $item->feedback_id != 0) {
                 $item['name'] = 'Feedback Credits';
             } elseif (!empty($item->pos_billing_dump_new_id) && $item->pos_billing_dump_new_id != 0) {
                 $item['name'] = 'Bonus Credits';
             }
-             else {
-                $item['name'] = 'Unknown Credits'; 
-            }
-
             return $item;
         });
+        if (!empty($request->credit_type)) {
+            $creditType = intval($request->credit_type);
+            $balance = $balance->filter(function ($item) use ($creditType) {
+                switch ($creditType) {
+                    case 1:
+                        return $item['name'] == 'eWallet Credits';
+                    case 2:
+                        return $item['name'] == 'Loyalty Credits';
+                    case 3:
+                        return $item['name'] == 'Bonus Credits';
+                    case 4:
+                        return $item['name'] == 'Feedback Credits';
+                    default:
+                        return true;
+                }
+            });
+        }
         if(!empty($request->is_expired)){
             $isExpiredFilter = filter_var($request->input('is_expired'), FILTER_VALIDATE_BOOLEAN);
             $balance = $balance->filter(function ($item) use ($isExpiredFilter) {
                 return $item['is_expired'] === $isExpiredFilter;
             });
         }
+        // echo"<pre>";
+        // print_r($balance); exit;
         return response()->json([
             'error' => false,
             'message' => 'Balance',
