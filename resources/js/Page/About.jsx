@@ -107,7 +107,7 @@ function About() {
                         </div>
                     </div>
                 )}
-                <div className={`wallet-container ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
+                <div className={`wallet-container gap-2 m-3 ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
                     <Link className='text-decoration-none' to={"/Creditwallet"}>
                     <div className="wallet-content">
                         <div className="content">
@@ -137,7 +137,7 @@ function About() {
                     </div>
                     </Link>
                 </div>
-                <div className="rewards-container">
+                <div className="rewards-container gap-2 m-3">
                     <Link className='text-decoration-none' to={"/Coupon"}>
                         <div className="rewards-content">
                             <div className="content">
@@ -182,8 +182,8 @@ function About() {
                     </Link>
                 </div>
                 <Link className='text-decoration-none' to={"/Giftcard"}>
-                    <div className="gift-container">
-                        <div className="gift-content">
+                    <div className="gift-container m-3 d-flex align-items-center justify-content-center text-light rounded-3">
+                        <div className="gift-content d-flex align-items-center gap-2">
                             <img src="https://i.imgur.com/ZoluTbe.png" alt="" />
                             <span className='text-uppercase'>Gift Card</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-up-right" viewBox="0 0 16 16">

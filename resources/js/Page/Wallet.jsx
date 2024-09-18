@@ -1,10 +1,17 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { DatePicker } from 'antd';
+import { Checkbox, Col, DatePicker, Drawer, Form, Row, Tabs } from 'antd';
 
 function Wallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
     const [openFilter2, setOpenFilter2] = useState(false);
+    const items = [
+        {
+            key: '1',
+            label: 'Type',
+            children: <FilterByType />,
+        },
+    ];
     return (
         <div className='body-container position-relative overflow-hidden'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -58,7 +65,7 @@ function Wallet() {
                 </div>
             </div>
             {/* Filter By Date Modal */}
-            <div className={`filter-by-date-modal position-absolute h-100 top-0 w-100 ${openFilter1 && "show"}`}>
+            {/* <div className={`filter-by-date-modal position-absolute h-100 top-0 w-100 ${openFilter1 && "show"}`}>
                 <div className={`filter-cancel-container position-absolute border h-100 w-100 ${openFilter1 && "show"}`} onClick={() => setOpenFilter1(false)}></div>
                 <div className="position-absolute filter-by-container overflow-hidden shadow rounded-3">
                     <div className="filter-by-date-header border-bottom">
@@ -77,9 +84,9 @@ function Wallet() {
                         <button className='border-0 p-2'>Apply</button>
                     </div>
                 </div>
-            </div>
+            </div> */}
             {/* Filter By Type Modal */}
-            <div className={`filter-by-type-modal position-absolute h-100 top-0 w-100 ${openFilter2 && "show"}`}>
+            {/* <div className={`filter-by-type-modal position-absolute h-100 top-0 w-100 ${openFilter2 && "show"}`}>
                 <div className={`filter-cancel-container position-absolute border h-100 w-100 ${openFilter2 && "show"}`} onClick={() => setOpenFilter2(false)}></div>
                 <div className="position-absolute filter-by-container overflow-hidden shadow rounded-3">
                     <div className="filter-by-date-header border-bottom">
@@ -104,9 +111,113 @@ function Wallet() {
                         <button className='border-0 p-2'>Apply</button>
                     </div>
                 </div>
-            </div>
+            </div> */}
+
+            <Drawer
+                rootClassName='filter-drawer'
+                open={openFilter1}
+                onClose={() => setOpenFilter1(false)}
+                getContainer={false}
+                closable={false}
+                styles={{
+                    body: {
+                        padding: 0,
+                    }
+                }}
+            >
+                <div className="border-bottom py-2 px-4">
+                    <span className='fw-semibold'>Filter By Date</span>
+                </div>
+                <div className="p-3 d-flex flex-column gap-3">
+                    <Row className=''>
+                        <Col span={7}>
+                            <div className="">
+                                To:
+                            </div>
+                        </Col>
+                        <Col span={17}>
+                            <div className="">
+                                <DatePicker className='filter-date-input' />
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row className=''>
+                        <Col span={7}>
+                            <div className="">
+                                From:
+                            </div>
+                        </Col>
+                        <Col span={17}>
+                            <div className="">
+                                <DatePicker className='filter-date-input' />
+                            </div>
+                        </Col>
+                    </Row>
+                </div>
+                <div className="filter-actions">
+                    <button className='border-0 p-2'>Clear</button>
+                    <button className='border-0 p-2'>Apply</button>
+                </div>
+            </Drawer>
+            <Drawer
+                rootClassName='filter-drawer'
+                open={openFilter2}
+                onClose={() => setOpenFilter2(false)}
+                getContainer={false}
+                closable={false}
+                styles={{
+                    body: {
+                        padding: 0,
+                    }
+                }}
+            >
+                <div className="border-bottom py-2 px-4">
+                    <span className='fw-semibold'>Filter By Type</span>
+                </div>
+                <FilterByType />
+                <div className="filter-actions">
+                    <button className='border-0 p-2'>Clear</button>
+                    <button className='border-0 p-2'>Apply</button>
+                </div>
+            </Drawer>
         </div>
     )
 }
 
 export default Wallet
+
+const FilterByType = () => {
+    const [form] = Form.useForm();
+    const options = [
+        {
+            label: 'Earned',
+            value: 'earned',
+        },
+        {
+            label: 'Redeemed',
+            value: 'redeemed',
+        },
+        {
+            label: 'Expired',
+            value: 'expired',
+        },
+    ];
+    return (
+        <Form
+            form={form}
+            layout='vertical'
+            className=''
+        >
+            <Form.Item name={'earned'} className='my-3'>
+                <Row gutter={[0, 10]} justify={'center'}>
+                    <Col span={15} className=''>
+                        <div className="">
+                            <Checkbox.Group options={options}
+                                rootClassName='filter-by-type-checkbox' />
+                        </div>
+                    </Col>
+                </Row>
+            </Form.Item>
+        </Form>
+    )
+}

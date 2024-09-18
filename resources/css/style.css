@@ -333,8 +333,6 @@ body {
 
 .wallet-container {
     display: grid;
-    padding: 10px 20px;
-    gap: 10px;
     grid-template-columns: repeat(2, 1fr);
 
     &.wallet-banner {
@@ -353,7 +351,7 @@ body {
     border-radius: 7px;
     background: #0B0B59;
     color: #ffffff;
-    padding: 10px;
+    padding: 12px;
     display: flex;
     justify-content: space-between;
 }
@@ -368,8 +366,6 @@ body {
 
 .rewards-container {
     display: grid;
-    padding: 10px 20px;
-    gap: 10px;
     grid-template-columns: repeat(3, 1fr);
 }
 
@@ -378,27 +374,14 @@ body {
     border-radius: 7px;
     background: #0B0B59;
     color: #ffffff;
-    padding: 8px;
+    padding: 9px;
     display: flex;
     justify-content: space-between;
 }
 
 .gift-container {
     height: 100px;
-    border-radius: 7px;
     background: #0B0B59;
-    color: #ffffff;
-    padding: 8px;
-    margin: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.gift-content {
-    display: flex;
-    gap: 5px;
-    align-items: center;
 }
 
 .gift-content img {
@@ -408,7 +391,6 @@ body {
 .content {
     display: flex;
     flex-direction: column;
-
 }
 
 .content .balance {
@@ -1174,90 +1156,12 @@ body {
     ;
 }
 
-.filter-by-date-modal {
-    transform: translateX(100%);
-    transition: all 0.4s ease-in-out;
-}
-
-.filter-by-container {
-    top: 25%;
-    right: 10px;
-    width: 200px;
-    background-color: #ffffff;
-}
-
-.filter-by-date-header {
-    color: #312E37;
-    font-weight: 600;
-    font-size: 13px;
-    padding: 10px 10px;
-}
-
-.filter-by-date-select-container input {
-    width: 115px;
-}
-
-.filter-by-select-container input {
-    height: 25px;
-}
-
-.filter-by-date-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    box-shadow: 0px -8px 10px -5px rgba(0, 0, 0, 0.1);
-
-    button {
-        background: #fff;
-    }
-}
-
-.filter-by-date-actions button:nth-child(2) {
-    background-color: #0B0B59;
-    color: #fff;
-}
-
-.filter-by-date-modal.show {
-    transform: translateX(0%);
-}
-
-.filter-cancel-container {
-    background: #00000028;
-    opacity: 0;
-    transition: all 0.3s ease-in-out;
-}
-
-.filter-cancel-container.show {
-    opacity: 1;
-}
-
-.filter-by-type-modal {
-    transform: translateX(100%);
-    transition: all 0.4s ease-in-out;
-}
-
-.filter-by-type-modal.show {
-    transform: translateX(0%);
-}
-
 .credit-filter-tab {
     cursor: pointer;
 }
 
 .credit-filter-tab.active {
     border-bottom: 2px solid #0b0b59;
-}
-
-.filter-date-input {
-    border: 1px solid #0B0B59;
-    padding: 0px 0px 0px 5px;
-    overflow: hidden;
-    border-radius: 4px;
-}
-
-.filter-date-input .ant-picker-input .ant-picker-suffix {
-    padding: 7px;
-    background-color: #EBECF7;
-    color: #0b0b59;
 }
 
 .profile-navigation-container {
@@ -1535,10 +1439,11 @@ body {
     }
 }
 
-.cust-css-ant-button{
+.cust-css-ant-button {
     background: #0b0b59 !important;
 }
-.cust-css-ant-button:hover{
+
+.cust-css-ant-button:hover {
     background: #0b0b59 !important;
     border: none;
     outline: none;
@@ -1574,4 +1479,67 @@ body {
 
 .slick-slide button img {
     height: 10px;
+}
+
+/* Antd Drawer custom css */
+
+.filter-drawer {
+    .ant-drawer-content-wrapper {
+        position: absolute;
+        height: max-content !important;
+        width: 190px !important;
+        right: 40px;
+        top: 23%;
+        border-radius: 10px;
+
+        .ant-drawer-content {
+            border-radius: 10px;
+        }
+    }
+
+    span {
+        font-size: 12px;
+    }
+}
+
+.filter-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    box-shadow: 0px -8px 10px -5px rgba(0, 0, 0, 0.1);
+
+    button {
+        background: #fff;
+    }
+}
+
+.filter-actions button:nth-child(2) {
+    background-color: #0B0B59;
+    color: #fff;
+}
+
+.filter-by-type-nav{
+    .ant-tabs-nav{
+        padding: 0px 20px;
+        margin-bottom: 0;
+    }
+}
+
+.filter-by-type-checkbox{
+    gap: 7px;
+}
+
+/* Antd Drawer custom css*/
+
+/* Antd datepicker css */
+.filter-date-input {
+    border: 1px solid #0B0B59;
+    padding: 0px 0px 0px 5px;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.filter-date-input .ant-picker-input .ant-picker-suffix {
+    padding: 7px;
+    background-color: #EBECF7;
+    color: #0b0b59;
 }
