@@ -155,13 +155,12 @@ function ActiveCoupons({ data, loading }) {
                                         <Skeleton style={{ height: "15px", width: "100%" }} />
                                     </div>
                                     <div className="coupon-limit">
-                                        <span>Uses:
+                                        <span>
                                             <Skeleton className='ms-2' style={{ height: "10px", width: "50px" }} />
                                         </span>
                                     </div>
                                     <div className="coupon-action">
                                         <div className="coupon-code">
-                                            CODE:
                                             <Skeleton className='ms-2' style={{ height: "10px", width: "55px" }} />
                                         </div>
                                         <div className="view-coupon">
@@ -297,7 +296,7 @@ function HoldOnCoupons({ data, loading }) {
 
                                     </div>
                                     <div className="coupon-limit">
-                                        <span>Uses:
+                                        <span>
 
                                             <Skeleton className='ms-2' style={{ height: "10px", width: "50px" }} />
 
@@ -305,7 +304,6 @@ function HoldOnCoupons({ data, loading }) {
                                     </div>
                                     <div className="coupon-action">
                                         <div className="coupon-code">
-                                            CODE:
 
                                             <Skeleton className='ms-2' style={{ height: "10px", width: "55px" }} />
 

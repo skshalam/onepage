@@ -93,7 +93,6 @@ function Reward() {
                                         <div className="reward-name">
                                             <Skeleton className='' style={{ height: "15px", width: "150px" }} />
                                             <div className="reward-valid">
-                                                validity
                                                 <Skeleton className='ms-2' style={{ height: "15px", width: "150px" }} />
                                             </div>
                                         </div>

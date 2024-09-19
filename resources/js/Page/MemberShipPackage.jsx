@@ -75,7 +75,7 @@ function MemberShipPackage() {
                                                 <Skeleton className='' style={{ height: "15px", width: "150px" }} />
                                             </div>
                                             <div className="membership-validity">
-                                                valid till <Skeleton className='ms-2' style={{ height: "15px", width: "90px" }} />
+                                                <Skeleton className='ms-2' style={{ height: "15px", width: "90px" }} />
                                             </div>
                                             <div className="membership-price">
                                                 <Skeleton className='' style={{ height: "15px", width: "60px" }} />
