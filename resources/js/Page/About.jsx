@@ -118,107 +118,106 @@ function About() {
                     )
                     : <div className="cust-skeleton-loader banner-skl"></div>
                 }
-                <div className={`wallet-container gap-2 m-3 ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
-                    <Link className='text-decoration-none' to={"/Creditwallet"}>
-                        <div className="wallet-content">
-                            <div className="content">
-                                <p>Credit Balance:</p>
-                                {loading ?
-                                    <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
-                                        <Skeleton />
-                                    </SkeletonTheme>
-                                    : <div className="balance">
-                                        <img src="" alt="" />
-                                        <span>
-                                            {data_home.cards.current_points}
-                                        </span>
-                                    </div>}
-                            </div>
-                            <div className="content">
-                                <i className="bi bi-chevron-right"></i>
-                            </div>
-                        </div>
-                    </Link>
-                    <Link className='text-decoration-none' to={"/Wallet"}>
-                        <div className="wallet-content">
-                            <div className="content">
-                                <p>Wallet's Balance:</p>
-                                {
-                                    loading ?
-                                        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
-                                            <Skeleton />
-                                        </SkeletonTheme>
-                                        : <div className="balance">
-                                            <img src="" alt="" />
-                                            <span>{data_home.cards.current_wallet_balance}</span>
-                                        </div>}
-                            </div>
-                            <div className="content">
-                                <i className="bi bi-chevron-right"></i>
-                            </div>
-                        </div>
-                    </Link>
-                </div>
-                <div className="rewards-container gap-2 m-3">
-                    <Link className='text-decoration-none' to={"/Coupon"}>
-                        <div className="rewards-content">
-                            <div className="content">
-                                <p>Coupon <br /> Cart</p>
-                                {
-                                    loading ?
-                                        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
-                                            <Skeleton />
-                                        </SkeletonTheme>
-                                        : <div className="balance">
-                                            <img src="" alt="" />
-                                            <span>{data_getcoupons.active_coupon_count}</span>
+                <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+                    <div className={`wallet-container gap-2 m-3 ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
+
+                        {loading
+                            ? <>
+                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                            </>
+                            : <>
+                                <Link className='text-decoration-none' to={"/Creditwallet"}>
+                                    <div className="wallet-content">
+                                        <div className="content">
+                                            <p>Credit Balance:</p>
+                                            <div className="balance">
+                                                <img src="" alt="" />
+                                                <span>
+                                                    {data_home.cards.current_points}
+                                                </span>
+                                            </div>
                                         </div>
-                                }
-                            </div>
-                            <div className="content">
-                                <i className="bi bi-chevron-right"></i>
-                            </div>
-                        </div>
-                    </Link>
-                    <Link className='text-decoration-none' to={"/Reward"}>
-                        <div className="rewards-content">
-                            <div className="content">
-                                <p>Reward <br /> Menu</p>
-                                {loading ?
-                                        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
-                                            <Skeleton />
-                                        </SkeletonTheme>
-                                        :
-                                    <div className="balance">
-                                    <img src="" alt="" />
-                                    <span>{data_getcoupons.active_rewards_count}</span>
-                                </div>}
-                            </div>
-                            <div className="content">
-                                <i className="bi bi-chevron-right"></i>
-                            </div>
-                        </div>
-                    </Link>
-                    <Link className='text-decoration-none' to={"/Membership"}>
-                        <div className="rewards-content">
-                            <div className="content">
-                                <p>Membership Package</p>
-                                {loading ?
-                                        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
-                                            <Skeleton />
-                                        </SkeletonTheme>
-                                        :
-                                    <div className="balance">
-                                    <img src="" alt="" />
-                                    <span>{data_getcoupons.active_membership_count}</span>
-                                </div>}
-                            </div>
-                            <div className="content">
-                                <i className="bi bi-chevron-right"></i>
-                            </div>
-                        </div>
-                    </Link>
-                </div>
+                                        <div className="content">
+                                            <i className="bi bi-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </Link>
+
+
+                                <Link className='text-decoration-none' to={"/Wallet"}>
+                                    <div className="wallet-content">
+                                        <div className="content">
+                                            <p>Wallet's Balance:</p>
+                                            <div className="balance">
+                                                <img src="" alt="" />
+                                                <span>{data_home.cards.current_wallet_balance}</span>
+                                            </div>
+                                        </div>
+                                        <div className="content">
+                                            <i className="bi bi-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </>
+                        }
+                    </div>
+                    <div className="rewards-container gap-2 m-3">
+                        {loading
+                            ? <>
+                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                            </>
+                            : <>
+                                <Link className='text-decoration-none' to={"/Coupon"}>
+                                    <div className="rewards-content">
+                                        <div className="content">
+                                            <p>Coupon <br /> Cart</p>
+                                            <div className="balance">
+                                                <img src="" alt="" />
+                                                <span>{data_getcoupons.active_coupon_count}</span>
+                                            </div>
+
+                                        </div>
+                                        <div className="content">
+                                            <i className="bi bi-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </Link>
+                                <Link className='text-decoration-none' to={"/Reward"}>
+                                    <div className="rewards-content">
+                                        <div className="content">
+                                            <p>Reward <br /> Menu</p>
+
+                                            <div className="balance">
+                                                <img src="" alt="" />
+                                                <span>{data_getcoupons.active_rewards_count}</span>
+                                            </div>
+                                        </div>
+                                        <div className="content">
+                                            <i className="bi bi-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </Link>
+                                <Link className='text-decoration-none' to={"/Membership"}>
+                                    <div className="rewards-content">
+                                        <div className="content">
+                                            <p>Membership Package</p>
+
+                                            <div className="balance">
+                                                <img src="" alt="" />
+                                                <span>{data_getcoupons.active_membership_count}</span>
+                                            </div>
+                                        </div>
+                                        <div className="content">
+                                            <i className="bi bi-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </>}
+                    </div>
+                </SkeletonTheme>
                 <Link className='text-decoration-none' to={"/Giftcard"}>
                     <div className="gift-container overflow-hidden position-relative m-3 d-flex align-items-center justify-content-center text-light rounded-3">
                         <div className="gift-content d-flex align-items-center gap-2">

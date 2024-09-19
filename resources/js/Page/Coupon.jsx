@@ -136,7 +136,6 @@ function ActiveCoupons({ data, loading }) {
             console.log('No token available, API call skipped');
         }
     };
-    console.log(dataLoading);
 
     return (
         <>
