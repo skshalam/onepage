@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
 import axios from 'axios';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 function MemberShipPackage() {
     const [membershipsDesc, setmembershipDesc] = useState({});
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
@@ -14,19 +16,21 @@ function MemberShipPackage() {
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                setmembershipDesc(response.data.data.membership);
-            })
-            .catch(error => {
-                console.error('API Error:', error);
-            });
+                .then(response => {
+                    setmembershipDesc(response.data.data.membership);
+                    setLoading(false)
+                })
+                .catch(error => {
+                    console.error('API Error:', error);
+                    setLoading(false)
+                });
         } else {
             console.log('No token available, API call skipped');
         }
     }, []);
     const formatDate = (dateStr) => {
         if (!dateStr) return 'No Date Available';
-        
+
         const date = new Date(dateStr);
         const day = date.getDate();
         const month = date.toLocaleString('default', { month: 'long' });
@@ -56,41 +60,73 @@ function MemberShipPackage() {
                 </div>
             </div>
             <div className={`inner-container`}>
-            {membershipsDesc?.length > 0 ? (
-                membershipsDesc.map((member, index) => (
-                    <div className="membership position-relative p-1">
-                        <div className="membership-inner">
-                            <div className="membership-info h-100">
-                                <div className="icon">
-                                    <img src="https://i.imgur.com/wiem34R.png" alt="" />
+                {
+                    loading
+                        ?
+                        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+                            {[...new Array(10)].map((i, iIndex) => (<div key={iIndex} className="membership position-relative p-1">
+                                <div className="membership-inner">
+                                    <div className="membership-info h-100">
+                                        <div className="icon">
+                                            <Skeleton className='' style={{ height: "85px", width: "110px" }} />
+                                        </div>
+                                        <div className="membership-info-details d-flex flex-column justify-content-around">
+                                            <div className="membership-name">
+                                                <Skeleton className='' style={{ height: "15px", width: "150px" }} />
+                                            </div>
+                                            <div className="membership-validity">
+                                                valid till <Skeleton className='ms-2' style={{ height: "15px", width: "90px" }} />
+                                            </div>
+                                            <div className="membership-price">
+                                                <Skeleton className='' style={{ height: "15px", width: "60px" }} />
+                                            </div>
+                                            <div className="membership-action">
+                                                <Skeleton className='' style={{ height: "25px", width: "60px" }} />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="membership-info-details d-flex flex-column justify-content-around">
-                                    <div className="membership-name">
-                                        <h6>{member.name}</h6>
+                            </div>))}
+                        </SkeletonTheme>
+                        :
+                        (
+                            membershipsDesc?.length > 0 ? (
+                                membershipsDesc.map((member, index) => (
+                                    <div className="membership position-relative p-1">
+                                        <div className="membership-inner">
+                                            <div className="membership-info h-100">
+                                                <div className="icon">
+                                                    <img src="https://i.imgur.com/wiem34R.png" alt="" />
+                                                </div>
+                                                <div className="membership-info-details d-flex flex-column justify-content-around">
+                                                    <div className="membership-name">
+                                                        <h6>{member.name}</h6>
+                                                    </div>
+                                                    <div className="membership-validity">
+                                                        valid till <span>{formatDate(member.end_date)}</span>
+                                                    </div>
+                                                    <div className="membership-price">
+                                                        <span>{member.selling_price}</span>
+                                                    </div>
+                                                    <div className="membership-action">
+                                                        <Link to={`/Membership/${member.membership_id}`}>
+                                                            <button>View Details</button>
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="membership-status">
+                                                <img src="https://i.imgur.com/euPvujv.png" alt="" />
+                                                <span>Active</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="membership-validity">
-                                        valid till <span>{formatDate(member.end_date)}</span>
-                                    </div>
-                                    <div className="membership-price">
-                                        <span>{member.selling_price}</span>
-                                    </div>
-                                    <div className="membership-action">
-                                     <Link to={`/Membership/${member.membership_id}`}>   
-                                        <button>View Details</button>
-                                    </Link>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="membership-status">
-                                <img src="https://i.imgur.com/euPvujv.png" alt="" />
-                                <span>Active</span>
-                            </div>
-                        </div>
-                    </div>
-                ))
-                ) : (
-                    <p>No rewards available</p>
-                )}
+                                ))
+                            ) : (
+                                <p>No rewards available</p>
+                            )
+                        )
+                }
             </div>
             <div className="powered-ewards">
                 <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">

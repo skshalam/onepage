@@ -6,7 +6,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
+// import 'react-loading-skeleton/dist/skeleton.css'
 function About() {
     const [data_getcoupons, setData_getcoupons] = useState({
         active_coupon_count: 0,

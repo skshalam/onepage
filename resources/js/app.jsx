@@ -23,6 +23,7 @@ import Referal from './Page/Referal';
 import ReferalList from './Page/ReferalList';
 import AboutUs from './Page/AboutUs';
 import Bookletissue_details from './Page/Bookletissue_details';
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const App = () => {
     const location = useLocation();
