@@ -1224,6 +1224,7 @@ body {
 
 .edit-profile {
     background-color: #fff;
+    /* height: auto; */
 }
 
 .edit-input-div label {
@@ -1589,3 +1590,10 @@ body {
     }
 }
 /* Skeleton Loader */
+
+/*  */
+.my-upload-comp{
+    .anticon.anticon-eye{
+        display: none;
+    }
+}

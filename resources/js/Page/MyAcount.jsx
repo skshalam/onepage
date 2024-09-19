@@ -1,14 +1,15 @@
 import { Avatar, Button, Col, DatePicker, Form, Input, Modal, Popover, Row, Select } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import UploadProfilePic from '../components/UploadProfilePic';
 
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [openDelPop, setOpenDelPop] = useState(false);
     const targetDiv = useRef(null);
-
+    const [formInstance, setFormInstance] = useState({})
     return (
         <div className='body-container position-relative overflow-hidden'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -39,7 +40,7 @@ function MyAcount() {
 
                                 </div>
                                 :
-                                <Button onClick={() => setIsEditable(false)} type='ghost' icon={<i className='bi bi-check-lg fs-3 text-light' />}></Button>
+                                <Button onClick={() => { formInstance.submit(),setIsEditable(false) }} type='ghost' icon={<i className='bi bi-check-lg fs-3 text-light' />}></Button>
                         }
                     </div>
                 </div>
@@ -52,7 +53,7 @@ function MyAcount() {
                         animate={{ opacity: 1, }}
                         transition={{ duration: 0.6 }}
                     >
-                        <ProfileEditForm />
+                        <ProfileEditForm formInstance={setFormInstance} />
                     </motion.div>
                     :
                     <div className="profile-info m-3" ref={targetDiv}>
@@ -156,13 +157,13 @@ function MyAcount() {
                 styles={{
                     footer: {
                         display: "grid",
-                        margin:"20px 10px",
+                        margin: "20px 10px",
                         padding: "0px 20px",
                         gridTemplateColumns: "1fr 1fr"
                     },
-                    content:{
-                        padding:"0px",
-                        overflow:"hidden",
+                    content: {
+                        padding: "0px",
+                        overflow: "hidden",
                     }
                 }}
             >
@@ -171,7 +172,7 @@ function MyAcount() {
                         <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726480398/xdbtbbvmgyt91wxi3dj6.png" alt="" />
                     </div>
                     <div className="position-absolute modal-icon d-flex flex-column gap-0">
-                        <i className='bi bi-exclamation-circle text-light'/>
+                        <i className='bi bi-exclamation-circle text-light' />
                         <span>Delete ?</span>
                     </div>
                     <div className="text-center fw-semibold modal-txt">
@@ -185,21 +186,29 @@ function MyAcount() {
 
 export default MyAcount
 
-const ProfileEditForm = () => {
+const ProfileEditForm = ({ formInstance }) => {
     const [form] = Form.useForm();
+    const [file, setFile] = useState('https://cdn.pixabay.com/photo/2014/06/03/19/38/test-361512_640.jpg');
+    const handleSubmit = (e) => {
+        console.log({ ...e, profilePicture: file });
+    }
+    useEffect(() => {
+        formInstance(form)
+    }, [])
     return (
         <div className="edit-profile p-3">
             <Form
                 form={form}
                 layout='vertical'
                 className=''
+                onFinish={handleSubmit}
             >
                 <Row gutter={[0, 20]} >
                     {/* User Profile Pic */}
                     <Col xs={24}>
                         <div className="text-center">
                             <Form.Item className='' name="profilePicture">
-                                <Avatar size={70} className='cust-css-ant-avatar' icon={<i className='bi bi-person-fill' />} />
+                                <UploadProfilePic URL={setFile} file={file} />
                             </Form.Item>
                         </div>
                     </Col>
