@@ -35,6 +35,8 @@ use App\Models\RedeemPoints;
 use App\Models\WalletRedeem;
 use App\Models\CountryCodes;
 use App\Models\Countries;
+use App\Models\CitisNew;
+use App\Models\MerchantRegion;
 use DB;
 use Auth;
 use Illuminate\Support\Facades\Validator;
@@ -949,21 +951,15 @@ class HomeController extends Controller
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
 
-
-
         $infodata = User::select('users.image','users.name','cards.gender','users.email','users.mobile','cards.dob','cards.marital','cards.doa','cards.address','cards.gstin','cards.pan','cards.bank_name','cards.bank_account_number','users.pincode','users.country','users.state','cards.region','cards.city')
         ->join('cards', 'users.id', '=', 'cards.user_id')
         ->where('users.id', $user_id)
         ->where('cards.merchant_id', $merchant_id)
         ->first();
-        $countryCodes = DB::table('country_codes')->get();
-        $countries = DB::table('countries')->get();
         return response()->json([
             'error' => false,
             'message' => 'Info Data',
             'infodata' => $infodata,
-            'country_codes' => $countryCodes,
-            'countries' => $countries,
         ]);
 
     }
@@ -1255,4 +1251,75 @@ class HomeController extends Controller
         ]);
        
     }
+    public function countries(Request $request)
+    {
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $countries = countries::get();
+        return response()->json([
+            'error' => false,
+            'message' => 'all countries',
+            'countries' => $countries,
+        ]);
+        
+    }
+    public function cities(Request $request)
+    {
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $country = $request->country;
+        $rules=[
+            'merchant_id'=>'Required',
+            'country'=>'Required',
+          ];
+          $validator = Validator::make($request->all(), $rules);
+        
+          if ($validator->fails()) {
+              return response()->json([
+                  'error' => true,
+                  'message' => 'Validation Failed',
+                  'errors' => $validator->errors()
+              ]);
+          }else{
+            $cities = CitisNew::get();
+            return response()->json([
+                'error' => false,
+                'message' => 'all cities',
+                'cities' => $cities,
+            ]);
+          } 
+
+    }
+
+    public function gettingregion(Request $request)
+    {
+
+      $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+      $city = $request->city;
+      $rules = [
+        'city' => 'required',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Validation Failed',
+                'errors' => $validator->errors()
+            ]);
+        }
+      $region = MerchantRegion::select('id','region')->where('city',$city)->where('merchant_id',$merchant_id)->orderBy('region')->get();
+      unset($merchant_id,$city);
+      if(count($region)>0){
+        return response()->json([
+            'error' => false,
+            'region' => $region,
+        ]);
+      }else{
+        $region = 'No city Found';
+        return response()->json([
+            'error' => true,
+            'region' => $region,
+        ]);
+      } 
+    }
+    
 }
