@@ -19,6 +19,9 @@ import Profile from './Page/Profile';
 import MyAcount from './Page/MyAcount';
 import TermsAndCondition from './Page/TermsAndCondition';
 import Contact from './Page/Contact';
+import Referal from './Page/Referal';
+import ReferalList from './Page/ReferalList';
+import AboutUs from './Page/AboutUs';
 import Bookletissue_details from './Page/Bookletissue_details';
 
 const App = () => {
@@ -78,6 +81,9 @@ const App = () => {
             <Route path="/Myaccount" element={<MyAcount />} />
             <Route path="/T&c" element={<TermsAndCondition />} />
             <Route path="/Contact" element={<Contact />} />
+            <Route path="/Referal" element={<Referal />} />
+            <Route path="/Referallist" element={<ReferalList />} />
+            <Route path="/Aboutus" element={<AboutUs />} />
             <Route path="/Bookletissue_details/:membership_id/:bookletissue_id" element={<Bookletissue_details />} />
         </Routes>
     );

@@ -74,7 +74,7 @@ function Reward() {
                 </div>
             </div>
             <div className={`inner-container`}>
-            {rewardsData.length > 0 ? (
+            {rewardsData?.length > 0 ? (
                 rewardsData.map((reward, index) => (
                     <div className="rewards p-1">
                         <div className="rewards-info h-100">

@@ -1,10 +1,33 @@
-import { Button, Col, Form, Input, Row } from 'antd'
-import React from 'react'
+import { Button, Col, Form, Input, Modal, Row } from 'antd'
+import React, { useRef, useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
-import { Link } from 'react-router-dom'
 
 function Contact() {
     const [form] = Form.useForm();
+    const [open, setOpen] = useState(false)
+    const targetDiv = useRef(null);
+    const { merchant_base } = useParams();
+    const [data_contact, setData_contact] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        axios.get('/api/contact', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                setData_contact(response.data.data);
+                setLoading(false)
+            })
+            .catch(error => {
+                setError(error);
+                setLoading(false);
+            });
+    }, [merchant_base]);
     return (
         <div className='onepage-main-body position-relative'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -24,7 +47,7 @@ function Contact() {
                 <p className='fs-1 fw-bold ps-5'>Hello !</p>
                 <p className='mb-0 px-5'>Fill out our contact form and we will get back to you within 1-2 business days.</p>
             </div>
-            <div className="contact_form_container rounded-3 p-4 ">
+            <div ref={targetDiv} className="contact_form_container rounded-3 p-4 ">
                 <Form
                     form={form}
                     layout="vertical"
@@ -67,7 +90,7 @@ function Contact() {
                     </Row>
                 </Form>
                 <div className="text-center mt-3">
-                    <Button type='primary'>Send</Button>
+                    <Button className='cust-css-ant-button' type='primary'>Send</Button>
                 </div>
             </div>
             <div className='socail-linkppart m-3'>
@@ -120,6 +143,30 @@ function Contact() {
                     </div>
                 </div>
             </div>
+            <Modal
+                open={open}
+                onCancel={() => setOpen(false)}
+                closable={false}
+                centered
+                width={350}
+                getContainer={targetDiv.current}
+                rootClassName='cust-css-ant-modal'
+                footer={null}
+                styles={{content:{
+                    padding:35,
+                }}}
+            >
+                <div className="text-center">
+                    <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726546901/ajvutch8pvzn6j9f3xml.svg" alt="" />
+                </div>
+                <div className="fs-5 text-center fw-bold my-2">
+                    <p className='mb-0'>Thank You for Contacting Us!</p>
+                </div>
+                <div className="text-center px-5">
+                    <span className='fw-semibold'>Someone from the Team will
+                        assist you shortly.</span>
+                </div>
+            </Modal>
         </div>
     )
 }

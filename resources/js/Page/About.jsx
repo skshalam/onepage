@@ -58,6 +58,7 @@ function About() {
         })
             .then(response => {
                 setData_home(response.data.data);
+                setLoading(false);
             })
             .catch(error => {
                 setError(error);
@@ -80,7 +81,11 @@ function About() {
                 <div className={`body-header ${data_home.display_brand_logo_name === 1 ? (data_home.brand_logo_alignment === 1 ? 'logo-left' : 'logo-center') : ''}`}>
                     <div className='head-logo'>
                         <div className={`headlogo-img ${data_home.display_brand_logo_name === 1 ? 'ratio-3' : 'ratio-1'}`}>
-                            <img src={data_home.homebrandlogo} alt="" />
+                            {
+                                loading
+                                ? <div className="cust-skeleton-loader header-img"></div>
+                                :<img src={data_home.homebrandlogo} alt="" />
+                            }
                         </div>
                         {data_home.display_brand_logo_name === 2 && (
                             <div className="headlogo-cont">
@@ -89,10 +94,14 @@ function About() {
                         )}
                     </div>
                     <div className="head-profile">
+                        <Link className='text-decoration-none' to={"/Profile"}>
                         <i className='bi bi-person-fill fs-5'></i>
+                        </Link>
                     </div>
                 </div>
-                {data_home.banners?.banner_image?.length > 0 && (
+                {data_home.banners?.banner_image?.length > 0 
+                
+                ? (
                     <div className='banner-part-main'>
                         <div className='banner-part'>
                             <Slider {...settings}>
@@ -104,15 +113,22 @@ function About() {
                             </Slider>
                         </div>
                     </div>
-                )}
-                <div className={`wallet-container ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
-                    <Link to={"/Creditwallet"}>
+                )
+                :<div className="cust-skeleton-loader banner-skl"></div>
+            }
+                <div className={`wallet-container gap-2 m-3 ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
+                    <Link className='text-decoration-none' to={"/Creditwallet"}>
                     <div className="wallet-content">
                         <div className="content">
                             <p>Credit Balance:</p>
                             <div className="balance">
                                 <img src="" alt="" />
-                                <span>{data_home.cards.current_points}</span>
+                                <span>
+                                    {
+                                        loading?<div className="cust-skeleton-loader header-img"></div>
+                                    :data_home.cards.current_points
+                                    }
+                                </span>
                             </div>
                         </div>
                         <div className="content">
@@ -120,7 +136,7 @@ function About() {
                         </div>
                     </div>
                     </Link>
-                    <Link to={"/Wallet"}>
+                    <Link className='text-decoration-none' to={"/Wallet"}>
                     <div className="wallet-content">
                         <div className="content">
                             <p>Wallet's Balance:</p>
@@ -135,8 +151,8 @@ function About() {
                     </div>
                     </Link>
                 </div>
-                <div className="rewards-container">
-                    <Link to={"/Coupon"} style={{ textDecoration: "none", color: "#fff" }}>
+                <div className="rewards-container gap-2 m-3">
+                    <Link className='text-decoration-none' to={"/Coupon"}>
                         <div className="rewards-content">
                             <div className="content">
                                 <p>Coupon <br /> Cart</p>
@@ -150,7 +166,7 @@ function About() {
                             </div>
                         </div>
                     </Link>
-                    <Link to={"/Reward"}>
+                    <Link className='text-decoration-none' to={"/Reward"}>
                         <div className="rewards-content">
                             <div className="content">
                                 <p>Reward <br /> Menu</p>
@@ -164,7 +180,7 @@ function About() {
                             </div>
                         </div>
                     </Link>
-                    <Link to={"/Membership"}>
+                    <Link className='text-decoration-none' to={"/Membership"}>
                         <div className="rewards-content">
                             <div className="content">
                                 <p>Membership Package</p>
@@ -179,9 +195,9 @@ function About() {
                         </div>
                     </Link>
                 </div>
-                <Link to={"/Giftcard"}>
-                    <div className="gift-container">
-                        <div className="gift-content">
+                <Link className='text-decoration-none' to={"/Giftcard"}>
+                    <div className="gift-container overflow-hidden position-relative m-3 d-flex align-items-center justify-content-center text-light rounded-3">
+                        <div className="gift-content d-flex align-items-center gap-2">
                             <img src="https://i.imgur.com/ZoluTbe.png" alt="" />
                             <span className='text-uppercase'>Gift Card</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
@@ -189,6 +205,7 @@ function About() {
                                 <path fillRule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
                             </svg>
                         </div>
+                        <img className='position-absolute' src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726655119/wv60wfj43xim17pv52j_kzmkbo.svg" alt="" />
                     </div>
                 </Link>
                 <div className="powered-ewards">

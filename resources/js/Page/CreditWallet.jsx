@@ -1,11 +1,23 @@
-import { DatePicker } from 'antd';
+import { Checkbox, Col, DatePicker, Drawer, Form, Row, Tabs } from 'antd';
+import { form } from 'framer-motion/client';
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 function CreditWallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
     const [openFilter2, setOpenFilter2] = useState(false);
-    const [filterTab, setFilterTab] = useState("1")
+    const items = [
+        {
+            key: '1',
+            label: 'Type',
+            children: <FilterByType />,
+        },
+        {
+            key: '2',
+            label: 'Source',
+            children: <FilterBySource />,
+        },
+    ];
     return (
         <div className='body-container position-relative overflow-hidden'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -63,80 +75,142 @@ function CreditWallet() {
                     </div>))}
                 </div>
             </div>
-            {/* Filter By Date */}
-            <div className={`filter-by-date-modal position-absolute h-100 top-0 w-100 ${openFilter1 && "show"}`}>
-                <div className={`filter-cancel-container position-absolute border h-100 w-100 ${openFilter1 && "show"}`} onClick={() => setOpenFilter1(false)}></div>
-                <div className="position-absolute filter-by-container overflow-hidden shadow rounded-3">
-                    <div className="filter-by-date-header border-bottom">
-                        Filter By Date
-                    </div>
-                    <div className="filter-by-date-select-container px-3 py-4 d-flex flex-column gap-2">
-                        <div className="filter-start-date d-flex justify-content-between gap-2">
-                            To: <DatePicker className='filter-date-input'/>
-                        </div>
-                        <div className="filter-end-date d-flex justify-content-between gap-2">
-                            From: <DatePicker className='filter-date-input'/>
-                        </div>
-                    </div>
-                    <div className="filter-by-date-actions">
-                        <button className='border-0 p-2'>Clear</button>
-                        <button className='border-0 p-2'>Apply</button>
-                    </div>
+            <Drawer
+                rootClassName='filter-drawer'
+                open={openFilter1}
+                onClose={() => setOpenFilter1(false)}
+                getContainer={false}
+                closable={false}
+                styles={{
+                    body: {
+                        padding: 0,
+                    }
+                }}
+            >
+                <div className="border-bottom py-2 px-4">
+                    <span className='fw-semibold'>Filter By Date</span>
                 </div>
-            </div>
-            {/* Filter By Type Modal */}
-            <div className={`filter-by-type-modal position-absolute h-100 top-0 w-100 ${openFilter2 && "show"}`}>
-                <div className={`filter-cancel-container position-absolute border h-100 w-100 ${openFilter2 && "show"}`} onClick={() => setOpenFilter2(false)}></div>
-                <div className="position-absolute filter-by-container overflow-hidden shadow rounded-3">
-                    <div className="credit-filter-by-options-actions">
-                        <div className="credit-filter-by-tab-header px-2 pt-2 border-bottom mb-2">
-                            <div className="credit-filter-by-tab d-flex justify-content-around">
-                                <span className={`credit-filter-tab px-3 ${filterTab === '1' ? "active" : ""}`} onClick={() => setFilterTab('1')}>Type</span>
-                                <span className={`credit-filter-tab px-3 ${filterTab === '2' ? "active" : ""}`} onClick={() => setFilterTab('2')}>Source</span>
+                <div className="p-3 d-flex flex-column gap-3">
+                    <Row className=''>
+                        <Col span={7}>
+                            <div className="">
+                                To:
                             </div>
-                        </div>
-                    </div>
-                    <div className="credit-filter-option p-3">
-                        {
-                            filterTab === '1'
-                                ? <div className="filter-by-select-container d-flex flex-column gap-2 ps-4">
-                                    <div className="d-flex gap-2">
-                                        <input type="checkbox" id='earned' />
-                                        <label htmlFor="earned">Earned</label>
-                                    </div>
-                                    <div className="d-flex gap-2">
-                                        <input type="checkbox" id='redeem' />
-                                        <label htmlFor="">Redeemed</label>
-                                    </div>
-                                    <div className="d-flex gap-2">
-                                        <input type="checkbox" id='expired' />
-                                        <label htmlFor="">Expired</label>
-                                    </div>
-                                </div>
-                                : <div className="filter-by-select-container d-flex flex-column gap-2 ps-4">
-                                    <div className="d-flex gap-2">
-                                        <input type="checkbox" id='loyalty' />
-                                        <label htmlFor="loyalty">Loyalty</label>
-                                    </div>
-                                    <div className="d-flex gap-2">
-                                        <input type="checkbox" id='bonus' />
-                                        <label htmlFor="bonus">Bonus</label>
-                                    </div>
-                                    <div className="d-flex gap-2">
-                                        <input type="checkbox" id='eWallet' />
-                                        <label htmlFor="eWallet">e-Wallet</label>
-                                    </div>
-                                </div>
-                        }
-                    </div>
-                    <div className="filter-by-date-actions">
-                        <button className='border-0 p-2'>Clear</button>
-                        <button className='border-0 p-2'>Apply</button>
-                    </div>
+                        </Col>
+                        <Col span={17}>
+                            <div className="">
+                                <DatePicker className='filter-date-input' />
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row className=''>
+                        <Col span={7}>
+                            <div className="">
+                                From:
+                            </div>
+                        </Col>
+                        <Col span={17}>
+                            <div className="">
+                                <DatePicker className='filter-date-input' />
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
-            </div>
+                <div className="filter-actions">
+                    <button className='border-0 p-2'>Clear</button>
+                    <button className='border-0 p-2'>Apply</button>
+                </div>
+            </Drawer>
+            <Drawer
+                rootClassName='filter-drawer'
+                open={openFilter2}
+                onClose={() => setOpenFilter2(false)}
+                getContainer={false}
+                closable={false}
+                styles={{
+                    body: {
+                        padding: 0,
+                    }
+                }}
+            >
+                <Tabs defaultActiveKey="1" rootClassName='filter-by-type-nav' items={items} />
+                <div className="filter-actions">
+                    <button className='border-0 p-2'>Clear</button>
+                    <button className='border-0 p-2'>Apply</button>
+                </div>
+            </Drawer>
         </div>
     )
 }
 
 export default CreditWallet
+
+const FilterByType = () => {
+    const [form] = Form.useForm();
+    const options = [
+        {
+            label: 'Earned',
+            value: 'earned',
+        },
+        {
+            label: 'Redeemed',
+            value: 'redeemed',
+        },
+        {
+            label: 'Expired',
+            value: 'expired',
+        },
+    ];
+    return (
+        <Form
+            form={form}
+            layout='vertical'
+            className=''
+        >
+            <Form.Item name={'earned'} className='my-3'>
+                <Row gutter={[0, 10]} justify={'center'}>
+                    <Col span={15} className=''>
+                        <div className="">
+                            <Checkbox.Group options={options}
+                                rootClassName='filter-by-type-checkbox' />
+                        </div>
+                    </Col>
+                </Row>
+            </Form.Item>
+        </Form>
+    )
+}
+const FilterBySource = () => {
+    const [form] = Form.useForm();
+    const options = [
+        {
+            label: 'Loyalty',
+            value: 'loyalty',
+        },
+        {
+            label: 'Bonus',
+            value: 'bonus',
+        },
+        {
+            label: 'e-wallet',
+            value: 'eWallet',
+        },
+    ];
+    return (
+        <Form
+            form={form}
+            layout='vertical'
+            className=''
+        >
+            <Form.Item name={'earned'} className='my-3'>
+                <Row gutter={[0, 10]} justify={'center'}>
+                    <Col span={15} className=''>
+                        <div className="">
+                            <Checkbox.Group options={options} rootClassName='filter-by-type-checkbox' />
+                        </div>
+                    </Col>
+                </Row>
+            </Form.Item>
+        </Form>
+    )
+}
