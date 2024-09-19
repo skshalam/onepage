@@ -1460,6 +1460,25 @@ body {
     padding: 12px;
     background-color: #fff;
     border-radius: 10px;
+    :is(button){
+        background: #0B0B59;
+        color: #fff;
+        font-size: 12px;
+        display: block;
+        width: 100%;
+        border: 0;
+        border-radius: 4px;
+        padding: 8px 0px;
+        font-weight: 500;
+        margin-top:12px;
+        :is(svg){
+            margin-right: 4px;
+        }
+        &&:hover{
+            background: #0B0B59;
+            color: #fff;
+        }
+    }
 }
 
 .location_img_content {

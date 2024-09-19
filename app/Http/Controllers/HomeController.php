@@ -608,13 +608,13 @@ class HomeController extends Controller
     {
         // $merchant_id= 15657;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-        $homebannersData = Onepage_Banner_Space::select('banner_image')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
-        if(count($homebannersData) > 0){
-            $banner_images = $homebannersData->pluck('banner_image')->all();
-            $data['banners'] = [
-                'banner_image' => $banner_images,
-            ];
-        }
+        // $homebannersData = Onepage_Banner_Space::select('banner_image')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
+        // if(count($homebannersData) > 0){
+        //     $banner_images = $homebannersData->pluck('banner_image')->all();
+        //     $data['banners'] = [
+        //         'banner_image' => $banner_images,
+        //     ];
+        // }
         $about =Onepage_BasicInformation::select('heading','content')->where('merchant_id', $merchant_id)->where('status',1)->where('hide_show',1)->first();
         if($about){
             $data['about'] = [
@@ -654,11 +654,14 @@ class HomeController extends Controller
         if (!empty($gallery_images)) {
             $galleryData['images'] = $gallery_images;
         }
+        if (!empty($galleryData)) {
+        $data['gallery'] = $galleryData;
+    }
         return response()->json([
             'error' => false,
             'message' => 'About',
             'data' => $data,
-            'gallery' => $galleryData
+            // 'gallery' => $galleryData
         ]);
 
 

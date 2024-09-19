@@ -1,12 +1,33 @@
 import { Button, Col, Form, Input, Modal, Row } from 'antd'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
-import { Link } from 'react-router-dom'
 
 function Contact() {
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false)
     const targetDiv = useRef(null);
+    const { merchant_base } = useParams();
+    const [data_contact, setData_contact] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        axios.get('/api/contact', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                setData_contact(response.data.data);
+                setLoading(false)
+            })
+            .catch(error => {
+                setError(error);
+                setLoading(false);
+            });
+    }, [merchant_base]);
     return (
         <div className='onepage-main-body position-relative'>
             <div className="position-sticky top-0 z-1 shadow-sm">
