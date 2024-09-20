@@ -3,9 +3,9 @@ import '../css/app.css';
 import '../css/style.css';
 import '../css/fonts.css';
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route, useLocation, matchPath,useNavigate} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, matchPath, useNavigate } from 'react-router-dom';
 import Home from './Page/Home';
 import About from './Page/About';
 import Coupon from './Page/Coupon';
@@ -24,6 +24,8 @@ import ReferalList from './Page/ReferalList';
 import AboutUs from './Page/AboutUs';
 import Bookletissue_details from './Page/Bookletissue_details';
 import 'react-loading-skeleton/dist/skeleton.css'
+import { TestProvider } from './Providers/ContextProviders/TestProvider';
+import TestContext from './Providers/Contexts/TestContext';
 
 const App = () => {
     const location = useLocation();
@@ -31,7 +33,7 @@ const App = () => {
     const merchant_base = match?.params?.merchant_base;
     const [merchantBase, setMerchantBase] = useState(null);
     const navigate = useNavigate();
-
+    const { setValue } = useContext(TestContext);
     useEffect(() => {
         if (match) {
             const { merchant_base } = match.params;
@@ -41,30 +43,31 @@ const App = () => {
     }, [match]);
 
     useEffect(() => {
-            const token = sessionStorage.getItem('access_token');
-            const storedMerchantBase = localStorage.getItem('merchant_base');
-            const url = `/onePageWebsite/${storedMerchantBase}`;
-            console.log('set-path:', location.pathname);
-            if (!token && location.pathname === url) {
-                console.log('Token exists, user is authenticated.');
-                navigate(url);
+        setValue("I am god")
+        const token = sessionStorage.getItem('access_token');
+        const storedMerchantBase = localStorage.getItem('merchant_base');
+        const url = `/onePageWebsite/${storedMerchantBase}`;
+        console.log('set-path:', location.pathname);
+        if (!token && location.pathname === url) {
+            console.log('Token exists, user is authenticated.');
+            navigate(url);
+        }
+        else if (!token && location.pathname !== url) {
+            navigate(url);
+            console.log("demo");
+        }
+        else {
+            if (location.pathname !== url) {
+                console.log("hhhhh22");
+                navigate(location.pathname);
+            } else {
+                console.log("hhhhh");
+                navigate(-1);
             }
-            else if(!token && location.pathname !== url){
-                navigate(url);
-                console.log("demo");
-            }
-            else {
-                if(location.pathname !== url){
-                    console.log("hhhhh22");
-                    navigate(location.pathname);
-                }else{
-                    console.log("hhhhh");
-                    navigate(-1);
-                }
-            }
-    },[navigate]);
+        }
+    }, [navigate]);
 
-    
+
 
     return (
         <Routes>
@@ -91,7 +94,9 @@ const App = () => {
 };
 
 ReactDOM.createRoot(document.getElementById('app')).render(
+        <TestProvider>
     <Router>
-        <App />
+            <App />
     </Router>
+        </TestProvider>
 );

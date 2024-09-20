@@ -4,9 +4,9 @@ import ThemeContext from '../Contexts/ThemeContext';
 
 const ThemeProvider = ({ children, themeStyles }) => {
     const [useThemeStyles, setUseThemeStyles] = useState(themeStyles)
-    
+
     return (
-        <ThemeContext.Provider value={useThemeStyles}>
+        <ThemeContext.Provider value={{ useThemeStyles, setUseThemeStyles }}>
             <div
                 className="theme-provider"
                 style={{

@@ -1,11 +1,12 @@
 // resources/js/Page/About.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
+import TestContext from '../Providers/Contexts/TestContext';
 // import 'react-loading-skeleton/dist/skeleton.css'
 function About() {
     const [data_getcoupons, setData_getcoupons] = useState({
@@ -29,6 +30,8 @@ function About() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { merchant_base } = useParams();
+    const {value} = useContext(TestContext);
+    console.log(value);
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
         if (token) {
