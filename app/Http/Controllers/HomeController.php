@@ -121,12 +121,18 @@ class HomeController extends Controller
                         Valid_Till,
                         Invoice_Number,
                         Points,
-                        Billing_Date,
+                        DATE_FORMAT(Billing_Date, '%e') AS Billing_Day,
+                        DATE_FORMAT(Billing_Date, '%b') AS Billing_Month,
+                        DATE_FORMAT(Billing_Date, '%Y') AS Billing_Year,
                         Billing_Amount,
                         Transaction_id,
                         Account,
                         Credit_Name,
-                        feedback_id
+                        feedback_id,
+                        pos_billing_dump_new_id,
+                        usefor,
+                        ebooklet_report_id,
+                        custom_ewallet_marker
                     FROM (
                         SELECT
                             CASE
@@ -147,7 +153,11 @@ class HomeController extends Controller
                                 WHEN up.pos_billing_dump_new_id != 0 THEN 'Bonus Credits'
                                 ELSE 'Other Credits'
                             END AS Credit_Name,
-                            up.feedback_id AS feedback_id
+                            up.feedback_id AS feedback_id,
+                            up.pos_billing_dump_new_id as pos_billing_dump_new_id,
+                            up.usefor as usefor,
+                            up.ebooklet_report_id as ebooklet_report_id,
+                            up.custom_ewallet_marker as custom_ewallet_marker
                         FROM user_points up
                         WHERE up.user_id = ".$user_id."
                         AND up.merchant_id = ".$merchant_id."
@@ -162,7 +172,11 @@ class HomeController extends Controller
                             NULL AS Transaction_id,
                             rp.M_account AS Account,
                             'Redeem Credits' AS Credit_Name,
-                             'null' AS feedback_id
+                             'null' AS feedback_id,
+                             'null' AS pos_billing_dump_new_id,
+                             'null' AS usefor,
+                             'null' AS ebooklet_report_id,
+                             'null' AS custom_ewallet_marker
                         FROM redeem_points rp
                         WHERE rp.user_id = ".$user_id."
                         AND rp.merchant_id = ".$merchant_id."
@@ -170,6 +184,21 @@ class HomeController extends Controller
                     ORDER BY Billing_Date DESC";
         $creditbalance_obj = DB::select($creditbalance_query);    
         
+        foreach ($creditbalance_obj as $item) {
+            $day = $item->Billing_Day;
+            $month = $item->Billing_Month;
+            $year = $item->Billing_Year;
+            $suffix = 'th';
+            if ($day == 1 || $day == 21 || $day == 31) {
+                $suffix = 'st';
+            } elseif ($day == 2 || $day == 22) {
+                $suffix = 'nd';
+            } elseif ($day == 3 || $day == 23) {
+                $suffix = 'rd';
+            }
+            $item->Formatted_Billing_Date = "{$day}{$suffix} {$month} {$year}";
+        }
+
         return response()->json([
             'error' => false,
             'message' => 'Balance',
@@ -1323,6 +1352,24 @@ class HomeController extends Controller
             'region' => $region,
         ]);
       } 
+    }
+    public function themecolor()
+    {
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $themeData = Onepage_WebsiteTheme::select('primary_color', 'secondary_color', 'font_primary_color','font_secondary_color')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show', 1)->first();
+        if($themeData){
+            $data['theme'] = [
+                'primary_color' => $themeData->primary_color,
+                'secondary_color' => $themeData->secondary_color,
+                'font_primary_color' => $themeData->font_primary_color,
+                'font_secondary_color' => $themeData->font_secondary_color,
+            ];
+        }
+        return response()->json([
+            'error' => false,
+            'message' => 'Theme Data',
+            'data' => $data,
+        ]);
     }
     
 }

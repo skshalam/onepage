@@ -43,6 +43,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/cities', [\App\Http\Controllers\HomeController::class, 'cities']);
     Route::post('/gettingregion', [\App\Http\Controllers\HomeController::class, 'gettingregion']);
     Route::post('/countries', [\App\Http\Controllers\HomeController::class, 'countries']);
+    Route::get('/themecolor', [\App\Http\Controllers\HomeController::class, 'themecolor']);
 });
 
 
