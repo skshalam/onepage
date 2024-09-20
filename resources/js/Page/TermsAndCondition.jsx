@@ -1,7 +1,33 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom';
 
 function TermsAndCondition() {
+    const { merchant_base } = useParams();
+    const [data_termscon, setData_termscon] = useState({
+        "termscondition": {
+            "heading": "",
+            "description": ""
+        }
+    });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        axios.get('/api/termscon', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                setData_termscon(response.data);
+                setLoading(false)
+            })
+            .catch(error => {
+                setError(error);
+                setLoading(false);
+            });
+    }, [merchant_base]);
     return (
         <div className='onepage-main-body position-relative'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -18,16 +44,9 @@ function TermsAndCondition() {
                 <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726487176/Rectangle_999_pu916t.png" alt="" />
             </div>
             <div className="terms_condition_head">
-                <p className='fs-2 fw-bold ps-5'>Privacy Policies</p>
+                <p className='fs-2 fw-bold ps-5'>{data_termscon.termscondition.heading}</p>
             </div>
-            <div className="terms_condition_content text-break rounded-4">
-                <p className='mb-0'>
-                    Effective Date: July 1, 2024
-                    Samsung Electronics Co., Ltd. and its affiliates (referred to as “Samsung Electronics”, “Samsung”, or “we” in this Privacy Policy) know how important privacy is to our customers. This Privacy Policy applies to all of our Samsung devices and services where we process personal information, from mobile phones, tablets, TVs and home appliances, to the customer services and online services we provide on our Samsung website. We will refer to these devices and services as the “Services” in this Privacy Policy.
-                    It is important that you check back often for updates to the Privacy Policy. We may update this Privacy Policy periodically to reflect changes in our personal information practices with respect to the Services or changes in applicable law. We will post a notice on our website or on your device to notify you in advance of material changes to our Privacy Policy and indicate at the top of the Privacy Policy when it was most recently updated. The most current version of the Privacy Policy will always be available here: https://account.samsung.com/membership/terms/privacypolicy.
-                    In addition to this Privacy Policy, Samsung also provides specific privacy notices related to certain products and services, or specific jurisdictions. Where you have a Samsung Account, the Samsung Account Privacy Notice tells you how Samsung uses your personal information, which you can access here: https://account.samsung.com/membership/policy/privacy. You will be given further specific privacy notices before using Services for which Samsung uses your personal information. In the event of any deviation between the terms of this Privacy Policy and a specific privacy notice, you should refer to the specific privacy notice for details on how Samsung uses your personal information.
-                </p>
-            </div>
+            <div className="terms_condition_content text-break rounded-4" dangerouslySetInnerHTML={{ __html: data_termscon.termscondition.description }}></div>
             <div className='socail-linkppart m-3'>
                 <div className="sl-details-body">
                     <p>Connect with us on:</p>
