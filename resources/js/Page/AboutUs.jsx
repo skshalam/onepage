@@ -143,7 +143,7 @@ function AboutUs() {
                                 <div key={index}>
                                     <div className="about_location_card mx-2">
                                         <div className="location_img_content">
-                                            <img src="{locat.image}" alt="" />
+                                            <img src={locat.image} alt={`Banner ${index + 1}`} />
                                         </div>
                                         <div className="location_heading">
                                             <p className='cust_text_primary fw-bold fs-5 mb-0'>
