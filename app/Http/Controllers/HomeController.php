@@ -115,6 +115,7 @@ class HomeController extends Controller
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $current_points = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->value('current_points');
 
         $creditbalance_query = "SELECT
                         Type,
@@ -203,6 +204,7 @@ class HomeController extends Controller
             'error' => false,
             'message' => 'Balance',
             'creditbalance' => $creditbalance_obj,
+            'current_points' => $current_points
         ]);
 
     
