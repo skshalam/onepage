@@ -1,0 +1,25 @@
+// MyContextProvider.js
+import React, { useState } from 'react';
+import ThemeContext from '../Contexts/ThemeContext';
+
+const ThemeProvider = ({ children, themeStyles }) => {
+    const [useThemeStyles, setUseThemeStyles] = useState(themeStyles)
+    
+    return (
+        <ThemeContext.Provider value={useThemeStyles}>
+            <div
+                className="theme-provider"
+                style={{
+                    '--primary-color': useThemeStyles.primary_color,
+                    '--secondary-color': useThemeStyles.secondary_color,
+                    '--primary-font-color': useThemeStyles.font_primary_color,
+                    '--secondary-font-color': useThemeStyles.font_secondary_color,
+                }}
+            >
+                {children}
+            </div>
+        </ThemeContext.Provider>
+    );
+};
+
+export { ThemeProvider };

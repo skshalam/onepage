@@ -1,5 +1,12 @@
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
 
+:root {
+    --primary-color: #0b0b59;
+    --secondary-color: #fff;
+    --primary-font-color: #282828;
+    --secondary-font-color: #7A7680;
+}
+
 html {
     height: 100%;
 }
@@ -36,10 +43,11 @@ body {
                 position: absolute;
                 height: 100%;
                 width: 100%;
-                background: rgba(11, 11, 89, 0.74);
+                background: var(--primary-color);
                 top: 0;
                 z-index: 0;
                 border-radius: 20px;
+                opacity: 74%;
             }
         }
     }
@@ -79,7 +87,7 @@ body {
     padding: 10px;
     border-radius: 40px;
     border: 1px solid #FFF;
-    background: rgba(255, 255, 255, 0.22);
+    background: hsla(0, 0%, 100%, 0.22);
     backdrop-filter: blur(7px);
     margin-top: -172px;
 
@@ -152,13 +160,14 @@ body {
                     margin-top: 20px;
 
                     :is(button) {
-                        background: #0B0B59;
+                        background: var(--primary-color);
                         display: block;
                         width: 100%;
                         color: #fff;
                         padding: 7px 0;
                         border-radius: 25px;
                         margin-top: 25px;
+                        border: none;
                     }
                 }
             }
@@ -175,7 +184,7 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px 6px;
-    border-top: 2px solid #0b0b59;
+    border-top: 2px solid var(--primary-color);
 }
 
 .sl-details-body p {
@@ -195,6 +204,18 @@ body {
     margin-top: 18px;
     display: block;
     text-align: center;
+
+    .ewards-color-set {
+            background: linear-gradient(45deg, #ff6b6b, #f7d794);
+    
+            /* Set the background clip to text */
+            -webkit-background-clip: text;
+            background-clip: text;
+    
+            /* Make the text transparent */
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
 }
 
 .powered-ewards p {
@@ -232,7 +253,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 5px;
-    background: #0B0B59;
+    background: var(--primary-color);
     position: relative;
 
     .head-logo {
@@ -349,7 +370,7 @@ body {
 .wallet-container .wallet-content {
     height: 100px;
     border-radius: 7px;
-    background: #0B0B59;
+    background: var(--primary-color);
     color: #ffffff;
     padding: 12px;
     display: flex;
@@ -372,7 +393,7 @@ body {
 .rewards-content {
     height: 100px;
     border-radius: 7px;
-    background: #0B0B59;
+    background: var(--primary-color);
     color: #ffffff;
     padding: 9px;
     display: flex;
@@ -382,7 +403,7 @@ body {
 
 .gift-container {
     height: 100px;
-    background: #0B0B59;
+    background: var(--primary-color);
 }
 
 .gift-content img {
@@ -406,21 +427,14 @@ body {
     font-weight: bolder;
 }
 
+
 .otp-fields {
-    display: flex;
-    justify-content: space-around;
-}
-
-.otp-fields input {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    border: 1px solid grey;
-    text-align: center;
-}
-
-.otp-fields input:focus {
-    outline: 1px solid #0B0B59;
+    .ant-otp input {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+        border: 1px solid var(--primary-color);
+    }
 }
 
 .PhoneInputCountry {
@@ -434,7 +448,7 @@ body {
 
 .navHeader {
     padding: 8px;
-    background-color: #0B0B59;
+    background-color: var(--primary-color);
     color: #ffffff;
 }
 
@@ -468,10 +482,12 @@ body {
     text-align: center;
     cursor: pointer;
     font-size: 13px;
+    font-weight: 500;
+    color: var(--primary-color);
 }
 
 .tabs.active {
-    border-bottom: 4px solid #0B0B59;
+    border-bottom: 4px solid var(--primary-color);
     transform: scale(1.001);
     box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.1);
 }
@@ -1174,7 +1190,7 @@ body {
 }
 
 .bg-layer-main {
-    background-color: #0b0b59;
+    background-color: var(--primary-color);
 }
 
 .bg-overlay {
@@ -1185,7 +1201,7 @@ body {
     width: -webkit-fill-available;
     height: 300px;
     border-radius: 49px 49px 0px 0px;
-    background: #0b0b59;
+    background: var(--primary-color);
     box-shadow: inset 0px 9px 4px -3px rgb(255 255 255 / 28%);
 }
 
@@ -1193,7 +1209,7 @@ body {
     width: -webkit-fill-available;
     height: 255px;
     border-radius: 49px 49px 0px 0px;
-    background: #0b0b59;
+    background: var(--primary-color);
     box-shadow: 0px -10px 5px -3px rgb(0 0 0 / 29%);
 }
 
@@ -1246,19 +1262,19 @@ body {
 }
 
 .cust-css-ant-input {
-    border: 1px solid #0b0b59;
+    border: 1px solid var(--primary-color);
     line-height: 1.7rem;
 }
 
 .cust-css-ant {
     .ant-select-selector {
         border-radius: 20px;
-        border: 1px solid #0b0b59 !important;
+        border: 1px solid var(--primary-color) !important;
     }
 }
 
 .cust-css-ant-date {
-    border: 1px solid #0b0b59;
+    border: 1px solid var(--primary-color);
 }
 
 .cust-css-ant-deleteModal {
@@ -1419,7 +1435,7 @@ body {
 }
 
 .cust_text_primary {
-    color: #0b0b59 !important;
+    color: var(--primary-color) !important;
 }
 
 .cust_text_secondary {
@@ -1559,11 +1575,12 @@ body {
     border-radius: 7px;
 }
 
-.cust-skeleton-loader.header-img{
+.cust-skeleton-loader.header-img {
     width: 42px;
     height: 42px;
 }
-.cust-skeleton-loader.banner-skl{
+
+.cust-skeleton-loader.banner-skl {
     width: -webkit-fill-available;
     height: 200px;
     margin: 20px;
@@ -1589,11 +1606,21 @@ body {
         transform: translateX(100%);
     }
 }
+
 /* Skeleton Loader */
 
 /*  */
-.my-upload-comp{
-    .anticon.anticon-eye{
+.my-upload-comp {
+    .anticon.anticon-eye {
         display: none;
+    }
+}
+
+.profile-upload-in{
+    .ant-avatar{
+        border: 1px solid var(--primary-color) !important;
+    }
+    .pp-btn{
+        background: var(--primary-color) !important;
     }
 }

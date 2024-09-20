@@ -22,9 +22,9 @@ function UploadProfilePic({ URL, file }) {
     };
     return (
         <>
-            <label htmlFor="fileInput" className='position-relative'>
-                <Avatar size={66} src={file} style={{...custStyle.avatarStyle}} />
-                <div className='position-absolute' style={{...custStyle.inputBtn}}>
+            <label htmlFor="fileInput" className='position-relative profile-upload-in'>
+                <Avatar size={66} src={file} />
+                <div className='position-absolute pp-btn' style={{...custStyle.inputBtn}}>
                     <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726730499/Vector_gmvkzf.svg" alt="" />
                 </div>
             </label>
@@ -40,7 +40,6 @@ const custStyle = {
         display: "none",
     },
     inputBtn:{
-        backgroundColor:"#0b0b59",
         height:"30px",
         width:"30px",
         top:"45px",
