@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
 import axios from 'axios';
+import ThemeContext from '../Providers/Contexts/ThemeContext';
 
 function MembershipDetails() {
     const [showModal, setModal] = useState(false);
@@ -8,28 +9,28 @@ function MembershipDetails() {
     const [eWalletissueDesc, seteWalletissueDesc] = useState({});
     const [bookletissueDesc, setbookletissueDesc] = useState({});
     const [couponsredeemDesc, setcouponsredeemDesc] = useState({});
-    
     const { membership_id } = useParams();
+    const {useThemeStyles} = useContext(ThemeContext);
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/eWalletissue', 
-            {
-                membership_id: membership_id
-            }, 
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                seteWalletissueDesc(response.data.data);
-            })
-            .catch(error => {
-                console.error('API Error:', error);
-            });
+            axios.post('/api/eWalletissue',
+                {
+                    membership_id: membership_id
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    seteWalletissueDesc(response.data.data);
+                })
+                .catch(error => {
+                    console.error('API Error:', error);
+                });
         } else {
             console.log('No token available, API call skipped');
         }
@@ -38,22 +39,22 @@ function MembershipDetails() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/bookletissue', 
-            {
-                membership_id: membership_id
-            }, 
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                setbookletissueDesc(response.data.data);
-            })
-            .catch(error => {
-                console.error('API Error:', error);
-            });
+            axios.post('/api/bookletissue',
+                {
+                    membership_id: membership_id
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    setbookletissueDesc(response.data.data);
+                })
+                .catch(error => {
+                    console.error('API Error:', error);
+                });
         } else {
             console.log('No token available, API call skipped');
         }
@@ -62,22 +63,22 @@ function MembershipDetails() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/couponsredeem', 
-            {
-                membership_id: membership_id
-            }, 
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                setcouponsredeemDesc(response.data.data.coupon_redeem);
-            })
-            .catch(error => {
-                console.error('API Error:', error);
-            });
+            axios.post('/api/couponsredeem',
+                {
+                    membership_id: membership_id
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    setcouponsredeemDesc(response.data.data.coupon_redeem);
+                })
+                .catch(error => {
+                    console.error('API Error:', error);
+                });
         } else {
             console.log('No token available, API call skipped');
         }
@@ -110,9 +111,15 @@ function MembershipDetails() {
             <div className="bg-shape d-flex justify-content-center position-absolute w-100 one">
                 <img src="https://i.imgur.com/UTAJ31K.png" alt="" />
                 <div className="position-absolute top-0 d-flex flex-column gap-3" style={{ marginTop: "180px" }}>
-                    <div onClick={() => { setModal(true), setTitle("e-Wallets Issued") }} style={{ background: "#fff", width: "370px",cursor:"pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                    <div onClick={() => { setModal(true), setTitle("e-Wallets Issued") }} style={{ background: "#fff", width: "370px", cursor: "pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
                         <div className="d-flex align-item-center justify-content-center position-relative">
-                            <img style={{ height: "50px" }} src="https://i.imgur.com/1CZgdmK.png" alt="" />
+                            <div className="">
+                                <svg width="40" height="46" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18.386 0.931864C19.3847 0.355224 20.6153 0.355224 21.614 0.931863L38.3046 10.5681C39.3033 11.1448 39.9186 12.2104 39.9186 13.3637V32.6363C39.9186 33.7896 39.3033 34.8552 38.3046 35.4319L21.614 45.0681C20.6153 45.6448 19.3847 45.6448 18.386 45.0681L1.69545 35.4319C0.696682 34.8552 0.0814152 33.7896 0.0814152 32.6363V13.3637C0.0814152 12.2104 0.696682 11.1448 1.69545 10.5681L18.386 0.931864Z" 
+                                    fill={useThemeStyles?.primary_color} />
+                                </svg>
+
+                            </div>
                             <div className="position-absolute" style={{ top: "10px" }}>
                                 <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M5.36035 7.83911H8.45392" stroke="white" stroke-width="1.16009" stroke-linecap="round" stroke-linejoin="round" />
@@ -130,9 +137,14 @@ function MembershipDetails() {
                             <i className='bi bi-chevron-right fw-bold' />
                         </div>
                     </div>
-                    <div onClick={() => { setModal(true), setTitle("Booklets Issued") }} style={{ background: "#fff", width: "370px",cursor:"pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                    <div onClick={() => { setModal(true), setTitle("Booklets Issued") }} style={{ background: "#fff", width: "370px", cursor: "pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
                         <div className="d-flex align-item-center justify-content-center position-relative">
-                            <img style={{ height: "50px" }} src="https://i.imgur.com/1CZgdmK.png" alt="" />
+                            <div className="">
+                                <svg width="40" height="46" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18.386 0.931864C19.3847 0.355224 20.6153 0.355224 21.614 0.931863L38.3046 10.5681C39.3033 11.1448 39.9186 12.2104 39.9186 13.3637V32.6363C39.9186 33.7896 39.3033 34.8552 38.3046 35.4319L21.614 45.0681C20.6153 45.6448 19.3847 45.6448 18.386 45.0681L1.69545 35.4319C0.696682 34.8552 0.0814152 33.7896 0.0814152 32.6363V13.3637C0.0814152 12.2104 0.696682 11.1448 1.69545 10.5681L18.386 0.931864Z" fill={useThemeStyles.primary_color} />
+                                </svg>
+
+                            </div>
                             <div className="position-absolute" style={{ top: "10px" }}>
                                 <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9.5 5.18181C8.67492 4.13169 7.40304 3.08157 4.25089 3.00451C4.04385 2.99945 3.875 3.16763 3.875 3.37473C3.875 4.91109 3.875 10.7275 3.875 12.4477C3.875 12.6548 4.04386 12.8175 4.25086 12.8242C7.40304 12.9273 8.67492 14.3248 9.5 15.375M9.5 5.18181C10.3251 4.13169 11.5969 3.08157 14.7491 3.00451C14.9562 2.99945 15.125 3.16385 15.125 3.37095C15.125 5.08835 15.125 10.7298 15.125 12.4472C15.125 12.6543 14.9562 12.8175 14.7492 12.8242C11.597 12.9273 10.3251 14.3248 9.5 15.375M9.5 5.18181V15.375" stroke="white" stroke-linejoin="round" />
@@ -147,9 +159,14 @@ function MembershipDetails() {
                             <i className='bi bi-chevron-right fw-bold' />
                         </div>
                     </div>
-                    <div onClick={() => { setModal(true), setTitle("Coupons Redeemed") }} style={{ background: "#fff", width: "370px",cursor:"pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                    <div onClick={() => { setModal(true), setTitle("Coupons Redeemed") }} style={{ background: "#fff", width: "370px", cursor: "pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
                         <div className="d-flex align-item-center justify-content-center position-relative">
-                            <img style={{ height: "50px" }} src="https://i.imgur.com/1CZgdmK.png" alt="" />
+                            <div className="">
+                                <svg width="40" height="46" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18.386 0.931864C19.3847 0.355224 20.6153 0.355224 21.614 0.931863L38.3046 10.5681C39.3033 11.1448 39.9186 12.2104 39.9186 13.3637V32.6363C39.9186 33.7896 39.3033 34.8552 38.3046 35.4319L21.614 45.0681C20.6153 45.6448 19.3847 45.6448 18.386 45.0681L1.69545 35.4319C0.696682 34.8552 0.0814152 33.7896 0.0814152 32.6363V13.3637C0.0814152 12.2104 0.696682 11.1448 1.69545 10.5681L18.386 0.931864Z" fill={useThemeStyles.primary_color} />
+                                </svg>
+
+                            </div>
                             <div className="position-absolute" style={{ top: "10px" }}>
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g clip-path="url(#clip0_393_548)">
@@ -238,8 +255,8 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                                     {bookletissueDesc.map((booklet, index) => (
                                         <tr key={index}>
                                             <td><Link to={`/Bookletissue_details/${membership_id}/${booklet.id}/`}>
-                                {booklet.name}
-                            </Link></td>
+                                                {booklet.name}
+                                            </Link></td>
                                         </tr>
                                     ))}
                                 </tbody>

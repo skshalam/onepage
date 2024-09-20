@@ -24,8 +24,9 @@ import ReferalList from './Page/ReferalList';
 import AboutUs from './Page/AboutUs';
 import Bookletissue_details from './Page/Bookletissue_details';
 import 'react-loading-skeleton/dist/skeleton.css'
-import { TestProvider } from './Providers/ContextProviders/TestProvider';
-import TestContext from './Providers/Contexts/TestContext';
+import axios from 'axios';
+import { ThemeProvider } from './Providers/ContextProviders/ThemeProvider';
+import ThemeContext from './Providers/Contexts/ThemeContext';
 
 const App = () => {
     const location = useLocation();
@@ -33,7 +34,7 @@ const App = () => {
     const merchant_base = match?.params?.merchant_base;
     const [merchantBase, setMerchantBase] = useState(null);
     const navigate = useNavigate();
-    const { setValue } = useContext(TestContext);
+    const {useThemeStyles,setUseThemeStyles} = useContext(ThemeContext);
     useEffect(() => {
         if (match) {
             const { merchant_base } = match.params;
@@ -41,9 +42,8 @@ const App = () => {
             localStorage.setItem('merchant_base', merchant_base); // Store in session storage
         }
     }, [match]);
-
+    
     useEffect(() => {
-        setValue("I am god")
         const token = sessionStorage.getItem('access_token');
         const storedMerchantBase = localStorage.getItem('merchant_base');
         const url = `/onePageWebsite/${storedMerchantBase}`;
@@ -67,7 +67,23 @@ const App = () => {
         }
     }, [navigate]);
 
-
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        if (token) {
+            axios.get(`/api/themecolor`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                setUseThemeStyles(res?.data?.data?.theme);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+    }, [merchant_base])
 
     return (
         <Routes>
@@ -94,9 +110,9 @@ const App = () => {
 };
 
 ReactDOM.createRoot(document.getElementById('app')).render(
-        <TestProvider>
-    <Router>
+    <ThemeProvider>
+        <Router>
             <App />
-    </Router>
-        </TestProvider>
+        </Router>
+    </ThemeProvider>
 );

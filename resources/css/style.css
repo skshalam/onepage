@@ -323,7 +323,7 @@ body {
 }
 
 .membership-package-body {
-    background-color: #0B0B59;
+    background-color: var(--primary-color);
     position: relative;
     overflow: hidden;
 }
@@ -1055,7 +1055,7 @@ body {
             background: #EBECF7;
 
             .slick-dots li button:before {
-                color: #0b0b59 !important;
+                color: var(--primary-color) !important;
                 /* opacity: 8 !important; */
             }
         }
@@ -1077,7 +1077,7 @@ body {
 }
 
 .membership-view-table thead th {
-    background: #0b0b59;
+    background: var(--primary-color);
     border: 1px solid #fff;
     color: #fff;
     text-align: center;
@@ -1381,7 +1381,7 @@ body {
 }
 
 .route_to_referal_list {
-    background-color: #0b0b59;
+    background-color: var(--primary-color);
 
     span,
     i {
@@ -1458,11 +1458,11 @@ body {
 }
 
 .cust-css-ant-button {
-    background: #0b0b59 !important;
+    background: var(--primary-color) !important;
 }
 
 .cust-css-ant-button:hover {
-    background: #0b0b59 !important;
+    background: var(--primary-color) !important;
     border: none;
     outline: none;
 }
