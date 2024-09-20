@@ -1,12 +1,74 @@
 import { Button, Col, Form, Input, Modal, Row } from 'antd'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
-import { Link } from 'react-router-dom'
 
 function Contact() {
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false)
     const targetDiv = useRef(null);
+    const { merchant_base } = useParams();
+    const [data_contact, setData_contact] = useState({
+        "contact":{
+            "heading":""
+        }
+    });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        axios.get('/api/contact', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                setData_contact(response.data);
+                setLoading(false)
+            })
+            .catch(error => {
+                setError(error);
+                setLoading(false);
+            });
+    }, [merchant_base]);
+    const handleSave = () => {
+        form.validateFields()
+            .then(values => {
+                const token = sessionStorage.getItem('access_token');
+                const merchant_id = localStorage.getItem('merchant_base');
+                if (token) {
+                    const payload = {
+                        ...values,
+                        merchant_id: merchant_id,
+                    };
+                    axios.post('/api/contactsubmit', payload, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => {
+                        console.log('API Response:', response);
+                        Modal.success({
+                            content: 'Message sent successfully!',
+                        });
+                        form.resetFields(); // Clear form after successful submission
+                    })
+                    .catch(error => {
+                        console.error('API Error:', error);
+                        Modal.error({
+                            content: 'Something went wrong. Please try again.',
+                        });
+                    });
+                } else {
+                    console.log('No token available, API call skipped');
+                }
+            })
+            .catch(errorInfo => {
+                console.log('Validation Failed:', errorInfo);
+            });
+    };    
     return (
         <div className='onepage-main-body position-relative'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -23,7 +85,7 @@ function Contact() {
                 <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726487176/Rectangle_999_pu916t.png" alt="" />
             </div>
             <div className="contact_form_head position-absolute">
-                <p className='fs-1 fw-bold ps-5'>Hello !</p>
+                <p className='fs-1 fw-bold ps-5'>{data_contact.contact.heading}</p>
                 <p className='mb-0 px-5'>Fill out our contact form and we will get back to you within 1-2 business days.</p>
             </div>
             <div ref={targetDiv} className="contact_form_container rounded-3 p-4 ">
@@ -42,12 +104,12 @@ function Contact() {
                         </Col>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"phone"} className='mb-0'>
+                                <Form.Item name={"mobile"} className='mb-0'>
                                     <PhoneInput
                                         country={'in'}
                                     />
                                 </Form.Item>
-                                <label className='position-absolute z-3' htmlFor="userName">Phone</label>
+                                <label className='position-absolute z-3' htmlFor="mobile">Phone</label>
                             </div>
                         </Col>
                         <Col xs={24}>
@@ -60,17 +122,17 @@ function Contact() {
                         </Col>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"email"} className='mb-0'>
+                                <Form.Item name={"message"} className='mb-0'>
                                     <Input.TextArea rows={5} className='rounded-2  cust-css-ant-input contact-info' placeholder='Enter your message' />
                                 </Form.Item>
-                                <label className='position-absolute' htmlFor="email">Message</label>
+                                <label className='position-absolute' htmlFor="message">Message</label>
                             </div>
                         </Col>
                     </Row>
+                    <div className="text-center mt-3">
+                        <Button className='cust-css-ant-button' onClick={handleSave} type='primary'>Send</Button>
+                    </div>
                 </Form>
-                <div className="text-center mt-3">
-                    <Button className='cust-css-ant-button' type='primary'>Send</Button>
-                </div>
             </div>
             <div className='socail-linkppart m-3'>
                 <div className="sl-details-body">

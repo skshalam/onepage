@@ -1,15 +1,148 @@
 import { Avatar, Button, Col, DatePicker, Form, Input, Modal, Popover, Row, Select } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import UploadProfilePic from '../components/UploadProfilePic';
-
+import { Link, Router, useParams } from 'react-router-dom';
+import axios from 'axios';
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [openDelPop, setOpenDelPop] = useState(false);
     const targetDiv = useRef(null);
-    const [formInstance, setFormInstance] = useState({})
+    const [data_account, setData_getaccount] = useState({
+        "name": {
+            "display_full_name_permission": 0,
+            "full_name_dynamic_name": ""
+        },
+        "email": {
+            "display_email_permission": 0,
+            "email_dynamic_name": ""
+        },
+        "gender": {
+            "display_gender_permission": 0,
+            "gender_dynamic_name": ""
+        },
+        "address": {
+            "display_address_permission": 0,
+            "address_dynamic_name": ""
+        },
+        "pincode": {
+            "display_pincode_permission": 0,
+            "pincode_dynamic_name": ""
+        },
+        "city": {
+            "display_city_permission": 0,
+            "city_dynamic_name": ""
+        },
+        "region": {
+            "display_region_permission": 0,
+            "region_dynamic_name": ""
+        },
+        "birthday": {
+            "display_birthday_permission": 0,
+            "birthday_dynamic_name": ""
+        },
+        "marital_status": {
+            "display_marital_status_permission": 0,
+            "marital_status_dynamic_name": ""
+        },
+        "bank": {
+            "display_bank_name_permission": 0,
+            "bank_name": "",
+            "display_bank_account_number_permission": 0,
+            "bank_account_number": ""
+        },
+        "mobile": {
+            "display_mobile_number_permission": 0,
+            "mobile_number_dynamic_name": ""
+        },
+        "gst": {
+            "display_gst_permission": 0,
+            "gst_dynamic_name": ""
+        },
+        "pan": {
+            "display_pan_permission": 0,
+            "pan_dynamic_name": ""
+        }
+    });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        if (token) {
+            axios.get('/api/accountInfo', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    // console.log('API Response:', response);
+                    setData_getaccount(response.data.accountheading);
+                })
+                .catch(error => {
+                    console.error('API Error:', error);
+                    setError(error);
+                });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, []);
+    // useEffect(() => {
+    //     const token = sessionStorage.getItem('access_token');
+    //     if (token) {
+    //         axios.get('/api/infodata', {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         })
+    //             .then(response => {
+    //                 // console.log('API Response:', response);
+    //                 setData_getaccount(response.data.accountheading);
+    //             })
+    //             .catch(error => {
+    //                 console.error('API Error:', error);
+    //                 setError(error);
+    //             });
+    //     } else {
+    //         console.log('No token available, API call skipped');
+    //     }
+    // }, []);
+    const handleSave = (formData) => {
+        const token = sessionStorage.getItem('access_token');
+        const merchant_id = localStorage.getItem('merchant_base');
+        if (token) {
+            const payload = {
+                ...formData,
+                merchant_id: 15657,
+                state: 'ANDHRA PRADESH',
+                country: 'India',
+                city: 'VISAKHAPATNAM',
+                region: 'fdsaf',
+                dob: '1970-01-01',
+                marital: 'Single',
+                doa: '1970-01-01',
+                gender: 'Male',
+            };
+            axios.post('/api/editinfo', payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    console.log('API Response:', response);
+                    // Handle successful response
+                    setIsEditable(false);
+                })
+                .catch(error => {
+                    console.error('API Error:', error);
+                    // Handle error
+                });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    };
     return (
         <div className='body-container position-relative'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -40,7 +173,7 @@ function MyAcount() {
 
                                 </div>
                                 :
-                                <Button onClick={() => { formInstance.submit(),setIsEditable(false) }} type='ghost' icon={<i className='bi bi-check-lg fs-3 text-light' />}></Button>
+                                <Button onClick={() => setIsEditable(false)} type='ghost' icon={<i className='bi bi-check-lg fs-3 text-light' />}></Button>
                         }
                     </div>
                 </div>
@@ -53,7 +186,7 @@ function MyAcount() {
                         animate={{ opacity: 1, }}
                         transition={{ duration: 0.6 }}
                     >
-                        <ProfileEditForm formInstance={setFormInstance} />
+                        <ProfileEditForm onSave={handleSave} />
                     </motion.div>
                     :
                     <div className="profile-info m-3" ref={targetDiv}>
@@ -61,84 +194,102 @@ function MyAcount() {
                             <div className="profile-pic text-center mb-3">
                                 <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
                             </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">Name</label>
-                                <div className="">
-                                    <span>Sameeksha Sinha</span>
+                            {data_account.name.display_full_name_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">Name</label>
+                                    <div className="">
+                                        <span>{data_account.name.full_name_dynamic_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">Gender</label>
-                                <div className="">
-                                    <span>Male</span>
+                            )}
+                            {data_account.gender.display_gender_permission ==  1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">Gender</label>
+                                    <div className="">
+                                        <span>{data_account.gender.gender_dynamic_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">E-mail</label>
-                                <div className="">
-                                    <span>gareeb.myewards@gmail.com</span>
+                            )}
+                            {data_account.email.display_email_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">E-mail</label>
+                                    <div className="">
+                                    <span>{data_account.email.email_dynamic_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">Phone</label>
-                                <div className="">
-                                    <span>+91 9772920587</span>
+                            )}
+                            {data_account.mobile.display_mobile_number_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">Phone</label>
+                                    <div className="">
+                                        <span>{data_account.mobile.mobile_number_dynamic_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">Birthday</label>
-                                <div className="">
-                                    <span>16th Oct, 1990</span>
+                            )}
+                            {data_account.birthday.display_birthday_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">Birthday</label>
+                                    <div className="">
+                                    <span>{data_account.birthday.birthday_dynamic_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">Relationship</label>
-                                <div className="">
-                                    <span>Single</span>
+                            )}
+                            {data_account.marital_status.display_marital_status_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">Relationship</label>
+                                    <div className="">
+                                        <span>{data_account.marital_status.marital_status_dynamic_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">Aniversary</label>
-                                <div className="">
-                                    <span>N/A</span>
+                            )}
+                            {data_account.address.display_address_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">Address</label>
+                                    <div className="">
+                                        <span>{data_account.address.address_dynamic_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">Address</label>
-                                <div className="">
-                                    <span>St. Moonshine lane, ABC road...</span>
+                            )}
+                            {data_account.gst.display_gst_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">GSTIN</label>
+                                    <div className="">
+                                    <span>{data_account.address.gst_dynamic_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">GSTIN</label>
-                                <div className="">
-                                    <span>ISTN87638RHA</span>
+                            )}
+                            {data_account.pan.display_pan_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">PAN</label>
+                                    <div className="">
+                                        <span>{data_account.pan.pan_dynamic_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">PAN</label>
-                                <div className="">
-                                    <span>CCDJO9E3H7</span>
+                            )}
+                            {data_account.bank.display_bank_name_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">Bank Name</label>
+                                    <div className="">
+                                        <span>{data_account.bank.bank_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">Bank Name</label>
-                                <div className="">
-                                    <span>AXIS Bank, Kolkata</span>
+                            )}
+                            {data_account.bank.display_bank_account_number_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">Bank A/C No.</label>
+                                    <div className="">
+                                        <span>{data_account.bank.bank_account_number}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">Bank A/C No.</label>
-                                <div className="">
-                                    <span>487512485624</span>
+                            )}
+                            {data_account.pincode.display_pincode_permission === 1 && (
+                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                    <label htmlFor="">P.O. Box No.</label>
+                                    <div className="">
+                                        <span>{data_account.pincode.pincode_dynamic_name}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                <label htmlFor="">P.O. Box No.</label>
-                                <div className="">
-                                    <span>784596</span>
-                                </div>
-                            </div>
+                            )}
                         </div>
                         <div className="powered-ewards">
                             <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
@@ -157,13 +308,13 @@ function MyAcount() {
                 styles={{
                     footer: {
                         display: "grid",
-                        margin: "20px 10px",
+                        margin:"20px 10px",
                         padding: "0px 20px",
                         gridTemplateColumns: "1fr 1fr"
                     },
-                    content: {
-                        padding: "0px",
-                        overflow: "hidden",
+                    content:{
+                        padding:"0px",
+                        overflow:"hidden",
                     }
                 }}
             >
@@ -172,7 +323,7 @@ function MyAcount() {
                         <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726480398/xdbtbbvmgyt91wxi3dj6.png" alt="" />
                     </div>
                     <div className="position-absolute modal-icon d-flex flex-column gap-0">
-                        <i className='bi bi-exclamation-circle text-light' />
+                        <i className='bi bi-exclamation-circle text-light'/>
                         <span>Delete ?</span>
                     </div>
                     <div className="text-center fw-semibold modal-txt">
@@ -186,39 +337,39 @@ function MyAcount() {
 
 export default MyAcount
 
-const ProfileEditForm = ({ formInstance }) => {
+const ProfileEditForm = ({ onSave }) => {
     const [form] = Form.useForm();
-    const [file, setFile] = useState('https://cdn.pixabay.com/photo/2014/06/03/19/38/test-361512_640.jpg');
-    const handleSubmit = (e) => {
-        console.log({ ...e, profilePicture: file });
-    }
-    useEffect(() => {
-        formInstance(form)
-    }, [])
+    const handleSave = () => {
+        form.validateFields().then(values => {
+            // Call the onSave prop function and pass the form values
+            onSave(values);
+        }).catch(errorInfo => {
+            console.log('Form validation failed:', errorInfo);
+        });
+    };
     return (
         <div className="edit-profile p-3">
             <Form
                 form={form}
                 layout='vertical'
                 className=''
-                onFinish={handleSubmit}
             >
                 <Row gutter={[0, 20]} >
                     {/* User Profile Pic */}
                     <Col xs={24}>
                         <div className="text-center">
                             <Form.Item className='' name="profilePicture">
-                                <UploadProfilePic URL={setFile} file={file} />
+                                <Avatar size={70} className='cust-css-ant-avatar' icon={<i className='bi bi-person-fill' />} />
                             </Form.Item>
                         </div>
                     </Col>
                     {/* UserName */}
                     <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"userName"} className='mb-0'>
+                            <Form.Item name={"name"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
                             </Form.Item>
-                            <label className='position-absolute' htmlFor="userName">Name</label>
+                            <label className='position-absolute' htmlFor="name">Name</label>
                         </div>
                     </Col>
                     {/* Email */}
@@ -233,10 +384,10 @@ const ProfileEditForm = ({ formInstance }) => {
                     {/* Phone Number */}
                     <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"phoneNumber"} className='mb-0'>
+                            <Form.Item name={"mobile"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
                             </Form.Item>
-                            <label className='position-absolute' htmlFor="phoneNumber">Phone Number</label>
+                            <label className='position-absolute' htmlFor="mobile">Phone Number</label>
                         </div>
                     </Col>
                     {/* Address Line */}
@@ -317,28 +468,28 @@ const ProfileEditForm = ({ formInstance }) => {
                             </Col>
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"birthday"} className='mb-0'>
+                                    <Form.Item name={"dob"} className='mb-0'>
                                         <DatePicker className='w-100 rounded-5 cust-css-ant-date' />
                                     </Form.Item>
-                                    <label className='position-absolute' htmlFor="birthday">Birthday</label>
+                                    <label className='position-absolute' htmlFor="dob">Birthday</label>
                                 </div>
                             </Col>
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"relationship"} className='mb-0'>
+                                    <Form.Item name={"marital"} className='mb-0'>
                                         <Select className='cust-css-ant'>
 
                                         </Select>
                                     </Form.Item>
-                                    <label className='position-absolute' htmlFor="relationship">Relationship</label>
+                                    <label className='position-absolute' htmlFor="marital">Relationship</label>
                                 </div>
                             </Col>
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"aniversary"} className='mb-0'>
+                                    <Form.Item name={"doa"} className='mb-0'>
                                         <DatePicker className='w-100 rounded-5 cust-css-ant-date' />
                                     </Form.Item>
-                                    <label className='position-absolute' htmlFor="aniversary">Aniversary</label>
+                                    <label className='position-absolute' htmlFor="doa">Aniversary</label>
                                 </div>
                             </Col>
                         </Row>
@@ -355,39 +506,44 @@ const ProfileEditForm = ({ formInstance }) => {
                     {/* Pan Number */}
                     <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"panNumber"} className='mb-0'>
+                            <Form.Item name={"pan"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
-                            <label className='position-absolute' htmlFor="panNumber">PAN</label>
+                            <label className='position-absolute' htmlFor="pan">PAN</label>
                         </div>
                     </Col>
                     {/* Bank Name */}
                     <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"bankName"} className='mb-0'>
+                            <Form.Item name={"bank_name"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
-                            <label className='position-absolute' htmlFor="bankName">Bank Name</label>
+                            <label className='position-absolute' htmlFor="bank_name">Bank Name</label>
                         </div>
                     </Col>
                     {/* Bank Account Number */}
                     <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"accountNumber"} className='mb-0'>
+                            <Form.Item name={"bank_account_number"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
-                            <label className='position-absolute' htmlFor="accountNumber">Bank A/C No.</label>
+                            <label className='position-absolute' htmlFor="bank_account_number">Bank A/C No.</label>
                         </div>
                     </Col>
                     {/* P.O. Box Number */}
-                    <Col xs={24}>
+                    {/* <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"poBoxNumber"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="poBoxNumber">P.O. Box No.</label>
                         </div>
-                    </Col>
+                    </Col> */}
+                    <Row gutter={[0, 20]}>
+                        <Col xs={24}>
+                            <Button onClick={handleSave} type='primary'>Save</Button>
+                        </Col>
+                    </Row>
                 </Row>
             </Form>
             <div className="powered-ewards">

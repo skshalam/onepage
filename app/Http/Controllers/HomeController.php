@@ -31,7 +31,12 @@ use App\Models\Ebooklets;
 use App\Models\Booklets;
 use App\Models\BookletContent;
 use App\Models\TokenRedeem;
+use App\Models\RedeemPoints;
 use App\Models\WalletRedeem;
+use App\Models\CountryCodes;
+use App\Models\Countries;
+use App\Models\CitisNew;
+use App\Models\MerchantRegion;
 use DB;
 use Auth;
 use Illuminate\Support\Facades\Validator;
@@ -88,56 +93,214 @@ class HomeController extends Controller
         ]);
         
     }
-    public function creditbalance(Request $request)
-    {
-        // $merchant_id= 15657;
-        // $user_id= 9;
+
+    public function getTotalCreditBalance(){
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-        $balance =Cards::select('cards.current_points','user_points.valid_till','user_points.original_points','user_points.original_bill_date','user_points.bill_amount','user_points.transaction_id','user_points.M_account','user_points.bill_no as invoice_no')
-        ->leftJoin('users', 'cards.user_id', '=', 'users.id')
-        ->leftJoin('user_points', function ($join) {
-            $join->on('cards.user_id', '=', 'user_points.user_id')
-                 ->on('cards.merchant_id', '=', 'user_points.merchant_id');
-        })
-        ->where('cards.merchant_id', $merchant_id)
-        ->where('cards.user_id', $user_id);
 
-        if(!empty($request->to_date) && !empty($request->from_date)){
-            $balance = $balance->whereBetween('user_points.original_bill_date', [$request->to_date, $request->from_date]);
-        }
-        $balance = $balance->get();
-        $currentDate = date('Y-m-d');
-        $balance = $balance->map(function ($item) use ($currentDate) {
-            $item['is_expired'] = $currentDate > $item->valid_till;
-            if (preg_match('/\d{2}:\d{2}:\d{2}/', $item->invoice_no, $matches)) {
-                $timePart = $matches[0]; 
-                $dateTime = DateTime::createFromFormat('H:i:s', $timePart);
-                if ($dateTime) {
-                    $formattedTime = $dateTime->format('g:i A'); // Format to 12-hour time with AM/PM
-                    $item['original_time'] = $timePart; // 24-hour format
-                    $item['formatted_time'] = $formattedTime; // 12-hour format
-                }
-            } else {
-                $item['original_time'] = '';
-                $item['formatted_time'] = '';
+        $total_bal = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->get('current_points');
+        
+        return response()->json([
+            'error' => false,
+            'message' => 'total_bal',
+            'total_bal' => $total_bal,
+        ]); 
+    }
+
+    public function creditbalance(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+
+        $creditbalance_query = "SELECT
+                        Type,
+                        Valid_Till,
+                        Invoice_Number,
+                        Points,
+                        DATE_FORMAT(Billing_Date, '%e') AS Billing_Day,
+                        DATE_FORMAT(Billing_Date, '%b') AS Billing_Month,
+                        DATE_FORMAT(Billing_Date, '%Y') AS Billing_Year,
+                        Billing_Amount,
+                        Transaction_id,
+                        Account,
+                        Credit_Name,
+                        feedback_id,
+                        pos_billing_dump_new_id,
+                        usefor,
+                        ebooklet_report_id,
+                        custom_ewallet_marker
+                    FROM (
+                        SELECT
+                            CASE
+                                WHEN up.valid_till < CURRENT_DATE THEN 'Expired'
+                                ELSE 'Earned'
+                            END AS Type,
+                            up.valid_till AS Valid_Till,
+                            up.bill_no AS Invoice_Number,
+                            up.original_points AS Points,
+                            up.original_bill_date AS Billing_Date,
+                            up.bill_amount AS Billing_Amount,
+                            up.transaction_id AS Transaction_id,
+                            up.M_account AS Account,
+                            CASE
+                                WHEN up.custom_ewallet_marker = 1 AND up.ebooklet_report_id IS NOT NULL AND up.ebooklet_report_id != 0 THEN 'eWallet Credits'
+                                WHEN up.usefor != 0 AND up.pos_billing_dump_new_id = 0 THEN 'Loyalty Credits'
+                                WHEN up.feedback_id != 0 THEN 'Feedback Credits'
+                                WHEN up.pos_billing_dump_new_id != 0 THEN 'Bonus Credits'
+                                ELSE 'Other Credits'
+                            END AS Credit_Name,
+                            up.feedback_id AS feedback_id,
+                            up.pos_billing_dump_new_id as pos_billing_dump_new_id,
+                            up.usefor as usefor,
+                            up.ebooklet_report_id as ebooklet_report_id,
+                            up.custom_ewallet_marker as custom_ewallet_marker
+                        FROM user_points up
+                        WHERE up.user_id = ".$user_id."
+                        AND up.merchant_id = ".$merchant_id."
+                        UNION ALL
+                        SELECT
+                            'Redeemed' AS Type,
+                            NULL AS Valid_Till,
+                            rp.bill_no AS Invoice_Number,
+                            rp.point_redeem AS Points,
+                            CONCAT(rp.date, ' ', rp.time) AS Billing_Date,
+                            rp.bill_amount AS Billing_Amount,
+                            NULL AS Transaction_id,
+                            rp.M_account AS Account,
+                            'Redeem Credits' AS Credit_Name,
+                             'null' AS feedback_id,
+                             'null' AS pos_billing_dump_new_id,
+                             'null' AS usefor,
+                             'null' AS ebooklet_report_id,
+                             'null' AS custom_ewallet_marker
+                        FROM redeem_points rp
+                        WHERE rp.user_id = ".$user_id."
+                        AND rp.merchant_id = ".$merchant_id."
+                    ) AS combined_results
+                    ORDER BY Billing_Date DESC";
+        $creditbalance_obj = DB::select($creditbalance_query);    
+        
+        foreach ($creditbalance_obj as $item) {
+            $day = $item->Billing_Day;
+            $month = $item->Billing_Month;
+            $year = $item->Billing_Year;
+            $suffix = 'th';
+            if ($day == 1 || $day == 21 || $day == 31) {
+                $suffix = 'st';
+            } elseif ($day == 2 || $day == 22) {
+                $suffix = 'nd';
+            } elseif ($day == 3 || $day == 23) {
+                $suffix = 'rd';
             }
-            return $item;
-        });
-        if(!empty($request->is_expired)){
-            $isExpiredFilter = filter_var($request->input('is_expired'), FILTER_VALIDATE_BOOLEAN);
-            $balance = $balance->filter(function ($item) use ($isExpiredFilter) {
-                return $item['is_expired'] === $isExpiredFilter;
-            });
+            $item->Formatted_Billing_Date = "{$day}{$suffix} {$month} {$year}";
         }
+
         return response()->json([
             'error' => false,
             'message' => 'Balance',
-            'creditbalance' => $balance,
-        ]); 
+            'creditbalance' => $creditbalance_obj,
+        ]);
 
+    
+    }
+
+    // public function creditbalance(Request $request)
+    // {
+    //     // $merchant_id= 15657;
+    //     // $user_id= 9;
+    //     $user = JWTAuth::parseToken()->authenticate();
+    //     $user_id = $user->id;
+    //     // Get the merchant_id from the JWT payload
+    //     $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+    //     $balance =UserPoints::select('user_points.valid_till','user_points.original_points','user_points.original_bill_date','user_points.bill_amount','user_points.transaction_id','user_points.M_account','user_points.bill_no as invoice_no','user_points.custom_ewallet_marker','user_points.ebooklet_report_id','user_points.usefor','user_points.pos_billing_dump_new_id','user_points.feedback_id')
+    //     ->where('user_points.merchant_id', $merchant_id)
+    //     ->where('user_points.user_id', $user_id);
+    //     // ->leftJoin('redeem_points', function ($join) {
+    //     //     $join->on('user_points.user_id', '=', 'redeem_points.user_id')
+    //     //          ->on('user_points.merchant_id', '=', 'redeem_points.merchant_id');
+    //     // });
+    //     if(!empty($request->to_date) && !empty($request->from_date)){
+    //         $balance = $balance->whereBetween('user_points.original_bill_date', [$request->to_date, $request->from_date]);
+    //     }
+    //     $balance = $balance->limit(10)->get();
+    //     $redeem_data = RedeemPoints::select('bill_no')->where('user_id', $user_id)->where('merchant_id', $merchant_id)->get();
+    //     $currentDate = date('Y-m-d');
+    //     $balance = $balance->map(function ($item) use ($currentDate) {
+    //         $item['is_expired'] = $currentDate > $item->valid_till;
+    //         if (preg_match('/\d{2}:\d{2}:\d{2}/', $item->invoice_no, $matches)) {
+    //             $timePart = $matches[0]; 
+    //             $dateTime = DateTime::createFromFormat('H:i:s', $timePart);
+    //             if ($dateTime) {
+    //                 $formattedTime = $dateTime->format('g:i A'); // Format to 12-hour time with AM/PM
+    //                 $item['original_time'] = $timePart; // 24-hour format
+    //                 $item['formatted_time'] = $formattedTime; // 12-hour format
+    //             }
+    //         } else {
+    //             $item['original_time'] = '';
+    //             $item['formatted_time'] = '';
+    //         }
+
+    //         if ($item->custom_ewallet_marker == 1 && (empty($item->ebooklet_report_id) || $item->ebooklet_report_id == 0)) {
+    //             $item['name'] = 'eWallet Credits';
+    //         } elseif (!empty($item->usefor) && $item->usefor != 0 && $item->pos_billing_dump_new_id == 0) {
+    //             $item['name'] = 'Loyalty Credits';
+    //         } elseif (!empty($item->feedback_id) && $item->feedback_id != 0) {
+    //             $item['name'] = 'Feedback Credits';
+    //         } elseif (!empty($item->pos_billing_dump_new_id) && $item->pos_billing_dump_new_id != 0) {
+    //             $item['name'] = 'Bonus Credits';
+    //         }
+    //         return $item;
+    //     });
+    //     if (!empty($request->credit_type)) {
+    //         $creditType = intval($request->credit_type);
+    //         $balance = $balance->filter(function ($item) use ($creditType) {
+    //             switch ($creditType) {
+    //                 case 1:
+    //                     return $item['name'] == 'eWallet Credits';
+    //                 case 2:
+    //                     return $item['name'] == 'Loyalty Credits';
+    //                 case 3:
+    //                     return $item['name'] == 'Bonus Credits';
+    //                 case 4:
+    //                     return $item['name'] == 'Feedback Credits';
+    //                 default:
+    //                     return true;
+    //             }
+    //         });
+    //     }
+    //     if(!empty($request->is_expired)){
+    //         $isExpiredFilter = filter_var($request->input('is_expired'), FILTER_VALIDATE_BOOLEAN);
+    //         $balance = $balance->filter(function ($item) use ($isExpiredFilter) {
+    //             return $item['is_expired'] === $isExpiredFilter;
+    //         });
+    //     }
+    //     // echo"<pre>";
+    //     // print_r($balance); exit;
+    //     return response()->json([
+    //         'error' => false,
+    //         'message' => 'Balance',
+    //         'creditbalance' => $balance,
+    //     ]); 
+
+    // }
+
+    public function getTotalWalletBalance(){
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        // Get the merchant_id from the JWT payload
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+
+        $total_wlbal = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->get('current_wallet_balance');
+        
+        return response()->json([
+            'error' => false,
+            'message' => 'total_bal',
+            'total_bal' => $total_wlbal,
+        ]); 
     }
     public function walletbalance(Request $request)
     {
@@ -162,9 +325,14 @@ class HomeController extends Controller
         }
         $waletbalance= $waletbalance->get();
         $currentDate = date('Y-m-d');
-        $waletbalance = $waletbalance->map(function ($item) use ($currentDate) {
+        $waletbalance = $waletbalance->map(function ($item) use ($currentDate,$request) {
             $item['is_expired'] = $currentDate > $item->validity;
-            $combinedValue = $item->current_wallet_balance + $item->original_points;
+            // $combinedValue = $item->current_wallet_balance + $item->original_points;
+            if (!empty($request->redem_chk) && $request->redem_chk == 1) {
+                $combinedValue = $item->current_wallet_balance - $item->original_points;
+            } else {
+                $combinedValue = $item->current_wallet_balance + $item->original_points;
+            }
             $item['value'] = $combinedValue;
             return $item;
         });
@@ -174,9 +342,6 @@ class HomeController extends Controller
                 return $item['is_expired'] === $isExpiredFilter;
             });
         }
-
-    
-
         return response()->json([
             'error' => false,
             'message' => 'Balance',
@@ -608,13 +773,13 @@ class HomeController extends Controller
     {
         // $merchant_id= 15657;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-        $homebannersData = Onepage_Banner_Space::select('banner_image')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
-        if(count($homebannersData) > 0){
-            $banner_images = $homebannersData->pluck('banner_image')->all();
-            $data['banners'] = [
-                'banner_image' => $banner_images,
-            ];
-        }
+        // $homebannersData = Onepage_Banner_Space::select('banner_image')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
+        // if(count($homebannersData) > 0){
+        //     $banner_images = $homebannersData->pluck('banner_image')->all();
+        //     $data['banners'] = [
+        //         'banner_image' => $banner_images,
+        //     ];
+        // }
         $about =Onepage_BasicInformation::select('heading','content')->where('merchant_id', $merchant_id)->where('status',1)->where('hide_show',1)->first();
         if($about){
             $data['about'] = [
@@ -654,11 +819,14 @@ class HomeController extends Controller
         if (!empty($gallery_images)) {
             $galleryData['images'] = $gallery_images;
         }
+        if (!empty($galleryData)) {
+        $data['gallery'] = $galleryData;
+    }
         return response()->json([
             'error' => false,
             'message' => 'About',
             'data' => $data,
-            'gallery' => $galleryData
+            // 'gallery' => $galleryData
         ]);
 
 
@@ -814,8 +982,6 @@ class HomeController extends Controller
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-
-
 
         $infodata = User::select('users.image','users.name','cards.gender','users.email','users.mobile','cards.dob','cards.marital','cards.doa','cards.address','cards.gstin','cards.pan','cards.bank_name','cards.bank_account_number','users.pincode','users.country','users.state','cards.region','cards.city')
         ->join('cards', 'users.id', '=', 'cards.user_id')
@@ -1117,4 +1283,93 @@ class HomeController extends Controller
         ]);
        
     }
+    public function countries(Request $request)
+    {
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $countries = countries::get();
+        return response()->json([
+            'error' => false,
+            'message' => 'all countries',
+            'countries' => $countries,
+        ]);
+        
+    }
+    public function cities(Request $request)
+    {
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $country = $request->country;
+        $rules=[
+            'merchant_id'=>'Required',
+            'country'=>'Required',
+          ];
+          $validator = Validator::make($request->all(), $rules);
+        
+          if ($validator->fails()) {
+              return response()->json([
+                  'error' => true,
+                  'message' => 'Validation Failed',
+                  'errors' => $validator->errors()
+              ]);
+          }else{
+            $cities = CitisNew::get();
+            return response()->json([
+                'error' => false,
+                'message' => 'all cities',
+                'cities' => $cities,
+            ]);
+          } 
+
+    }
+
+    public function gettingregion(Request $request)
+    {
+
+      $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+      $city = $request->city;
+      $rules = [
+        'city' => 'required',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Validation Failed',
+                'errors' => $validator->errors()
+            ]);
+        }
+      $region = MerchantRegion::select('id','region')->where('city',$city)->where('merchant_id',$merchant_id)->orderBy('region')->get();
+      unset($merchant_id,$city);
+      if(count($region)>0){
+        return response()->json([
+            'error' => false,
+            'region' => $region,
+        ]);
+      }else{
+        $region = 'No city Found';
+        return response()->json([
+            'error' => true,
+            'region' => $region,
+        ]);
+      } 
+    }
+    public function themecolor()
+    {
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $themeData = Onepage_WebsiteTheme::select('primary_color', 'secondary_color', 'font_primary_color','font_secondary_color')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show', 1)->first();
+        if($themeData){
+            $data['theme'] = [
+                'primary_color' => $themeData->primary_color,
+                'secondary_color' => $themeData->secondary_color,
+                'font_primary_color' => $themeData->font_primary_color,
+                'font_secondary_color' => $themeData->font_secondary_color,
+            ];
+        }
+        return response()->json([
+            'error' => false,
+            'message' => 'Theme Data',
+            'data' => $data,
+        ]);
+    }
+    
 }
