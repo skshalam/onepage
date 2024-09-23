@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
+import axiosSetup from '@/axiosSetup';
 function AboutUs() {
     const [data_home, setData_home] = useState({
         "cards": {
@@ -36,12 +36,7 @@ function AboutUs() {
     const { merchant_base } = useParams();
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
-        axios.get('/api/onepagehome', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        })
+        axiosSetup.get('/api/onepagehome')
             .then(response => {
                 setData_home(response.data.data);
                 setLoading(false)
@@ -53,12 +48,7 @@ function AboutUs() {
     }, [merchant_base]);
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
-        axios.get('/api/about', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        })
+        axiosSetup.get('/api/about')
             .then(response => {
                 setData_aboutus(response.data.data);
                 setLoading(false)

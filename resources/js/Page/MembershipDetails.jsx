@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
-import axios from 'axios';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
-
+import axiosSetup from '@/axiosSetup';
 function MembershipDetails() {
     const [showModal, setModal] = useState(false);
     const [title, setTitle] = useState(null);
@@ -15,15 +14,9 @@ function MembershipDetails() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/eWalletissue',
+            axiosSetup.post('/api/eWalletissue',
                 {
                     membership_id: membership_id
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
                 })
                 .then(response => {
                     seteWalletissueDesc(response.data.data);
@@ -39,15 +32,9 @@ function MembershipDetails() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/bookletissue',
+            axiosSetup.post('/api/bookletissue',
                 {
                     membership_id: membership_id
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
                 })
                 .then(response => {
                     setbookletissueDesc(response.data.data);
@@ -63,15 +50,9 @@ function MembershipDetails() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/couponsredeem',
+            axiosSetup.post('/api/couponsredeem',
                 {
                     membership_id: membership_id
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
                 })
                 .then(response => {
                     setcouponsredeemDesc(response.data.data.coupon_redeem);

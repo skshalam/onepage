@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
-import axios from 'axios';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-
+import axiosSetup from '@/axiosSetup';
 function coupon_booklet() {
     const [open, setOpen] = useState(false);
     const [openConfirm, setOpenConfirm] = useState(false);
@@ -35,16 +34,10 @@ function coupon_booklet() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/bookletcoupon',
+            axiosSetup.post('/api/bookletcoupon',
                 {
                     membership_id: membership_id,
                     booklets_id: bookletissue_id
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
                 })
                 .then(response => {
                     setrewardsData(response.data.data.booklet_coupon);
@@ -62,17 +55,11 @@ function coupon_booklet() {
     const handleDrawer = (coupon_booklet) => {
         const token = sessionStorage.getItem('access_token');
         if (token) {
-            axios.post('/api/bookletcoupon',
+            axiosSetup.post('/api/bookletcoupon',
                 {
                     membership_id: membership_id,
                     booklets_id: bookletissue_id,
                     token_id: coupon_booklet.id
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
                 })
                 .then(response => {
                     setRewardsDesc(response.data.data); // Assuming response contains coupon details

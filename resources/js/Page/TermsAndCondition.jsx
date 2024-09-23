@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
-
+import axiosSetup from '@/axiosSetup';
 function TermsAndCondition() {
     const { merchant_base } = useParams();
     const { useThemeStyles } = useContext(ThemeContext)
@@ -15,12 +15,7 @@ function TermsAndCondition() {
     const [error, setError] = useState(null);
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
-        axios.get('/api/termscon', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        })
+        axiosSetup.get('/api/termscon')
             .then(response => {
                 setData_termscon(response.data);
                 setLoading(false)

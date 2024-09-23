@@ -2,8 +2,7 @@ import { Checkbox, Col, DatePicker, Drawer, Form, Row, Tabs } from 'antd';
 import { form } from 'framer-motion/client';
 import React, { useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
-import axios from 'axios';
-
+import axiosSetup from '@/axiosSetup';
 function CreditWallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
     const [openFilter2, setOpenFilter2] = useState(false);
@@ -24,12 +23,7 @@ function CreditWallet() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/creditbalance', [], {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axiosSetup.post('/api/creditbalance', [])
             .then(response => {
                 setcreditwalletData(response.data.creditbalance);
                 console.log(response.data.creditbalance);

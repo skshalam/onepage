@@ -27,6 +27,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import axios from 'axios';
 import { ThemeProvider } from './Providers/ContextProviders/ThemeProvider';
 import ThemeContext from './Providers/Contexts/ThemeContext';
+import axiosSetup from '@/axiosSetup';
 
 const App = () => {
     const location = useLocation();
@@ -49,19 +50,19 @@ const App = () => {
         const url = `/onePageWebsite/${storedMerchantBase}`;
         console.log('set-path:', location.pathname);
         if (!token && location.pathname === url) {
-            console.log('Token exists, user is authenticated.');
+            // console.log('Token exists, user is authenticated.');
             navigate(url);
         }
         else if (!token && location.pathname !== url) {
             navigate(url);
-            console.log("demo");
+            // console.log("demo");
         }
         else {
             if (location.pathname !== url) {
-                console.log("hhhhh22");
+                // console.log("hhhhh22");
                 navigate(location.pathname);
             } else {
-                console.log("hhhhh");
+                // console.log("hhhhh");
                 navigate(-1);
             }
         }
@@ -70,12 +71,7 @@ const App = () => {
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
         if (token) {
-            axios.get(`/api/themecolor`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axiosSetup.get(`/api/themecolor`)
             .then(res => {
                 setUseThemeStyles(res?.data?.data?.theme);
             })
