@@ -1,7 +1,8 @@
 import { Checkbox, Col, DatePicker, Drawer, Form, Row, Tabs } from 'antd';
 import { form } from 'framer-motion/client';
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { Link, Router, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 function CreditWallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
@@ -18,6 +19,28 @@ function CreditWallet() {
             children: <FilterBySource />,
         },
     ];
+    const [creditwalletData, setcreditwalletData] = useState([]);
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+        console.log('Token:', token);
+        if (token) {
+            axios.post('/api/creditbalance', [], {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                setcreditwalletData(response.data.creditbalance);
+                console.log(response.data.creditbalance);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, []);
     return (
         <div className='body-container position-relative overflow-hidden'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -46,33 +69,39 @@ function CreditWallet() {
                     </div>
                 </div>
                 <div className="wallet-table-body">
-                    {[...new Array(6)].map((i, iIndex) => (<div key={iIndex} className="wallet-detail-container p-2 px-3">
-                        <div className="wallet-detail-container-top d-flex justify-content-between align-items-center">
-                            <div className="wallet-name">
-                                <p className='fw-bold mb-0'>
-                                    Sky Wallet
-                                </p>
+                    {creditwalletData?.length > 0 ? (
+                        creditwalletData.map((crwallet, index) => (
+                            <div key={index} className="wallet-detail-container p-2 px-3">
+                                <div className="wallet-detail-container-top d-flex justify-content-between align-items-center">
+                                    <div className="wallet-name">
+                                        <p className='fw-bold mb-0'>
+                                            Sky Wallet
+                                        </p>
+                                    </div>
+                                    <div className="wallet-expire">
+                                        <p className='mb-0'>
+                                            Valid till <span>30th Jun,25</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="wallet-detail-container-middle d-flex justify-content-between align-items-center">
+                                    <div className="invoice-number">
+                                        Invoice Number: <span>INVG78945GTSZ</span>
+                                    </div>
+                                    <div className="wallet-transaction-value d-flex gap-1">
+                                        <p className='mb-0'>+1,000</p><i className='bi bi-chevron-down' />
+                                    </div>
+                                </div>
+                                <div className="wallet-detail-container-bottom d-flex justify-content-between align-items-center">
+                                    <div className="wallet-balance">
+                                        <p className='mb-2'>value <span>₹ 147,854</span></p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="wallet-expire">
-                                <p className='mb-0'>
-                                    Valid till <span>30th Jun,25</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div className="wallet-detail-container-middle d-flex justify-content-between align-items-center">
-                            <div className="invoice-number">
-                                Invoice Number: <span>INVG78945GTSZ</span>
-                            </div>
-                            <div className="wallet-transaction-value d-flex gap-1">
-                                <p className='mb-0'>+1,000</p><i className='bi bi-chevron-down' />
-                            </div>
-                        </div>
-                        <div className="wallet-detail-container-bottom d-flex justify-content-between align-items-center">
-                            <div className="wallet-balance">
-                                <p className='mb-2'>value <span>₹ 147,854</span></p>
-                            </div>
-                        </div>
-                    </div>))}
+                        ))
+                    ) : (
+                        <p>No Credit Wallet Available</p>
+                    )}
                 </div>
             </div>
             <Drawer
