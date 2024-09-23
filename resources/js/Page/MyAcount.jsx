@@ -4,11 +4,12 @@ import { motion } from 'framer-motion';
 import { Link, Router, useParams } from 'react-router-dom';
 import axiosSetup from '@/axiosSetup';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [openDelPop, setOpenDelPop] = useState(false);
-    const [formInstance,setFormInstance] = useState({});
+    const [formInstance, setFormInstance] = useState({});
     const { useThemeStyles } = useContext(ThemeContext)
     const targetDiv = useRef(null);
     const [data_account, setData_getaccount] = useState({
@@ -67,6 +68,7 @@ function MyAcount() {
             "pan_dynamic_name": ""
         }
     });
+    const [userData, setUserData] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     useEffect(() => {
@@ -85,30 +87,25 @@ function MyAcount() {
             console.log('No token available, API call skipped');
         }
     }, []);
-    // useEffect(() => {
-    //     const token = sessionStorage.getItem('access_token');
-    //     if (token) {
-    //         axios.get('/api/infodata', {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         })
-    //             .then(response => {
-    //                 // console.log('API Response:', response);
-    //                 setData_getaccount(response.data.accountheading);
-    //             })
-    //             .catch(error => {
-    //                 console.error('API Error:', error);
-    //                 setError(error);
-    //             });
-    //     } else {
-    //         console.log('No token available, API call skipped');
-    //     }
-    // }, []);
+    const getUserData = () => {
+        const token = sessionStorage.getItem('access_token');
+        if (token) {
+            axiosSetup.get('/api/infodata')
+                .then(res => {
+                    setUserData(res.data.infodata);
+                    setLoading(false)
+                })
+                .catch(err => {
+                    console.log(err)
+                    setLoading(false)
+                })
+        }
+    }
+    useEffect(() => {
+        getUserData()
+    }, [])
     const handleSave = (formData) => {
         console.log(formData);
-        
         const token = sessionStorage.getItem('access_token');
         const merchant_id = localStorage.getItem('merchant_base');
         if (token) {
@@ -124,11 +121,12 @@ function MyAcount() {
                 doa: '1970-01-01',
                 gender: 'Male',
             };
-            axios.post('/api/editinfo', payload)
+            axiosSetup.post('/api/editinfo', payload)
                 .then(response => {
                     console.log('API Response:', response);
                     // Handle successful response
                     setIsEditable(false);
+                    getUserData()
                 })
                 .catch(error => {
                     console.error('API Error:', error);
@@ -138,7 +136,7 @@ function MyAcount() {
             console.log('No token available, API call skipped');
         }
     };
-    
+
     return (
         <div className='body-container position-relative'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -169,7 +167,7 @@ function MyAcount() {
 
                                 </div>
                                 :
-                                <Button onClick={() => {formInstance?.submit()}} type='ghost' icon={<i className='bi bi-check-lg fs-3 text-light' />}></Button>
+                                <Button onClick={() => { formInstance?.submit() }} type='ghost' icon={<i className='bi bi-check-lg fs-3 text-light' />}></Button>
                         }
                     </div>
                 </div>
@@ -182,116 +180,144 @@ function MyAcount() {
                         animate={{ opacity: 1, }}
                         transition={{ duration: 0.6 }}
                     >
-                        <ProfileEditForm onSave={handleSave} data={data_account} setFormInstance={setFormInstance} />
+                        <ProfileEditForm onSave={handleSave} data={userData} acData={data_account} setFormInstance={setFormInstance} />
                     </motion.div>
                     :
-                    <div className="profile-info m-3" ref={targetDiv}>
-                        <div className="d-flex gap-2 flex-column">
-                            <div className="profile-pic text-center mb-3">
-                                <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
+                    <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+                        <div className="profile-info m-3" ref={targetDiv}>
+                            <div className="d-flex gap-2 flex-column">
+                                <div className="profile-pic text-center mb-3">
+                                    <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
+                                </div>
+                                {data_account.name.display_full_name_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">Name</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.name === "" ? data_account.name.full_name_dynamic_name : userData?.name}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.gender.display_gender_permission == 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">Gender</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.gender === "" ? data_account.gender.gender_dynamic_name : userData?.gender}</span>}
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.email.display_email_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">E-mail</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.email === "" ? data_account.email.email_dynamic_name : userData?.email}</span>}
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.mobile.display_mobile_number_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">Phone</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.mobile === "" ? data_account.mobile.mobile_number_dynamic_name : userData?.mobile}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.birthday.display_birthday_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">Birthday</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.dob === "" ? data_account.birthday.birthday_dynamic_name : userData?.dob}</span>}
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.marital_status.display_marital_status_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">Relationship</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.marital === "" ? data_account.marital_status.marital_status_dynamic_name : userData?.marital}</span>}
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.address.display_address_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">Address</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.address === "" ? data_account.address.address_dynamic_name : userData?.address}</span>}
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.gst.display_gst_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">GSTIN</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.gstin === "" ? data_account.address.gst_dynamic_name : userData?.gstin}</span>}
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.pan.display_pan_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">PAN</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.pan === "" ? data_account.pan.pan_dynamic_name : userData?.pan}</span>}
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.bank.display_bank_name_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">Bank Name</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.bank_name === "" ? data_account.bank.bank_name : userData?.bank_name}</span>}
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.bank.display_bank_account_number_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">Bank A/C No.</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.bank_account_number === "" ? data_account.bank.bank_account_number : userData?.bank_account_number}</span>}
+                                        </div>
+                                    </div>
+                                )}
+                                {data_account.pincode.display_pincode_permission === 1 && (
+                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                        <label htmlFor="">Pincode.</label>
+                                        <div className="">
+                                            {loading ?
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                : <span>{userData?.pincode === "" ? data_account.pincode.pincode_dynamic_name : userData?.pincode}</span>}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                            {data_account.name.display_full_name_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">Name</label>
-                                    <div className="">
-                                        <span>{data_account.name.full_name_dynamic_name}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.gender.display_gender_permission == 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">Gender</label>
-                                    <div className="">
-                                        <span>{data_account.gender.gender_dynamic_name}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.email.display_email_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">E-mail</label>
-                                    <div className="">
-                                        <span>{data_account.email.email_dynamic_name}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.mobile.display_mobile_number_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">Phone</label>
-                                    <div className="">
-                                        <span>{data_account.mobile.mobile_number_dynamic_name}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.birthday.display_birthday_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">Birthday</label>
-                                    <div className="">
-                                        <span>{data_account.birthday.birthday_dynamic_name}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.marital_status.display_marital_status_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">Relationship</label>
-                                    <div className="">
-                                        <span>{data_account.marital_status.marital_status_dynamic_name}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.address.display_address_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">Address</label>
-                                    <div className="">
-                                        <span>{data_account.address.address_dynamic_name}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.gst.display_gst_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">GSTIN</label>
-                                    <div className="">
-                                        <span>{data_account.address.gst_dynamic_name}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.pan.display_pan_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">PAN</label>
-                                    <div className="">
-                                        <span>{data_account.pan.pan_dynamic_name}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.bank.display_bank_name_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">Bank Name</label>
-                                    <div className="">
-                                        <span>{data_account.bank.bank_name}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.bank.display_bank_account_number_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">Bank A/C No.</label>
-                                    <div className="">
-                                        <span>{data_account.bank.bank_account_number}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {data_account.pincode.display_pincode_permission === 1 && (
-                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                    <label htmlFor="">P.O. Box No.</label>
-                                    <div className="">
-                                        <span>{data_account.pincode.pincode_dynamic_name}</span>
-                                    </div>
-                                </div>
-                            )}
+                            <div className="powered-ewards">
+                                <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
+                                    <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
+                            </div>
                         </div>
-                        <div className="powered-ewards">
-                            <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
-                                <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
-                        </div>
-                    </div>
+                    </SkeletonTheme>
             }
             <Modal
                 open={deleteModal}
@@ -336,30 +362,30 @@ function MyAcount() {
 
 export default MyAcount
 
-const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
+const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
     const [form] = Form.useForm();
-    useEffect(()=>{
+    useEffect(() => {
         setFormInstance(form);
-    },[])
+    }, [])
     useEffect(() => {
         form.setFieldsValue({
-            name: data.name.full_name_dynamic_name,
-            email: data.email.email_dynamic_name,
-            mobile: data?.mobile.mobile_number_dynamic_name,
-            address: data?.address.address_dynamic_name,
+            name: data.name,
+            email: data.email,
+            mobile: data?.mobile,
+            address: data?.address,
             // country:data?.country.,
             // state:data,
-            city: data?.city.city_dynamic_name,
-            region: data?.region.region_dynamic_name,
-            pincode: data?.pincode.pincode_dynamic_name,
-            gender: data?.gender.gender_dynamic_name,
+            city: data?.city,
+            region: data?.region,
+            pincode: data?.pincode,
+            gender: data?.gender,
             // dob:data?.birthday.birthday_dynamic_name,
-            marital: data?.marital_status.marital_status_dynamic_name,
+            marital: data?.marital,
             // doa:data,
-            gstin: data?.gst.gst_dynamic_name,
-            pan: data?.pan.pan_dynamic_name,
-            bank_name: data?.bank.bank_name,
-            bank_account_number: data?.bank.bank_account_number,
+            gstin: data?.gstin,
+            pan: data?.pan,
+            bank_name: data?.bank_name,
+            bank_account_number: data?.bank_account_number,
         })
     }, [])
     const handleSave = () => {
@@ -388,7 +414,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                         </div>
                     </Col>
                     {/* UserName */}
-                    {data.name.display_full_name_permission === 1 && <Col xs={24}>
+                    {acData.name.display_full_name_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"name"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
@@ -397,7 +423,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                         </div>
                     </Col>}
                     {/* Email */}
-                    {data?.email.display_email_permission === 1 && <Col xs={24}>
+                    {acData?.email.display_email_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"email"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' type='email'></Input>
@@ -406,7 +432,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                         </div>
                     </Col>}
                     {/* Phone Number */}
-                    {data?.mobile.display_mobile_number_permission === 1 && <Col xs={24}>
+                    {acData?.mobile.display_mobile_number_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"mobile"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
@@ -415,7 +441,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                         </div>
                     </Col>}
                     {/* Address Line */}
-                    {data?.address.display_address_permission === 1 && <Col xs={24}>
+                    {acData?.address.display_address_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"address"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
@@ -446,7 +472,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                                     <label className='position-absolute' htmlFor="state">State</label>
                                 </div>
                             </Col>
-                            {data?.city.display_city_permission === 1 && <Col xs={12}>
+                            {acData?.city.display_city_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"city"} className='mb-0'>
                                         <Select className='cust-css-ant'>
@@ -456,7 +482,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                                     <label className='position-absolute' htmlFor="city">City</label>
                                 </div>
                             </Col>}
-                            {data?.region.display_region_permission === 1 && <Col xs={12}>
+                            {acData?.region.display_region_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"region"} className='mb-0'>
                                         <Select className='cust-css-ant'>
@@ -469,7 +495,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                         </Row>
                     </Col>
                     {/* Pin Code */}
-                    {data?.pincode.display_pincode_permission === 1 && <Col xs={24}>
+                    {acData?.pincode.display_pincode_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"pincode"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
@@ -480,7 +506,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                     {/* Gender, Birthday, RelationShip, Aniversary */}
                     <Col xs={24}>
                         <Row gutter={[10, 25]}>
-                            {data?.gender.display_gender_permission===1&&<Col xs={12}>
+                            {acData?.gender.display_gender_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"gender"} className='mb-0'>
                                         <Select className='cust-css-ant'>
@@ -490,7 +516,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                                     <label className='position-absolute' htmlFor="gender">Gender</label>
                                 </div>
                             </Col>}
-                            {data?.birthday.display_birthday_permission===1&&<Col xs={12}>
+                            {acData?.birthday.display_birthday_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"dob"} className='mb-0'>
                                         <DatePicker className='w-100 rounded-5 cust-css-ant-date' />
@@ -498,7 +524,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                                     <label className='position-absolute' htmlFor="dob">Birthday</label>
                                 </div>
                             </Col>}
-                            {data?.marital_status.display_marital_status_permission===1&&<Col xs={12}>
+                            {acData?.marital_status.display_marital_status_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"marital"} className='mb-0'>
                                         <Select className='cust-css-ant'>
@@ -519,7 +545,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                         </Row>
                     </Col>
                     {/* GSTIN */}
-                    {data?.gst.display_gst_permission===1&&<Col xs={24}>
+                    {acData?.gst.display_gst_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"gstin"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
@@ -528,7 +554,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                         </div>
                     </Col>}
                     {/* Pan Number */}
-                    {data?.pan.display_pan_permission===1&&<Col xs={24}>
+                    {acData?.pan.display_pan_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"pan"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
@@ -537,7 +563,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                         </div>
                     </Col>}
                     {/* Bank Name */}
-                    {data?.bank.display_bank_name_permission===1&&<Col xs={24}>
+                    {acData?.bank.display_bank_name_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"bank_name"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
@@ -546,7 +572,7 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                         </div>
                     </Col>}
                     {/* Bank Account Number */}
-                    {data?.bank.display_bank_account_number_permission===1&&<Col xs={24}>
+                    {acData?.bank.display_bank_account_number_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"bank_account_number"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
@@ -563,11 +589,6 @@ const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
                             <label className='position-absolute' htmlFor="poBoxNumber">P.O. Box No.</label>
                         </div>
                     </Col> */}
-                    <Row gutter={[0, 20]}>
-                        <Col xs={24}>
-                            <Button onClick={handleSave} type='primary'>Save</Button>
-                        </Col>
-                    </Row>
                 </Row>
             </Form>
             <div className="powered-ewards">
