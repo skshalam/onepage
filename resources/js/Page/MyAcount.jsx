@@ -8,7 +8,7 @@ function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [openDelPop, setOpenDelPop] = useState(false);
-    const {useThemeStyles} = useContext(ThemeContext)
+    const { useThemeStyles } = useContext(ThemeContext)
     const targetDiv = useRef(null);
     const [data_account, setData_getaccount] = useState({
         "name": {
@@ -188,7 +188,7 @@ function MyAcount() {
                         animate={{ opacity: 1, }}
                         transition={{ duration: 0.6 }}
                     >
-                        <ProfileEditForm onSave={handleSave} />
+                        <ProfileEditForm onSave={handleSave} data={data_account} />
                     </motion.div>
                     :
                     <div className="profile-info m-3" ref={targetDiv}>
@@ -204,7 +204,7 @@ function MyAcount() {
                                     </div>
                                 </div>
                             )}
-                            {data_account.gender.display_gender_permission ==  1 && (
+                            {data_account.gender.display_gender_permission == 1 && (
                                 <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
                                     <label htmlFor="">Gender</label>
                                     <div className="">
@@ -216,7 +216,7 @@ function MyAcount() {
                                 <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
                                     <label htmlFor="">E-mail</label>
                                     <div className="">
-                                    <span>{data_account.email.email_dynamic_name}</span>
+                                        <span>{data_account.email.email_dynamic_name}</span>
                                     </div>
                                 </div>
                             )}
@@ -232,7 +232,7 @@ function MyAcount() {
                                 <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
                                     <label htmlFor="">Birthday</label>
                                     <div className="">
-                                    <span>{data_account.birthday.birthday_dynamic_name}</span>
+                                        <span>{data_account.birthday.birthday_dynamic_name}</span>
                                     </div>
                                 </div>
                             )}
@@ -256,7 +256,7 @@ function MyAcount() {
                                 <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
                                     <label htmlFor="">GSTIN</label>
                                     <div className="">
-                                    <span>{data_account.address.gst_dynamic_name}</span>
+                                        <span>{data_account.address.gst_dynamic_name}</span>
                                     </div>
                                 </div>
                             )}
@@ -310,25 +310,25 @@ function MyAcount() {
                 styles={{
                     footer: {
                         display: "grid",
-                        margin:"20px 10px",
+                        margin: "20px 10px",
                         padding: "0px 20px",
                         gridTemplateColumns: "1fr 1fr"
                     },
-                    content:{
-                        padding:"0px",
-                        overflow:"hidden",
+                    content: {
+                        padding: "0px",
+                        overflow: "hidden",
                     }
                 }}
             >
                 <div className="del-ac-modal-content position-relative">
                     <div className="modal-bg position absolute">
-                    <svg width="345" height="166" viewBox="0 0 345 166" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M345 91.3234L1.65989 165.285C1.10338 165.405 0.548585 165.475 0 165.497V-1H345V91.3234Z" fill={useThemeStyles?.primary_color}/>
-</svg>
+                        <svg width="345" height="166" viewBox="0 0 345 166" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M345 91.3234L1.65989 165.285C1.10338 165.405 0.548585 165.475 0 165.497V-1H345V91.3234Z" fill={useThemeStyles?.primary_color} />
+                        </svg>
 
                     </div>
                     <div className="position-absolute modal-icon d-flex flex-column gap-0">
-                        <i className='bi bi-exclamation-circle text-light'/>
+                        <i className='bi bi-exclamation-circle text-light' />
                         <span>Delete ?</span>
                     </div>
                     <div className="text-center fw-semibold modal-txt">
@@ -342,8 +342,29 @@ function MyAcount() {
 
 export default MyAcount
 
-const ProfileEditForm = ({ onSave }) => {
+const ProfileEditForm = ({ onSave, data }) => {
     const [form] = Form.useForm();
+    useEffect(() => {
+        form.setFieldsValue({
+            name: data.name.full_name_dynamic_name,
+            email: data.email.email_dynamic_name,
+            mobile: data?.mobile.mobile_number_dynamic_name,
+            address: data?.address.address_dynamic_name,
+            // country:data?.country.,
+            // state:data,
+            city: data?.city.city_dynamic_name,
+            region: data?.region.region_dynamic_name,
+            pincode: data?.pincode.pincode_dynamic_name,
+            gender: data?.gender.gender_dynamic_name,
+            // dob:data?.birthday.birthday_dynamic_name,
+            marital: data?.marital_status.marital_status_dynamic_name,
+            // doa:data,
+            gstin: data?.gst.gst_dynamic_name,
+            pan: data?.pan.pan_dynamic_name,
+            bank_name: data?.bank.bank_name,
+            bank_account_number: data?.bank.bank_account_number,
+        })
+    }, [])
     const handleSave = () => {
         form.validateFields().then(values => {
             // Call the onSave prop function and pass the form values
@@ -359,7 +380,7 @@ const ProfileEditForm = ({ onSave }) => {
                 layout='vertical'
                 className=''
             >
-                <Row gutter={[0, 20]} >
+                <Row gutter={[0, 25]} >
                     {/* User Profile Pic */}
                     <Col xs={24}>
                         <div className="text-center">
@@ -369,44 +390,44 @@ const ProfileEditForm = ({ onSave }) => {
                         </div>
                     </Col>
                     {/* UserName */}
-                    <Col xs={24}>
+                    {data.name.display_full_name_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"name"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
                             </Form.Item>
                             <label className='position-absolute' htmlFor="name">Name</label>
                         </div>
-                    </Col>
+                    </Col>}
                     {/* Email */}
-                    <Col xs={24}>
+                    {data?.email.display_email_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"email"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' type='email'></Input>
                             </Form.Item>
                             <label className='position-absolute' htmlFor="email">Email</label>
                         </div>
-                    </Col>
+                    </Col>}
                     {/* Phone Number */}
-                    <Col xs={24}>
+                    {data?.mobile.display_mobile_number_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"mobile"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
                             </Form.Item>
                             <label className='position-absolute' htmlFor="mobile">Phone Number</label>
                         </div>
-                    </Col>
+                    </Col>}
                     {/* Address Line */}
-                    <Col xs={24}>
+                    {data?.address.display_address_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"address"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
                             </Form.Item>
                             <label className='position-absolute' htmlFor="address">Address</label>
                         </div>
-                    </Col>
+                    </Col>}
                     {/* Address (Country, State, City Region) */}
                     <Col xs={24}>
-                        <Row gutter={[10, 20]}>
+                        <Row gutter={[10, 25]}>
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"country"} className='mb-0'>
@@ -427,7 +448,7 @@ const ProfileEditForm = ({ onSave }) => {
                                     <label className='position-absolute' htmlFor="state">State</label>
                                 </div>
                             </Col>
-                            <Col xs={12}>
+                            {data?.city.display_city_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"city"} className='mb-0'>
                                         <Select className='cust-css-ant'>
@@ -436,8 +457,8 @@ const ProfileEditForm = ({ onSave }) => {
                                     </Form.Item>
                                     <label className='position-absolute' htmlFor="city">City</label>
                                 </div>
-                            </Col>
-                            <Col xs={12}>
+                            </Col>}
+                            {data?.region.display_region_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"region"} className='mb-0'>
                                         <Select className='cust-css-ant'>
@@ -446,22 +467,22 @@ const ProfileEditForm = ({ onSave }) => {
                                     </Form.Item>
                                     <label className='position-absolute' htmlFor="region">Region</label>
                                 </div>
-                            </Col>
+                            </Col>}
                         </Row>
                     </Col>
                     {/* Pin Code */}
-                    <Col xs={24}>
+                    {data?.pincode.display_pincode_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"pincode"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="pincode">Pin</label>
                         </div>
-                    </Col>
+                    </Col>}
                     {/* Gender, Birthday, RelationShip, Aniversary */}
                     <Col xs={24}>
-                        <Row gutter={[10, 20]}>
-                            <Col xs={12}>
+                        <Row gutter={[10, 25]}>
+                            {data?.gender.display_gender_permission===1&&<Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"gender"} className='mb-0'>
                                         <Select className='cust-css-ant'>
@@ -470,16 +491,16 @@ const ProfileEditForm = ({ onSave }) => {
                                     </Form.Item>
                                     <label className='position-absolute' htmlFor="gender">Gender</label>
                                 </div>
-                            </Col>
-                            <Col xs={12}>
+                            </Col>}
+                            {data?.birthday.display_birthday_permission===1&&<Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"dob"} className='mb-0'>
                                         <DatePicker className='w-100 rounded-5 cust-css-ant-date' />
                                     </Form.Item>
                                     <label className='position-absolute' htmlFor="dob">Birthday</label>
                                 </div>
-                            </Col>
-                            <Col xs={12}>
+                            </Col>}
+                            {data?.marital_status.display_marital_status_permission===1&&<Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"marital"} className='mb-0'>
                                         <Select className='cust-css-ant'>
@@ -488,7 +509,7 @@ const ProfileEditForm = ({ onSave }) => {
                                     </Form.Item>
                                     <label className='position-absolute' htmlFor="marital">Relationship</label>
                                 </div>
-                            </Col>
+                            </Col>}
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"doa"} className='mb-0'>
@@ -500,41 +521,41 @@ const ProfileEditForm = ({ onSave }) => {
                         </Row>
                     </Col>
                     {/* GSTIN */}
-                    <Col xs={24}>
+                    {data?.gst.display_gst_permission===1&&<Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"gstin"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="gstin">GSTIN</label>
                         </div>
-                    </Col>
+                    </Col>}
                     {/* Pan Number */}
-                    <Col xs={24}>
+                    {data?.pan.display_pan_permission===1&&<Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"pan"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="pan">PAN</label>
                         </div>
-                    </Col>
+                    </Col>}
                     {/* Bank Name */}
-                    <Col xs={24}>
+                    {data?.bank.display_bank_name_permission===1&&<Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"bank_name"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="bank_name">Bank Name</label>
                         </div>
-                    </Col>
+                    </Col>}
                     {/* Bank Account Number */}
-                    <Col xs={24}>
+                    {data?.bank.display_bank_account_number_permission===1&&<Col xs={24}>
                         <div className="position-relative edit-input-div">
                             <Form.Item name={"bank_account_number"} className='mb-0'>
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="bank_account_number">Bank A/C No.</label>
                         </div>
-                    </Col>
+                    </Col>}
                     {/* P.O. Box Number */}
                     {/* <Col xs={24}>
                         <div className="position-relative edit-input-div">

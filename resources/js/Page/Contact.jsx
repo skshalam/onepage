@@ -34,7 +34,13 @@ function Contact() {
                 setLoading(false);
             });
     }, [merchant_base]);
-    const handleSave = () => {
+    const validateMessages = {
+        types: {
+          email: 'Enter A valid Email',
+        },
+      };
+    const handleSave = (e) => {
+
         form.validateFields()
             .then(values => {
                 const token = sessionStorage.getItem('access_token');
@@ -79,7 +85,7 @@ function Contact() {
                         <Link to={"/Profile"}>
                             <i className="bi bi-chevron-left"></i>
                         </Link>
-                        <span>TERMS AND CONDITION</span>
+                        <span>CONTACT</span>
                     </div>
                 </div>
             </div>
@@ -97,11 +103,17 @@ function Contact() {
                 <Form
                     form={form}
                     layout="vertical"
+                    validateMessages={validateMessages}
                 >
                     <Row gutter={[0, 20]}>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"name"} className='mb-0'>
+                                <Form.Item name={"name"} className='mb-0' rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please enter name',
+                                    },
+                                ]}>
                                     <Input className='rounded-2  cust-css-ant-input contact-info' placeholder='Enter your name' />
                                 </Form.Item>
                                 <label className='position-absolute' htmlFor="name">Name</label>
@@ -109,7 +121,14 @@ function Contact() {
                         </Col>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"mobile"} className='mb-0'>
+                                <Form.Item name={"mobile"} className='mb-0'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter phone number"
+                                        }
+                                    ]}
+                                >
                                     <PhoneInput
                                         country={'in'}
                                     />
@@ -119,7 +138,17 @@ function Contact() {
                         </Col>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"email"} className='mb-0'>
+                                <Form.Item name={"email"} className='mb-0'
+                                    rules={[
+                                        {
+                                            type: 'email',
+                                        },
+                                        {
+                                            required: true,
+                                            message: "Please enter email"
+                                        }
+                                    ]}
+                                >
                                     <Input className='rounded-2  cust-css-ant-input contact-info' type='email' placeholder='Enter your email' />
                                 </Form.Item>
                                 <label className='position-absolute' htmlFor="email">Email</label>
@@ -127,10 +156,17 @@ function Contact() {
                         </Col>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"message"} className='mb-0'>
-                                    <Input.TextArea rows={5} className='rounded-2  cust-css-ant-input contact-info' placeholder='Enter your message' />
+                                <Form.Item name={"message"} className='mb-0'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter message"
+                                        }
+                                    ]}
+                                >
+                                    <Input.TextArea rows={4} className='rounded-2  cust-css-ant-input contact-info' placeholder='Enter your message' />
                                 </Form.Item>
-                                <label className='position-absolute' htmlFor="message">Message</label>
+                                <label className='position-absolute' htmlFor="message">Message</label>  
                             </div>
                         </Col>
                     </Row>

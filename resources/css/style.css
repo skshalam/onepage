@@ -660,7 +660,7 @@ body {
     .code {
         bottom: 0;
         width: 100%;
-        background: #0B0B59;
+        background: var(--primary-color);
         color: #fff;
         text-align: center;
         padding-bottom: 3px;
@@ -706,7 +706,7 @@ body {
         font-size: 13px;
         display: flex;
         justify-content: space-between;
-        border: 1px solid #0B0B59;
+        border: 1px solid var(--primary-color);
         border-radius: 3px;
     }
 }
@@ -893,12 +893,12 @@ body {
 
 .reward-view-bnt button {
     background: none;
-    border: 1px solid #0b0b59;
-    color: #0B0B59;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
 }
 
 .reward-redeem-bnt button {
-    background-color: #0B0B59;
+    background-color: var(--primary-color);
     color: #fff;
 }
 
@@ -977,14 +977,14 @@ body {
 }
 
 .pop-confirm-action button:nth-child(1) {
-    color: #0b0b59;
-    border: 1px solid #0b0b59;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
 }
 
 .pop-confirm-action button:nth-child(2) {
     color: #fff;
-    border: 1px solid #0b0b59;
-    background: #0b0b59;
+    border: 1px solid var(--primary-color);
+    background: var(--primary-color);
 }
 
 .pop-confirm-onCancel {
@@ -1250,6 +1250,7 @@ body {
     background-color: #ffffff;
 }
 
+
 .edit-input-div.contact-us label {
     color: #7A7680;
 }
@@ -1264,12 +1265,14 @@ body {
 .cust-css-ant-input {
     border: 1px solid var(--primary-color);
     line-height: 1.7rem;
+    padding: 6px 17px;
 }
 
 .cust-css-ant {
     .ant-select-selector {
         border-radius: 20px;
         border: 1px solid var(--primary-color) !important;
+        line-height: 40px;
     }
 }
 

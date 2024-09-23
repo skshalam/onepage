@@ -83,7 +83,7 @@ function Reward() {
             <div className={`inner-container`}>
                 {loading
                     ? ([...new Array(6)].map((i, iIndex) =>
-                        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+                        <SkeletonTheme key={iIndex} baseColor="#c7c7c7" highlightColor="#ffffff">
                             <div className="rewards p-1">
                                 <div className="rewards-info h-100">
                                     <div className="icon">
@@ -114,7 +114,7 @@ function Reward() {
                     (
                         rewardsData?.length > 0 ? (
                             rewardsData.map((reward, index) => (
-                                <div className="rewards p-1">
+                                <div key={index} className="rewards p-1">
                                     <div className="rewards-info h-100">
                                         <div className="icon">
                                             <img src="https://i.imgur.com/wkYeeU3.png" alt="" />
