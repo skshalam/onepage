@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
-import axios from 'axios';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-
+import axiosSetup from '@/axiosSetup';
 function MemberShipPackage() {
     const [membershipsDesc, setmembershipDesc] = useState({});
     const [loading, setLoading] = useState(true);
@@ -10,12 +9,7 @@ function MemberShipPackage() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/memebership', [], {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axiosSetup.post('/api/memebership', [])
                 .then(response => {
                     setmembershipDesc(response.data.data.membership);
                     setLoading(false)

@@ -1,11 +1,12 @@
 // resources/js/Page/About.jsx
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
-import axios from 'axios';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
+import axiosSetup from '@/axiosSetup';
+
 // import 'react-loading-skeleton/dist/skeleton.css'
 function About() {
     const [data_getcoupons, setData_getcoupons] = useState({
@@ -32,12 +33,7 @@ function About() {
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
         if (token) {
-            axios.get('/api/getDataCounts', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axiosSetup.get('/api/getDataCounts')
                 .then(response => {
                     console.log('API Response:', response);
                     setData_getcoupons(response.data.data);
@@ -52,12 +48,7 @@ function About() {
     }, []);
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
-        axios.get('/api/onepagehome', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        })
+        axiosSetup.get('/api/onepagehome')
             .then(response => {
                 setData_home(response.data.data);
                 setLoading(false);

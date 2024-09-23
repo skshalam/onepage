@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
-import axios from 'axios';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import axiosSetup from '@/axiosSetup';
+
 function Coupon() {
     const [activeTab, setActiveTab] = useState('coupon');
     const [couponData, setCouponData] = useState([]);
@@ -11,12 +12,7 @@ function Coupon() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/couponscart', [], {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axiosSetup.post('/api/couponscart', [])
                 .then(response => {
                     setCouponData(response.data.data.couponcart);
                     setLoading(false)
@@ -34,12 +30,7 @@ function Coupon() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/couponhold', [], {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axiosSetup.post('/api/couponhold', [])
                 .then(response => {
                     setCouponholdData(response.data.data.onHoldCoupons);
                 })

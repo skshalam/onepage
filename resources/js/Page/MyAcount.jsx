@@ -2,7 +2,7 @@ import { Avatar, Button, Col, DatePicker, Form, Input, Modal, Popover, Row, Sele
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import { motion } from 'framer-motion';
 import { Link, Router, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axiosSetup from '@/axiosSetup';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
@@ -71,12 +71,7 @@ function MyAcount() {
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
         if (token) {
-            axios.get('/api/accountInfo', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axiosSetup.get('/api/accountInfo')
                 .then(response => {
                     // console.log('API Response:', response);
                     setData_getaccount(response.data.accountheading);
@@ -126,12 +121,7 @@ function MyAcount() {
                 doa: '1970-01-01',
                 gender: 'Male',
             };
-            axios.post('/api/editinfo', payload, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axios.post('/api/editinfo', payload)
                 .then(response => {
                     console.log('API Response:', response);
                     // Handle successful response

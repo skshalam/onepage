@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axiosSetup from '@/axiosSetup';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 function Reward() {
@@ -23,12 +23,7 @@ function Reward() {
         const token = sessionStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/rewards', [], {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axiosSetup.post('/api/rewards', [])
                 .then(response => {
                     setrewardsData(response.data.data.rewards);
                     setLoading(false)
@@ -45,15 +40,9 @@ function Reward() {
     const handleDrawer = (reward) => {
         const token = sessionStorage.getItem('access_token');
         if (token) {
-            axios.post('/api/rewards',
+            axiosSetup.post('/api/rewards',
                 {
                     rewards_id: reward.rewards_id // Send rewards_id in the payload
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
                 })
                 .then(response => {
                     setRewardsDesc(response.data.data); // Assuming response contains coupon details

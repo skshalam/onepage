@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState, useContext } from 'react'
 import { Link, useParams } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
-
+import axiosSetup from '@/axiosSetup';
 function Contact() {
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false)
@@ -19,12 +19,7 @@ function Contact() {
     const [error, setError] = useState(null);
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
-        axios.get('/api/contact', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        })
+        axiosSetup.get('/api/contact')
             .then(response => {
                 setData_contact(response.data);
                 setLoading(false)
@@ -44,12 +39,7 @@ function Contact() {
                         ...values,
                         merchant_id: merchant_id,
                     };
-                    axios.post('/api/contactsubmit', payload, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        },
-                    })
+                    axiosSetup.post('/api/contactsubmit', payload)
                         .then(response => {
                             console.log('API Response:', response);
                             Modal.success({
