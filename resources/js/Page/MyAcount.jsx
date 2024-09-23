@@ -8,6 +8,7 @@ function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [openDelPop, setOpenDelPop] = useState(false);
+    const [formInstance,setFormInstance] = useState({});
     const { useThemeStyles } = useContext(ThemeContext)
     const targetDiv = useRef(null);
     const [data_account, setData_getaccount] = useState({
@@ -111,6 +112,8 @@ function MyAcount() {
     //     }
     // }, []);
     const handleSave = (formData) => {
+        console.log(formData);
+        
         const token = sessionStorage.getItem('access_token');
         const merchant_id = localStorage.getItem('merchant_base');
         if (token) {
@@ -145,6 +148,7 @@ function MyAcount() {
             console.log('No token available, API call skipped');
         }
     };
+    
     return (
         <div className='body-container position-relative'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -175,7 +179,7 @@ function MyAcount() {
 
                                 </div>
                                 :
-                                <Button onClick={() => setIsEditable(false)} type='ghost' icon={<i className='bi bi-check-lg fs-3 text-light' />}></Button>
+                                <Button onClick={() => {formInstance?.submit()}} type='ghost' icon={<i className='bi bi-check-lg fs-3 text-light' />}></Button>
                         }
                     </div>
                 </div>
@@ -188,7 +192,7 @@ function MyAcount() {
                         animate={{ opacity: 1, }}
                         transition={{ duration: 0.6 }}
                     >
-                        <ProfileEditForm onSave={handleSave} data={data_account} />
+                        <ProfileEditForm onSave={handleSave} data={data_account} setFormInstance={setFormInstance} />
                     </motion.div>
                     :
                     <div className="profile-info m-3" ref={targetDiv}>
@@ -342,8 +346,11 @@ function MyAcount() {
 
 export default MyAcount
 
-const ProfileEditForm = ({ onSave, data }) => {
+const ProfileEditForm = ({ onSave, data, setFormInstance }) => {
     const [form] = Form.useForm();
+    useEffect(()=>{
+        setFormInstance(form);
+    },[])
     useEffect(() => {
         form.setFieldsValue({
             name: data.name.full_name_dynamic_name,
@@ -379,6 +386,7 @@ const ProfileEditForm = ({ onSave, data }) => {
                 form={form}
                 layout='vertical'
                 className=''
+                onFinish={handleSave}
             >
                 <Row gutter={[0, 25]} >
                     {/* User Profile Pic */}
