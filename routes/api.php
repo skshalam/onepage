@@ -38,7 +38,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/infodata', [\App\Http\Controllers\HomeController::class, 'infodata']);
     Route::POST('/editinfo', [\App\Http\Controllers\HomeController::class, 'editinfo']);
     Route::get('/getDataCounts', [\App\Http\Controllers\HomeController::class, 'getDataCounts']);
-    Route::get('/getTotalCreditBalance', [\App\Http\Controllers\HomeController::class, 'getTotalCreditBalance']);
     Route::get('/getTotalWalletBalance', [\App\Http\Controllers\HomeController::class, 'getTotalWalletBalance']);
     Route::post('/cities', [\App\Http\Controllers\HomeController::class, 'cities']);
     Route::post('/gettingregion', [\App\Http\Controllers\HomeController::class, 'gettingregion']);
