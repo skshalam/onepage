@@ -124,7 +124,8 @@ function About() {
                                             <p>Credit Balance:</p>
                                             <div className="balance">
                                                 <img src="" alt="" />
-                                                <span>
+                                                <span className='d-flex gap-1 fw-semibold'>
+                                                    <img height={25} src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1727175731/Frame_277132290_fpq1oh.svg" alt="" />
                                                     {data_home.cards.current_points}
                                                 </span>
                                             </div>
@@ -142,7 +143,10 @@ function About() {
                                             <p>Wallet's Balance:</p>
                                             <div className="balance">
                                                 <img src="" alt="" />
-                                                <span>{data_home.cards.current_wallet_balance}</span>
+                                                <span className='d-flex gap-1 fw-semibold'>
+                                                <img height={25} src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1727175524/_Group__1_vgentw.svg" alt="" />
+                                                    {data_home.cards.current_wallet_balance}
+                                                </span>
                                             </div>
                                         </div>
                                         <div className="content">
