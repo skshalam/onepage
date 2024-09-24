@@ -38,6 +38,8 @@ use App\Models\Countries;
 use App\Models\CitisNew;
 use App\Models\MerchantRegion;
 use App\Models\ExpireUserPoints;
+use App\Models\ExpireUserWallet;
+use App\Models\State;
 use DB;
 use Auth;
 use Illuminate\Support\Facades\Validator;
@@ -106,7 +108,7 @@ class HomeController extends Controller
 
         // Pagination parameters
         $page_number = $request->page_number; 
-        $limit = 11094; 
+        $limit = 10; 
         $offset = ($page_number - 1) * $limit;
         // dd($offset);
         $total_entries_query = "
@@ -373,54 +375,144 @@ class HomeController extends Controller
             'total_bal' => $total_wlbal,
         ]); 
     }
+
     public function walletbalance(Request $request)
     {
-        // $merchant_id= 15657;
-        // $user_id= 9;
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
-        // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-        $waletbalance = Cards::select('cards.current_wallet_balance', 'user_wallet.validity', 'user_wallet.original_points', 'wallet_structure.name')
-        ->leftJoin('users', 'cards.user_id', '=', 'users.id')
-        ->leftJoin('user_wallet', 'user_wallet.user_id', '=', 'cards.user_id')
-        ->leftJoin('wallet_structure', 'user_wallet.structure_foreign_id', '=', 'wallet_structure.id')
-        ->where('cards.merchant_id', $merchant_id)
-        ->where('cards.user_id', $user_id);
-        if(!empty($request->redem_chk) && $request->redem_chk == 1){
-            $waletbalance = $waletbalance->leftJoin('wallet_redeem', 'wallet_redeem.temp_wallet_redeem_id', '=', 'wallet_structure.id')
-        ->leftJoin('wallet_structure as ws2', 'wallet_redeem.temp_wallet_redeem_id', '=', 'ws2.id');
+        $current_wallet_balance = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->value('current_wallet_balance');
+
+        // Pagination parameters
+        $page_number = $request->page_number; 
+        $limit = 10; 
+        $offset = ($page_number - 1) * $limit;
+
+        // Count total entries for pagination
+        $total_entries_query = "
+            SELECT COUNT(*) as total_entries
+            FROM (
+                SELECT 1 FROM user_wallet uw WHERE uw.user_id = ".$user_id." AND uw.merchant_id = ".$merchant_id."
+                UNION ALL
+                SELECT 1 FROM wallet_redeem wr WHERE wr.user_id = ".$user_id." AND wr.merchant_id = ".$merchant_id."
+                UNION ALL
+                SELECT 1 FROM expiry_user_wallet eup WHERE eup.user_id = ".$user_id." AND eup.merchant_id = ".$merchant_id."
+            ) as total_count_query
+        ";
+        $total_entries = DB::select($total_entries_query)[0]->total_entries;
+        $total_pages = ceil($total_entries / $limit);
+
+        // Main wallet balance query
+        $walletbalance_query = "
+                    SELECT 
+                        Type,
+                        Validity,
+                        Points,
+                        Wallet_Name,
+                        redemption_value,
+                        expiry_value,
+                        date,
+                        time
+                    FROM (
+                        SELECT 
+                            'Earned' AS Type,
+                            uw.validity AS Validity,
+                            uw.original_points AS Points,
+                            ws.name AS Wallet_Name,
+                            NULL AS redemption_value,
+                            NULL AS date,
+                            NULL AS time,
+                            NULL as expiry_value
+                        FROM user_wallet uw
+                        LEFT JOIN wallet_structure ws ON uw.structure_foreign_id = ws.id
+                        WHERE uw.user_id = ".$user_id." AND uw.merchant_id = ".$merchant_id."
+                        
+                        UNION ALL
+                        
+                        SELECT 
+                            'Redeemed' AS Type,
+                            NULL AS Validity,
+                            NULL AS Points,
+                            'Wallet Redeem' AS Wallet_Name,
+                            wr.redemption_value AS redemption_value,
+                            wr.date AS date,
+                            wr.time AS time,
+                            NULL as expiry_value
+                        FROM wallet_redeem wr
+                        WHERE wr.user_id = ".$user_id." AND wr.merchant_id = ".$merchant_id."
+                        
+                        UNION ALL
+                        
+                        SELECT 
+                            'Expired' AS Type,
+                            NULL AS Validity,
+                            euw.original_points AS Points,
+                            'Expired Credits' AS Wallet_Name,
+                            NULL AS redemption_value,
+                            NULL AS date,
+                            euw.time AS time,
+                            euw.expiry_value as expiry_value
+                        FROM expiry_user_wallet euw
+                        WHERE euw.user_id = ".$user_id." AND euw.merchant_id = ".$merchant_id."
+                    ) AS combined_results
+                ";
+
+        $whereClauses = [];
+
+        // if (!empty($request->type)) {
+        //     $whereClauses[] = "Type IN ('" . implode("', '", $request->type) . "')";
+        // }
+        if (!empty($request->type)) {
+            $types = is_array($request->type) ? $request->type : [$request->type];
+            $whereClauses[] = "Type IN ('" . implode("', '", $types) . "')";
         }
-        if(!empty($request->to_date) && !empty($request->from_date)){
-            $waletbalance = $waletbalance->whereBetween('user_wallet.validity', [$request->to_date, $request->from_date]);
+        if (!empty($request->to_date)) {
+            $to_date = date('Y-m-d', strtotime($request->to_date));
+            $whereClauses[] = "Validity <= '".$to_date."'";
         }
-        $waletbalance= $waletbalance->get();
-        $currentDate = date('Y-m-d');
-        $waletbalance = $waletbalance->map(function ($item) use ($currentDate,$request) {
-            $item['is_expired'] = $currentDate > $item->validity;
-            // $combinedValue = $item->current_wallet_balance + $item->original_points;
-            if (!empty($request->redem_chk) && $request->redem_chk == 1) {
-                $combinedValue = $item->current_wallet_balance - $item->original_points;
-            } else {
-                $combinedValue = $item->current_wallet_balance + $item->original_points;
-            }
-            $item['value'] = $combinedValue;
-            return $item;
-        });
-        if(!empty($request->is_expired)){
-            $isExpiredFilter = filter_var($request->input('is_expired'), FILTER_VALIDATE_BOOLEAN);
-            $waletbalance = $waletbalance->filter(function ($item) use ($isExpiredFilter) {
-                return $item['is_expired'] === $isExpiredFilter;
-            });
+        if (!empty($request->from_date)) {
+            $from_date = date('Y-m-d', strtotime($request->from_date));
+            $whereClauses[] = "Validity >= '".$from_date."'";
         }
+
+        // Combine where clauses
+        if (count($whereClauses) > 0) {
+            $walletbalance_query .= " WHERE " . implode(' AND ', $whereClauses);
+        }
+
+        // // Add pagination and ordering
+        $walletbalance_query .= " ORDER BY Validity DESC LIMIT ".$limit." OFFSET ".$offset;
+
+        // Execute the query
+        $walletbalance_obj = DB::select($walletbalance_query);
+
+        // foreach ($walletbalance_obj as $item) {
+        //     $day = date('d', strtotime($item->Validity));
+        //     $month = date('M', strtotime($item->Validity));
+        //     $year = date('Y', strtotime($item->Validity));
+        //     $suffix = 'th';
+        //     if ($day == 1 || $day == 21 || $day == 31) {
+        //         $suffix = 'st';
+        //     } elseif ($day == 2 || $day == 22) {
+        //         $suffix = 'nd';
+        //     } elseif ($day == 3 || $day == 23) {
+        //         $suffix = 'rd';
+        //     }
+        //     $item->Formatted_Validity = "{$day}{$suffix} {$month} {$year}";
+        // }
+
         return response()->json([
             'error' => false,
             'message' => 'Balance',
-            'walletbalance' => $waletbalance,
+            'current_wallet_balance' => $current_wallet_balance,
+            'walletbalance' => $walletbalance_obj,
+            'total_pages' => $total_pages,
+            'total_entries' => $total_entries,
+            'current_page' => $page_number,
         ]);
-
-
     }
+
+
     public function couponscart(Request $request)
     {
         // $merchant_id= 15657;
@@ -892,7 +984,7 @@ class HomeController extends Controller
         }
         if (!empty($galleryData)) {
         $data['gallery'] = $galleryData;
-    }
+        }
         return response()->json([
             'error' => false,
             'message' => 'About',
@@ -1365,43 +1457,14 @@ class HomeController extends Controller
         ]);
         
     }
-    public function cities(Request $request)
+    public function state(Request $request)
     {
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-        $country = $request->country;
-        $rules=[
-            'merchant_id'=>'Required',
-            'country'=>'Required',
-          ];
-          $validator = Validator::make($request->all(), $rules);
-        
-          if ($validator->fails()) {
-              return response()->json([
-                  'error' => true,
-                  'message' => 'Validation Failed',
-                  'errors' => $validator->errors()
-              ]);
-          }else{
-            $cities = CitisNew::get();
-            return response()->json([
-                'error' => false,
-                'message' => 'all cities',
-                'cities' => $cities,
-            ]);
-          } 
-
-    }
-
-    public function gettingregion(Request $request)
-    {
-
-      $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-      $city = $request->city;
-      $rules = [
-        'city' => 'required',
+        $country_id = $request->country_id;
+        $rules = [
+            'country_id' => 'required',
         ];
         $validator = Validator::make($request->all(), $rules);
-    
         if ($validator->fails()) {
             return response()->json([
                 'error' => true,
@@ -1409,20 +1472,50 @@ class HomeController extends Controller
                 'errors' => $validator->errors()
             ]);
         }
-      $region = MerchantRegion::select('id','region')->where('city',$city)->where('merchant_id',$merchant_id)->orderBy('region')->get();
-      unset($merchant_id,$city);
-      if(count($region)>0){
+        $states = state::select('id','name','country_id')->where('country_id', $country_id)->get();
         return response()->json([
             'error' => false,
-            'region' => $region,
+            'message' => 'all states',
+            'states' => $states,
         ]);
-      }else{
-        $region = 'No city Found';
+    }
+    
+    public function cities(Request $request)
+    {
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $country = $request->country;
+        $state_id = $request->state_id;
+        $rules = [
+            'state_id' => 'required',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Validation Failed',
+                'errors' => $validator->errors()
+            ]);
+        } 
+        $cities = CitisNew::select('id','name','state_id')->where('state_id', $state_id)->get();
+
         return response()->json([
-            'error' => true,
-            'region' => $region,
+            'error' => false,
+            'message' => 'all cities',
+            'cities' => $cities,
         ]);
-      } 
+
+    }
+
+    public function gettingregion(Request $request)
+    {
+    //   $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+      $region = MerchantRegion::select('city', 'region')->get();
+      return response()->json([
+          'error' => false,
+          'message' => 'all regions',
+          'region' => $region,
+      ]);
     }
     public function themecolor()
     {
