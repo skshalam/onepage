@@ -23,8 +23,8 @@ function Profile() {
           </div>
         </div>
       </div>
-      <div className="my-5 text-center z-3">
-        <Avatar className='z-3 bg-light' size={80} icon={<i class="bi bi-person-fill text-dark" />} />
+      <div className="my-5 text-center z-2">
+        <Avatar className='z-2 bg-light' size={80} icon={<i class="bi bi-person-fill text-dark" />} />
       </div>
       <div className="mx-4 p-4 profile-navigation-container z-3 position-relative rounded-4">
         <Link to={"/Myaccount"} className='cust_text_primary text-decoration-none'>
