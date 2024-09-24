@@ -26,10 +26,13 @@ function About() {
         "display_brand_logo_name": 0,
         "brand_logo_alignment": 0,
         "merchant_name": "",
+        "ewards_url": "", 
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { merchant_base } = useParams();
+    const storedMerchantBase = localStorage.getItem('merchant_base');
+    console.log('merchant_base:', storedMerchantBase);
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
         if (token) {
@@ -209,7 +212,7 @@ function About() {
                             </>}
                     </div>
                 </SkeletonTheme>
-                <Link className='text-decoration-none' to={"/Giftcard"}>
+                <Link className='text-decoration-none' to={`${data_home.ewards_url}giftcard_claim/${storedMerchantBase}`} target="_blank">
                     <div className="gift-container overflow-hidden position-relative m-3 d-flex align-items-center justify-content-center text-light rounded-3">
                         <div className="gift-content d-flex align-items-center gap-2">
                             <img src="https://i.imgur.com/ZoluTbe.png" alt="" />
