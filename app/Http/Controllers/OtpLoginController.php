@@ -756,7 +756,6 @@ class OtpLoginController extends Controller
         $otp = preg_match('/\d{6}/', $otp_msg, $matches);
         $otp = $matches[0];
 
-
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -778,18 +777,15 @@ class OtpLoginController extends Controller
 
         if ($httpCode == 200) {
             $curl_res = json_decode($response);
+            
             if($curl_res->error == false){
-                echo"<pre>";
-                print_r($curl_res);
-                exit;
-                $user = User::where('id',$curl_res->user_id)->first();
-                if (!$token = JWTAuth::fromUser($user)) {
-                    return response()->json(['error' => 'Unable to generate token'], 500);
-                }
-                if($user){
-                    $token = JWTAuth::claims(['merchant_id' => $request->merchant_id])->fromUser($user);
-                }
-                return response()->json(["error"=>false,"message"=>$this->respondWithToken($token,$otp,$user,json_decode($response, true))]);
+
+                return response()->json(array(
+                    'error'=>false,
+                    'message'=>'OTP sent successfully',
+                    'otp_msg' => $request->otp_msg,
+                    'curl_data' => $curl_res,
+                ));
             }
 
             return response()->json([
