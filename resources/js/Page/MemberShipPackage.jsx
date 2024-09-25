@@ -6,7 +6,7 @@ function MemberShipPackage() {
     const [membershipsDesc, setmembershipDesc] = useState({});
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/memebership', [])

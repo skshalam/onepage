@@ -83,8 +83,8 @@ const Home = () => {
                 otp,
             });
             if (response && response.data && response.data.message && response.data.message.original) {
-                sessionStorage.setItem('access_token', response.data.message.original.access_token);
-                sessionStorage.setItem('expires_in', response.data.message.original.expires_in);
+                localStorage.setItem('access_token', response.data.message.original.access_token);
+                localStorage.setItem('expires_in', response.data.message.original.expires_in);
                 // Optionally, you might want to navigate or update UI state here
                 navigate('/About');
             } else {

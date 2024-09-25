@@ -35,7 +35,7 @@ function AboutUs() {
     const [error, setError] = useState(null);
     const { merchant_base } = useParams();
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         axiosSetup.get('/api/onepagehome')
             .then(response => {
                 setData_home(response.data.data);
@@ -47,7 +47,7 @@ function AboutUs() {
             });
     }, [merchant_base]);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         axiosSetup.get('/api/about')
             .then(response => {
                 setData_aboutus(response.data.data);

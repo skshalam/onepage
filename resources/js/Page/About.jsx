@@ -34,7 +34,7 @@ function About() {
     const storedMerchantBase = localStorage.getItem('merchant_base');
     console.log('merchant_base:', storedMerchantBase);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.get('/api/getDataCounts')
                 .then(response => {
@@ -50,7 +50,7 @@ function About() {
         }
     }, []);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         axiosSetup.get('/api/onepagehome')
             .then(response => {
                 setData_home(response.data.data);

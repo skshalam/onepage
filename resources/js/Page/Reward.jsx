@@ -20,7 +20,7 @@ function Reward() {
         return dayDifference > 0 ? `${dayDifference} days` : 'Expired';
     };
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/rewards', [])
@@ -38,7 +38,7 @@ function Reward() {
     }, []);
 
     const handleDrawer = (reward) => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.post('/api/rewards',
                 {

@@ -14,7 +14,7 @@ function TermsAndCondition() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         axiosSetup.get('/api/termscon')
             .then(response => {
                 setData_termscon(response.data);

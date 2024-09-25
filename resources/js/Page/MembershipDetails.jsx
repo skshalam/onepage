@@ -11,7 +11,7 @@ function MembershipDetails() {
     const { membership_id } = useParams();
     const {useThemeStyles} = useContext(ThemeContext);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/eWalletissue',
@@ -29,7 +29,7 @@ function MembershipDetails() {
         }
     }, []);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/bookletissue',
@@ -47,7 +47,7 @@ function MembershipDetails() {
         }
     }, []);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/couponsredeem',

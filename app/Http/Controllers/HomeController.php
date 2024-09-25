@@ -109,7 +109,7 @@ class HomeController extends Controller
 
         // Pagination parameters
         $page_number = $request->page_number; 
-        $limit = 11094; 
+        $limit = 10; 
         $offset = ($page_number - 1) * $limit;
         // dd($offset);
         $total_entries_query = "

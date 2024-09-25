@@ -40,13 +40,13 @@ const App = () => {
         if (match) {
             const { merchant_base } = match.params;
             setMerchantBase(merchant_base);
-            localStorage.setItem('merchant_base', merchant_base); // Store in session storage
+            sessionStorage.setItem('merchant_base', merchant_base); // Store in session storage
         }
     }, [match]);
     
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
-        const storedMerchantBase = localStorage.getItem('merchant_base');
+        const token = localStorage.getItem('access_token');
+        const storedMerchantBase = sessionStorage.getItem('merchant_base');
         const url = `/onePageWebsite/${storedMerchantBase}`;
         console.log('set-path:', location.pathname);
         if (!token && location.pathname === url) {
@@ -69,7 +69,7 @@ const App = () => {
     }, [navigate]);
 
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.get(`/api/themecolor`)
             .then(res => {

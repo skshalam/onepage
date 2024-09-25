@@ -31,7 +31,7 @@ function coupon_booklet() {
     const { membership_id } = useParams();
     const { bookletissue_id } = useParams();
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/bookletcoupon',
@@ -53,7 +53,7 @@ function coupon_booklet() {
     }, []);
 
     const handleDrawer = (coupon_booklet) => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.post('/api/bookletcoupon',
                 {
