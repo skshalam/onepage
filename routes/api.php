@@ -38,11 +38,12 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/infodata', [\App\Http\Controllers\HomeController::class, 'infodata']);
     Route::POST('/editinfo', [\App\Http\Controllers\HomeController::class, 'editinfo']);
     Route::get('/getDataCounts', [\App\Http\Controllers\HomeController::class, 'getDataCounts']);
-    Route::get('/getTotalWalletBalance', [\App\Http\Controllers\HomeController::class, 'getTotalWalletBalance']);
     Route::post('/cities', [\App\Http\Controllers\HomeController::class, 'cities']);
     Route::post('/gettingregion', [\App\Http\Controllers\HomeController::class, 'gettingregion']);
-    Route::post('/countries', [\App\Http\Controllers\HomeController::class, 'countries']);
+    Route::get('/countries', [\App\Http\Controllers\HomeController::class, 'countries']);
+    Route::post('/state', [\App\Http\Controllers\HomeController::class, 'state']);
     Route::get('/themecolor', [\App\Http\Controllers\HomeController::class, 'themecolor']);
+    Route::post('/redeem_rewards', [\App\Http\Controllers\HomeController::class, 'redeem_rewards']);
 });
 
 
