@@ -1021,10 +1021,10 @@ class HomeController extends Controller
         $message=$request->message;
         $contact = new OnePageContact();
         $contact->merchant_id = $merchant_id;
-        $contact->name = $name;
-        $contact->mobile = $mobile;
-        $contact->email = $email;
-        $contact->message = $message;
+        $contact->name = $name ?? '';
+        $contact->mobile = $mobile ?? '';
+        $contact->email = $email ?? '';
+        $contact->message = $message ?? '';
         $contact->priority=0;
         $contact->status = 1;
         $contact->hide_show = 1;
@@ -1221,12 +1221,12 @@ class HomeController extends Controller
             }
         }
 
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->mobile = $request->mobile;
-        $user->country = $request->country;
-        $user->pincode = $request->pincode;
-        $user->state = $request->state;
+        $user->name = $request->name ?? '';
+        $user->email = $request->email ?? '';
+        $user->mobile = $request->mobile ?? '';
+        $user->country = $request->country ?? '';
+        $user->pincode = $request->pincode ?? '';
+        $user->state = $request->state ?? '';
         $user->save();
 
         $profile = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->first();
@@ -1237,17 +1237,17 @@ class HomeController extends Controller
             ]);
         }
 
-        $profile->gender = $request->gender;
-        $profile->dob = $request->dob;
-        $profile->marital = $request->marital;
-        $profile->doa = $request->doa;
-        $profile->address = $request->address;
-        $profile->gstin = $request->gstin;
-        $profile->pan = $request->pan;
-        $profile->city = $request->city;
-        $profile->bank_name = $request->bank_name;
-        $profile->bank_account_number = $request->bank_account_number;
-        $profile->region = $request->region;
+        $profile->gender = $request->gender ?? '';
+        $profile->dob = $request->dob ?? '';
+        $profile->marital = $request->marital ?? '';
+        $profile->doa = $request->doa ?? '';
+        $profile->address = $request->address ?? '';
+        $profile->gstin = $request->gstin ?? '';
+        $profile->pan = $request->pan ?? '';
+        $profile->city = $request->city ?? '';
+        $profile->bank_name = $request->bank_name ?? '';
+        $profile->bank_account_number = $request->bank_account_number ?? '';
+        $profile->region = $request->region ?? '';
         $profile->save();
 
         return response()->json([
