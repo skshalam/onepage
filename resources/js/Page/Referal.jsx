@@ -1,10 +1,19 @@
 import { Button, Col, DatePicker, Form, Input, Row } from 'antd'
-import React from 'react'
+import React, { useState } from 'react'
 import PhoneInput from 'react-phone-input-2';
 import { Link } from 'react-router-dom'
 
 function Referal() {
     const [form] = Form.useForm();
+    const handleSubmit = () => {
+        form.validateFields()
+            .then(values => {
+                console.log(values);
+            })
+            .catch(err => {
+                console.log("Validation Error", err);
+            })
+    }
     return (
         <div className='onepage-main-body position-relative'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -28,7 +37,14 @@ function Referal() {
                     <Row gutter={[0, 20]}>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"name"} className='mb-0'>
+                                <Form.Item name={"name"} className='mb-0'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Enter person's name"
+                                        }
+                                    ]}
+                                >
                                     <Input className='rounded-2  cust-css-ant-input contact-info' placeholder='Enter name' />
                                 </Form.Item>
                                 <label className='position-absolute ps-0' htmlFor="name">Friend's Name</label>
@@ -36,7 +52,14 @@ function Referal() {
                         </Col>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"phone"} className='mb-0'>
+                                <Form.Item name={"phone"} className='mb-0'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Enter phone number"
+                                        }
+                                    ]}
+                                >
                                     <PhoneInput
                                         country={'in'}
                                     />
@@ -46,7 +69,14 @@ function Referal() {
                         </Col>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"dob"} className='mb-0'>
+                                <Form.Item name={"dob"} className='mb-0'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please select date"
+                                        }
+                                    ]}
+                                >
                                     <DatePicker rootClassName='w-100 rounded-1 py-2' />
                                 </Form.Item>
                                 <label className='position-absolute z-3 ps-0' htmlFor="userName">Date of Birth</label>
@@ -54,7 +84,18 @@ function Referal() {
                         </Col>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"email"} className='mb-0'>
+                                <Form.Item name={"email"} className='mb-0'
+                                    rules={[
+                                        {
+                                            type: "email",
+                                            message: "Enter a valid mail"
+                                        },
+                                        {
+                                            required: true,
+                                            message: "Enter your email"
+                                        }
+                                    ]}
+                                >
                                     <Input className='rounded-2  cust-css-ant-input contact-info' placeholder='Enter email' />
                                 </Form.Item>
                                 <label className='position-absolute z-3 ps-0' htmlFor="userName">Email</label>
@@ -65,7 +106,7 @@ function Referal() {
                         justify={'center'}
                         className='my-3'>
                         <Col xs={7}>
-                            <Button className='cust-css-ant-button' type='primary' block>Submit</Button>
+                            <Button className='cust-css-ant-button' type='primary' block onClick={handleSubmit}>Submit</Button>
                         </Col>
                     </Row>
                 </Form>

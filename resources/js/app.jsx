@@ -3,9 +3,9 @@ import '../css/app.css';
 import '../css/style.css';
 import '../css/fonts.css';
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route, useLocation, matchPath,useNavigate} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, matchPath, useNavigate } from 'react-router-dom';
 import Home from './Page/Home';
 import About from './Page/About';
 import Coupon from './Page/Coupon';
@@ -23,6 +23,11 @@ import Referal from './Page/Referal';
 import ReferalList from './Page/ReferalList';
 import AboutUs from './Page/AboutUs';
 import Bookletissue_details from './Page/Bookletissue_details';
+import 'react-loading-skeleton/dist/skeleton.css'
+import axios from 'axios';
+import { ThemeProvider } from './Providers/ContextProviders/ThemeProvider';
+import ThemeContext from './Providers/Contexts/ThemeContext';
+import axiosSetup from '@/axiosSetup';
 
 const App = () => {
     const location = useLocation();
@@ -30,40 +35,51 @@ const App = () => {
     const merchant_base = match?.params?.merchant_base;
     const [merchantBase, setMerchantBase] = useState(null);
     const navigate = useNavigate();
-
+    const {useThemeStyles,setUseThemeStyles} = useContext(ThemeContext);
     useEffect(() => {
         if (match) {
             const { merchant_base } = match.params;
             setMerchantBase(merchant_base);
-            localStorage.setItem('merchant_base', merchant_base); // Store in session storage
+            sessionStorage.setItem('merchant_base', merchant_base); // Store in session storage
         }
     }, [match]);
+    
+    useEffect(() => {
+        const token = localStorage.getItem('access_token');
+        const storedMerchantBase = sessionStorage.getItem('merchant_base');
+        const url = `/onePageWebsite/${storedMerchantBase}`;
+        console.log('set-path:', location.pathname);
+        if (!token && location.pathname === url) {
+            // console.log('Token exists, user is authenticated.');
+            navigate(url);
+        }
+        else if (!token && location.pathname !== url) {
+            navigate(url);
+            // console.log("demo");
+        }
+        else {
+            if (location.pathname !== url) {
+                // console.log("hhhhh22");
+                navigate(location.pathname);
+            } else {
+                // console.log("hhhhh");
+                navigate(-1);
+            }
+        }
+    }, [navigate]);
 
     useEffect(() => {
-            const token = sessionStorage.getItem('access_token');
-            const storedMerchantBase = localStorage.getItem('merchant_base');
-            const url = `/onePageWebsite/${storedMerchantBase}`;
-            console.log('set-path:', location.pathname);
-            if (!token && location.pathname === url) {
-                console.log('Token exists, user is authenticated.');
-                navigate(url);
-            }
-            else if(!token && location.pathname !== url){
-                navigate(url);
-                console.log("demo");
-            }
-            else {
-                if(location.pathname !== url){
-                    console.log("hhhhh22");
-                    navigate(location.pathname);
-                }else{
-                    console.log("hhhhh");
-                    navigate(-1);
-                }
-            }
-    },[navigate]);
-
-    
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            axiosSetup.get(`/api/themecolor`)
+            .then(res => {
+                setUseThemeStyles(res?.data?.data?.theme);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+    }, [merchant_base])
 
     return (
         <Routes>
@@ -90,7 +106,9 @@ const App = () => {
 };
 
 ReactDOM.createRoot(document.getElementById('app')).render(
-    <Router>
-        <App />
-    </Router>
+    <ThemeProvider>
+        <Router>
+            <App />
+        </Router>
+    </ThemeProvider>
 );

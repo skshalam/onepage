@@ -37,6 +37,7 @@ use App\Models\CountryCodes;
 use App\Models\Countries;
 use App\Models\CitisNew;
 use App\Models\MerchantRegion;
+use App\Models\Master;
 use App\Models\ExpireUserPoints;
 use App\Models\ExpireUserWallet;
 use App\Models\State;
@@ -78,6 +79,7 @@ class HomeController extends Controller
         $data['homebrandlogo'] = $homebrandlogo->brand_logo_image;
         $data['display_brand_logo_name'] = $homebrandlogo->display_brand_logo_name;
         $data['brand_logo_alignment'] = $homebrandlogo->brand_logo_alignment;
+        $master = Master::where('id',1)->first();
         $merchant_name = MerchantDetails::select('business_name')->where('user_id', $merchant_id)->first();
         $cards=Cards::select('cards.current_points', 'cards.current_wallet_balance')->where('cards.merchant_id', $merchant_id)->where('cards.user_id', $user_id)->first();
         $homebannersData = Onepage_Banner_Space::select('banner_image','hide_show')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
@@ -89,6 +91,7 @@ class HomeController extends Controller
         }
         $data['merchant_name'] = $merchant_name->business_name;
         $data['cards'] = $cards;
+        $data['ewards_url'] = $master->ewards_url;
         return response()->json([
             'error' => false,
             'message' => 'Home screen data',
@@ -1271,7 +1274,6 @@ class HomeController extends Controller
         // dd($user_id);
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-
         $rewards_id = $request->rewards_id;
         $membership_id = $request->membership_id;
         

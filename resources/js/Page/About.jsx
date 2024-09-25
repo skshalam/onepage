@@ -1,10 +1,13 @@
 // resources/js/Page/About.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
-import axios from 'axios';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
+import axiosSetup from '@/axiosSetup';
+
+// import 'react-loading-skeleton/dist/skeleton.css'
 function About() {
     const [data_getcoupons, setData_getcoupons] = useState({
         active_coupon_count: 0,
@@ -23,19 +26,17 @@ function About() {
         "display_brand_logo_name": 0,
         "brand_logo_alignment": 0,
         "merchant_name": "",
+        "ewards_url": "", 
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { merchant_base } = useParams();
+    const storedMerchantBase = localStorage.getItem('merchant_base');
+    console.log('merchant_base:', storedMerchantBase);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         if (token) {
-            axios.get('/api/getDataCounts', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axiosSetup.get('/api/getDataCounts')
                 .then(response => {
                     console.log('API Response:', response);
                     setData_getcoupons(response.data.data);
@@ -49,13 +50,8 @@ function About() {
         }
     }, []);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
-        axios.get('/api/onepagehome', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        })
+        const token = localStorage.getItem('access_token');
+        axiosSetup.get('/api/onepagehome')
             .then(response => {
                 setData_home(response.data.data);
                 setLoading(false);
@@ -83,8 +79,8 @@ function About() {
                         <div className={`headlogo-img ${data_home.display_brand_logo_name === 1 ? 'ratio-3' : 'ratio-1'}`}>
                             {
                                 loading
-                                ? <div className="cust-skeleton-loader header-img"></div>
-                                :<img src={data_home.homebrandlogo} alt="" />
+                                    ? <div className="cust-skeleton-loader header-img"></div>
+                                    : <img src={data_home.homebrandlogo} alt="" />
                             }
                         </div>
                         {data_home.display_brand_logo_name === 2 && (
@@ -95,107 +91,128 @@ function About() {
                     </div>
                     <div className="head-profile">
                         <Link className='text-decoration-none' to={"/Profile"}>
-                        <i className='bi bi-person-fill fs-5'></i>
+                            <i className='bi bi-person-fill fs-5'></i>
                         </Link>
                     </div>
                 </div>
-                {data_home.banners?.banner_image?.length > 0 
-                
-                ? (
-                    <div className='banner-part-main'>
-                        <div className='banner-part'>
-                            <Slider {...settings}>
-                                {data_home.banners.banner_image.map((banner, index) => (
-                                    <div key={index}>
-                                        <img src={banner} alt={`Banner ${index + 1}`} />
+                {data_home.banners?.banner_image?.length > 0
+
+                    ? (
+                        <div className='banner-part-main'>
+                            <div className='banner-part'>
+                                <Slider {...settings}>
+                                    {data_home.banners.banner_image.map((banner, index) => (
+                                        <div key={index}>
+                                            <img src={banner} alt={`Banner ${index + 1}`} />
+                                        </div>
+                                    ))}
+                                </Slider>
+                            </div>
+                        </div>
+                    )
+                    : <div className="cust-skeleton-loader banner-skl"></div>
+                }
+                <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+                    <div className={`wallet-container gap-2 m-3 ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
+
+                        {loading
+                            ? <>
+                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                            </>
+                            : <>
+                                <Link className='text-decoration-none' to={"/Creditwallet"}>
+                                    <div className="wallet-content">
+                                        <div className="content">
+                                            <p>Credit Balance:</p>
+                                            <div className="balance">
+                                                <img src="" alt="" />
+                                                <span>
+                                                    {data_home.cards.current_points}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="content">
+                                            <i className="bi bi-chevron-right"></i>
+                                        </div>
                                     </div>
-                                ))}
-                            </Slider>
-                        </div>
+                                </Link>
+
+
+                                <Link className='text-decoration-none' to={"/Wallet"}>
+                                    <div className="wallet-content">
+                                        <div className="content">
+                                            <p>Wallet's Balance:</p>
+                                            <div className="balance">
+                                                <img src="" alt="" />
+                                                <span>{data_home.cards.current_wallet_balance}</span>
+                                            </div>
+                                        </div>
+                                        <div className="content">
+                                            <i className="bi bi-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </>
+                        }
                     </div>
-                )
-                :<div className="cust-skeleton-loader banner-skl"></div>
-            }
-                <div className={`wallet-container gap-2 m-3 ${data_home.banners?.banner_image?.length > 0 ? '' : 'wallet-banner'}`}>
-                    <Link className='text-decoration-none' to={"/Creditwallet"}>
-                    <div className="wallet-content">
-                        <div className="content">
-                            <p>Credit Balance:</p>
-                            <div className="balance">
-                                <img src="" alt="" />
-                                <span>
-                                    {
-                                        loading?<div className="cust-skeleton-loader header-img"></div>
-                                    :data_home.cards.current_points
-                                    }
-                                </span>
-                            </div>
-                        </div>
-                        <div className="content">
-                            <i className="bi bi-chevron-right"></i>
-                        </div>
+                    <div className="rewards-container gap-2 m-3">
+                        {loading
+                            ? <>
+                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                            </>
+                            : <>
+                                <Link className='text-decoration-none' to={"/Coupon"}>
+                                    <div className="rewards-content">
+                                        <div className="content">
+                                            <p>Coupon <br /> Cart</p>
+                                            <div className="balance">
+                                                <img src="" alt="" />
+                                                <span>{data_getcoupons.active_coupon_count}</span>
+                                            </div>
+
+                                        </div>
+                                        <div className="content">
+                                            <i className="bi bi-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </Link>
+                                <Link className='text-decoration-none' to={"/Reward"}>
+                                    <div className="rewards-content">
+                                        <div className="content">
+                                            <p>Reward <br /> Menu</p>
+
+                                            <div className="balance">
+                                                <img src="" alt="" />
+                                                <span>{data_getcoupons.active_rewards_count}</span>
+                                            </div>
+                                        </div>
+                                        <div className="content">
+                                            <i className="bi bi-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </Link>
+                                <Link className='text-decoration-none' to={"/Membership"}>
+                                    <div className="rewards-content">
+                                        <div className="content">
+                                            <p>Membership Package</p>
+
+                                            <div className="balance">
+                                                <img src="" alt="" />
+                                                <span>{data_getcoupons.active_membership_count}</span>
+                                            </div>
+                                        </div>
+                                        <div className="content">
+                                            <i className="bi bi-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </>}
                     </div>
-                    </Link>
-                    <Link className='text-decoration-none' to={"/Wallet"}>
-                    <div className="wallet-content">
-                        <div className="content">
-                            <p>Wallet's Balance:</p>
-                            <div className="balance">
-                                <img src="" alt="" />
-                                <span>{data_home.cards.current_wallet_balance}</span>
-                            </div>
-                        </div>
-                        <div className="content">
-                            <i className="bi bi-chevron-right"></i>
-                        </div>
-                    </div>
-                    </Link>
-                </div>
-                <div className="rewards-container gap-2 m-3">
-                    <Link className='text-decoration-none' to={"/Coupon"}>
-                        <div className="rewards-content">
-                            <div className="content">
-                                <p>Coupon <br /> Cart</p>
-                                <div className="balance">
-                                    <img src="" alt="" />
-                                    <span>{data_getcoupons.active_coupon_count}</span>
-                                </div>
-                            </div>
-                            <div className="content">
-                                <i className="bi bi-chevron-right"></i>
-                            </div>
-                        </div>
-                    </Link>
-                    <Link className='text-decoration-none' to={"/Reward"}>
-                        <div className="rewards-content">
-                            <div className="content">
-                                <p>Reward <br /> Menu</p>
-                                <div className="balance">
-                                    <img src="" alt="" />
-                                    <span>{data_getcoupons.active_rewards_count}</span>
-                                </div>
-                            </div>
-                            <div className="content">
-                                <i className="bi bi-chevron-right"></i>
-                            </div>
-                        </div>
-                    </Link>
-                    <Link className='text-decoration-none' to={"/Membership"}>
-                        <div className="rewards-content">
-                            <div className="content">
-                                <p>Membership Package</p>
-                                <div className="balance">
-                                    <img src="" alt="" />
-                                    <span>{data_getcoupons.active_membership_count}</span>
-                                </div>
-                            </div>
-                            <div className="content">
-                                <i className="bi bi-chevron-right"></i>
-                            </div>
-                        </div>
-                    </Link>
-                </div>
-                <Link className='text-decoration-none' to={"/Giftcard"}>
+                </SkeletonTheme>
+                <Link className='text-decoration-none' to={`${data_home.ewards_url}giftcard_claim/${storedMerchantBase}`} target="_blank">
                     <div className="gift-container overflow-hidden position-relative m-3 d-flex align-items-center justify-content-center text-light rounded-3">
                         <div className="gift-content d-flex align-items-center gap-2">
                             <img src="https://i.imgur.com/ZoluTbe.png" alt="" />

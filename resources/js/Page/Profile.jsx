@@ -1,9 +1,11 @@
 import { Avatar, Col, Divider, Modal, Row } from 'antd'
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import ThemeContext from '../Providers/Contexts/ThemeContext';
 
 function Profile() {
   const [deleteModal, setDeleteModal] = useState(false);
+  const {useThemeStyles} = useContext(ThemeContext);
   const targetDiv = useRef(null)
   return (
     <div className='body-container position-relative'>
@@ -165,7 +167,9 @@ function Profile() {
       >
         <div className="del-ac-modal-content position-relative">
           <div className="modal-bg position absolute">
-            <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726480398/xdbtbbvmgyt91wxi3dj6.png" alt="" />
+            <svg width="345" height="166" viewBox="0 0 345 166" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M345 91.3234L1.65989 165.285C1.10338 165.405 0.548585 165.475 0 165.497V-1H345V91.3234Z" fill={useThemeStyles?.primary_color} />
+            </svg>
           </div>
           <div className="position-absolute modal-icon d-flex flex-column gap-0">
             <i className='bi bi-exclamation-circle text-light' />

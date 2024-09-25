@@ -1,7 +1,7 @@
 import { Col, Row } from 'antd'
 import React, { useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axiosSetup from '@/axiosSetup';
 function ReferalList() {
     const [referallistData, setreferallistData] = useState([]);
     const formatDate = (dateStr) => {
@@ -30,15 +30,10 @@ function ReferalList() {
         return `${day}${daySuffix(day)} ${month}, ${year}`;
     };    
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
-            axios.post('/api/referral_programview', [], {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
+            axiosSetup.post('/api/referral_programview', [])
             .then(response => {
                 setreferallistData(response.data.data);
             })
