@@ -39,7 +39,7 @@ function Contact() {
         form.validateFields()
             .then(values => {
                 const token = localStorage.getItem('access_token');
-                const merchant_id = localStorage.getItem('merchant_base');
+                const merchant_id = sessionStorage.getItem('merchant_base');
                 if (token) {
                     const payload = {
                         ...values,

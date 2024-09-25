@@ -1,12 +1,31 @@
 import { Avatar, Col, Divider, Modal, Row } from 'antd'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ThemeContext from '../Providers/Contexts/ThemeContext';
+import axiosSetup from '@/axiosSetup';
 
 function Profile() {
   const [deleteModal, setDeleteModal] = useState(false);
   const {useThemeStyles} = useContext(ThemeContext);
+  const [referPermission,setReferPermission] = useState({})
   const targetDiv = useRef(null)
+  const merchant_id = sessionStorage.getItem('merchant_base');
+  useEffect(() => {
+    axiosSetup.post('/api/referErn',{merchant_id})
+        .then(response => {
+          if(response.data.refer){
+            setReferPermission(response.data.refer);
+          }
+          else{
+            setReferPermission({});
+          }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}, []);
+console.log(referPermission);
+
   return (
     <div className='body-container position-relative'>
       <div className="position-absolute h-100 w-100 top-0 bg-layer-main z-1">
@@ -62,7 +81,9 @@ function Profile() {
             </Col>
           </Row>
         </Link>
-        <Link to={"/Referal"} className='cust_text_primary text-decoration-none'>
+        {
+          referPermission.referral_permission===1&&
+          <Link to={"/Referal"} className='cust_text_primary text-decoration-none'>
           <Divider className='m-0' />
           <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
             <Col span={3}>
@@ -72,7 +93,7 @@ function Profile() {
             </Col>
             <Col span={21}>
               <div className="d-flex justify-content-between align-items-center">
-                <span className='cust_text_primary fw-semibold'>Refer & Earn</span>
+                <span className='cust_text_primary fw-semibold'>{referPermission.referral_dynamic_name}</span>
                 <span>
                   <i className='bi bi-chevron-right fs-5' />
                 </span>
@@ -80,6 +101,7 @@ function Profile() {
             </Col>
           </Row>
         </Link>
+        }
         <Link to={"/Contact"} className='cust_text_primary text-decoration-none'>
           <Divider className='m-0' />
           <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
