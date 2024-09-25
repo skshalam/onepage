@@ -42,6 +42,7 @@ use App\Models\ExpireUserPoints;
 use App\Models\ExpireUserWallet;
 use App\Models\State;
 use App\Models\UserStamps;
+use App\Models\WlOutlets;
 use DB;
 use Auth;
 use Illuminate\Support\Facades\Validator;
