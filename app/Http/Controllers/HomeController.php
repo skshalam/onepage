@@ -364,20 +364,141 @@ class HomeController extends Controller
 
     // }
 
-    public function getTotalWalletBalance(){
-        $user = JWTAuth::parseToken()->authenticate();
-        $user_id = $user->id;
-        // Get the merchant_id from the JWT payload
-        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+    // public function walletbalance(Request $request)
+    // {
+    //     $user = JWTAuth::parseToken()->authenticate();
+    //     $user_id = $user->id;
+    //     $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+    //     $current_wallet_balance = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->value('current_wallet_balance');
 
-        $total_wlbal = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->get('current_wallet_balance');
-        
-        return response()->json([
-            'error' => false,
-            'message' => 'total_bal',
-            'total_bal' => $total_wlbal,
-        ]); 
-    }
+    //     // Pagination parameters
+    //     $page_number = $request->page_number; 
+    //     $limit = 10; 
+    //     $offset = ($page_number - 1) * $limit;
+
+    //     // Count total entries for pagination
+    //     $total_entries_query = "
+    //         SELECT COUNT(*) as total_entries
+    //         FROM (
+    //             SELECT 1 FROM user_wallet uw WHERE uw.user_id = ".$user_id." AND uw.merchant_id = ".$merchant_id."
+    //             UNION ALL
+    //             SELECT 1 FROM wallet_redeem wr WHERE wr.user_id = ".$user_id." AND wr.merchant_id = ".$merchant_id."
+    //             UNION ALL
+    //             SELECT 1 FROM expiry_user_wallet eup WHERE eup.user_id = ".$user_id." AND eup.merchant_id = ".$merchant_id."
+    //         ) as total_count_query
+    //     ";
+    //     $total_entries = DB::select($total_entries_query)[0]->total_entries;
+    //     $total_pages = ceil($total_entries / $limit);
+
+    //     // Main wallet balance query
+    //     $walletbalance_query = "
+    //                 SELECT 
+    //                     Type,
+    //                     Validity,
+    //                     Points,
+    //                     Wallet_Name,
+    //                     redemption_value,
+    //                     expiry_value,
+    //                     date,
+    //                     time
+    //                 FROM (
+    //                     SELECT 
+    //                         'Earned' AS Type,
+    //                         uw.validity AS Validity,
+    //                         uw.original_points AS Points,
+    //                         ws.name AS Wallet_Name,
+    //                         NULL AS redemption_value,
+    //                         NULL AS date,
+    //                         NULL AS time,
+    //                         NULL as expiry_value
+    //                     FROM user_wallet uw
+    //                     LEFT JOIN wallet_structure ws ON uw.structure_foreign_id = ws.id
+    //                     WHERE uw.user_id = ".$user_id." AND uw.merchant_id = ".$merchant_id."
+                        
+    //                     UNION ALL
+                        
+    //                     SELECT 
+    //                         'Redeemed' AS Type,
+    //                         NULL AS Validity,
+    //                         NULL AS Points,
+    //                         'Wallet Redeem' AS Wallet_Name,
+    //                         wr.redemption_value AS redemption_value,
+    //                         wr.date AS date,
+    //                         wr.time AS time,
+    //                         NULL as expiry_value
+    //                     FROM wallet_redeem wr
+    //                     WHERE wr.user_id = ".$user_id." AND wr.merchant_id = ".$merchant_id."
+                        
+    //                     UNION ALL
+                        
+    //                     SELECT 
+    //                         'Expired' AS Type,
+    //                         NULL AS Validity,
+    //                         euw.original_points AS Points,
+    //                         'Expired Credits' AS Wallet_Name,
+    //                         NULL AS redemption_value,
+    //                         NULL AS date,
+    //                         euw.time AS time,
+    //                         euw.expiry_value as expiry_value
+    //                     FROM expiry_user_wallet euw
+    //                     WHERE euw.user_id = ".$user_id." AND euw.merchant_id = ".$merchant_id."
+    //                 ) AS combined_results
+    //             ";
+
+    //     $whereClauses = [];
+
+    //     // if (!empty($request->type)) {
+    //     //     $whereClauses[] = "Type IN ('" . implode("', '", $request->type) . "')";
+    //     // }
+    //     if (!empty($request->type)) {
+    //         $types = is_array($request->type) ? $request->type : [$request->type];
+    //         $whereClauses[] = "Type IN ('" . implode("', '", $types) . "')";
+    //     }
+    //     if (!empty($request->to_date)) {
+    //         $to_date = date('Y-m-d', strtotime($request->to_date));
+    //         $whereClauses[] = "Validity <= '".$to_date."'";
+    //     }
+    //     if (!empty($request->from_date)) {
+    //         $from_date = date('Y-m-d', strtotime($request->from_date));
+    //         $whereClauses[] = "Validity >= '".$from_date."'";
+    //     }
+
+    //     // Combine where clauses
+    //     if (count($whereClauses) > 0) {
+    //         $walletbalance_query .= " WHERE " . implode(' AND ', $whereClauses);
+    //     }
+
+    //     // // Add pagination and ordering
+    //     $walletbalance_query .= " ORDER BY Validity DESC LIMIT ".$limit." OFFSET ".$offset;
+
+    //     // Execute the query
+    //     $walletbalance_obj = DB::select($walletbalance_query);
+
+    //     // foreach ($walletbalance_obj as $item) {
+    //     //     $day = date('d', strtotime($item->Validity));
+    //     //     $month = date('M', strtotime($item->Validity));
+    //     //     $year = date('Y', strtotime($item->Validity));
+    //     //     $suffix = 'th';
+    //     //     if ($day == 1 || $day == 21 || $day == 31) {
+    //     //         $suffix = 'st';
+    //     //     } elseif ($day == 2 || $day == 22) {
+    //     //         $suffix = 'nd';
+    //     //     } elseif ($day == 3 || $day == 23) {
+    //     //         $suffix = 'rd';
+    //     //     }
+    //     //     $item->Formatted_Validity = "{$day}{$suffix} {$month} {$year}";
+    //     // }
+
+    //     return response()->json([
+    //         'error' => false,
+    //         'message' => 'Balance',
+    //         'current_wallet_balance' => $current_wallet_balance,
+    //         'walletbalance' => $walletbalance_obj,
+    //         'total_pages' => $total_pages,
+    //         'total_entries' => $total_entries,
+    //         'current_page' => $page_number,
+    //     ]);
+    // }
 
     public function walletbalance(Request $request)
     {
@@ -387,8 +508,8 @@ class HomeController extends Controller
         $current_wallet_balance = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->value('current_wallet_balance');
 
         // Pagination parameters
-        $page_number = $request->page_number; 
-        $limit = 10; 
+        $page_number = $request->page_number;
+        $limit = 10;
         $offset = ($page_number - 1) * $limit;
 
         // Count total entries for pagination
@@ -399,83 +520,89 @@ class HomeController extends Controller
                 UNION ALL
                 SELECT 1 FROM wallet_redeem wr WHERE wr.user_id = ".$user_id." AND wr.merchant_id = ".$merchant_id."
                 UNION ALL
-                SELECT 1 FROM expiry_user_wallet eup WHERE eup.user_id = ".$user_id." AND eup.merchant_id = ".$merchant_id."
+                SELECT 1 FROM expiry_user_wallet euw WHERE euw.user_id = ".$user_id." AND euw.merchant_id = ".$merchant_id."
             ) as total_count_query
         ";
         $total_entries = DB::select($total_entries_query)[0]->total_entries;
         $total_pages = ceil($total_entries / $limit);
 
-        // Main wallet balance query
+        // Main wallet balance query (refactored)
         $walletbalance_query = "
-                    SELECT 
-                        Type,
-                        Validity,
-                        Points,
-                        Wallet_Name,
-                        redemption_value,
-                        expiry_value,
-                        date,
-                        time
-                    FROM (
-                        SELECT 
-                            'Earned' AS Type,
-                            uw.validity AS Validity,
-                            uw.original_points AS Points,
-                            ws.name AS Wallet_Name,
-                            NULL AS redemption_value,
-                            NULL AS date,
-                            NULL AS time,
-                            NULL as expiry_value
-                        FROM user_wallet uw
-                        LEFT JOIN wallet_structure ws ON uw.structure_foreign_id = ws.id
-                        WHERE uw.user_id = ".$user_id." AND uw.merchant_id = ".$merchant_id."
-                        
-                        UNION ALL
-                        
-                        SELECT 
-                            'Redeemed' AS Type,
-                            NULL AS Validity,
-                            NULL AS Points,
-                            'Wallet Redeem' AS Wallet_Name,
-                            wr.redemption_value AS redemption_value,
-                            wr.date AS date,
-                            wr.time AS time,
-                            NULL as expiry_value
-                        FROM wallet_redeem wr
-                        WHERE wr.user_id = ".$user_id." AND wr.merchant_id = ".$merchant_id."
-                        
-                        UNION ALL
-                        
-                        SELECT 
-                            'Expired' AS Type,
-                            NULL AS Validity,
-                            euw.original_points AS Points,
-                            'Expired Credits' AS Wallet_Name,
-                            NULL AS redemption_value,
-                            NULL AS date,
-                            euw.time AS time,
-                            euw.expiry_value as expiry_value
-                        FROM expiry_user_wallet euw
-                        WHERE euw.user_id = ".$user_id." AND euw.merchant_id = ".$merchant_id."
-                    ) AS combined_results
-                ";
+        Select
+            Wallet_Type,
+            Valid_Till,
+            DATE_FORMAT(Valid_Till, '%e') AS valid_Day,
+            DATE_FORMAT(Valid_Till, '%b') AS valid_Month,
+            DATE_FORMAT(Valid_Till, '%Y') AS valid_Year,
+            Wallet_Balance,
+            Wallet_Name,
+            Redemption_Date,
+            Redemption_Time,
+            Expiry_Date,
+            Expiry_Time
+        From(
+                SELECT
+                    'Earned' AS Wallet_Type,
+                    uw.validity AS Valid_Till,
+                    uw.original_points AS Wallet_Balance,
+                    COALESCE(ws.name, 'Wallet Earned') AS Wallet_Name,
+                    NULL AS Redemption_Date,
+                    NULL AS Redemption_Time,
+                    NULL AS Expiry_Date,
+                    NULL AS Expiry_Time
+                FROM
+                    user_wallet uw
+                LEFT JOIN wallet_structure ws ON uw.structure_foreign_id = ws.id
+                WHERE
+                    uw.merchant_id = ".$merchant_id." AND uw.user_id = ".$user_id."
+
+                UNION ALL
+
+                SELECT
+                    'Redeemed' AS Wallet_Type,
+                    NULL AS Valid_Till,
+                    wr.redemption_value AS Wallet_Balance,
+                    'Wallet Redeem' AS Wallet_Name,
+                    wr.date AS Redemption_Date,
+                    wr.time AS Redemption_Time,
+                    NULL AS Expiry_Date,
+                    NULL AS Expiry_Time
+                FROM
+                    wallet_redeem wr
+                WHERE
+                    wr.merchant_id = ".$merchant_id." AND wr.user_id = ".$user_id."
+
+                UNION ALL
+
+                SELECT
+                    'Expired' AS Wallet_Type,
+                    NULL AS Valid_Till,
+                    euw.expiry_value AS Wallet_Balance,
+                    COALESCE(ws_exp.name, 'Wallet Expired') AS Wallet_Name,
+                    NULL AS Redemption_Date,
+                    NULL AS Redemption_Time,
+                    euw.date AS Expiry_Date,
+                    euw.time AS Expiry_Time
+                FROM
+                    expiry_user_wallet euw
+                LEFT JOIN user_wallet uw_exp ON euw.user_wallet_id = uw_exp.id
+                LEFT JOIN wallet_structure ws_exp ON uw_exp.structure_foreign_id = ws_exp.id
+                WHERE
+                    euw.merchant_id = ".$merchant_id." AND euw.user_id = ".$user_id."
+            )as combined_results";
 
         $whereClauses = [];
 
-        // if (!empty($request->type)) {
-        //     $whereClauses[] = "Type IN ('" . implode("', '", $request->type) . "')";
-        // }
         if (!empty($request->type)) {
-            $types = is_array($request->type) ? $request->type : [$request->type];
-            $whereClauses[] = "Type IN ('" . implode("', '", $types) . "')";
+            $whereClauses[] = "Wallet_Type IN (" . $request->type . ")";
         }
-        if (!empty($request->to_date)) {
-            $to_date = date('Y-m-d', strtotime($request->to_date));
-            $whereClauses[] = "Validity <= '".$to_date."'";
+        if (!empty($request->start_date)) {
+            $sdate = date('Y-m-d', strtotime($request->start_date));
+            $whereClauses[] = "Valid_Till >= '" . $sdate . "'";
         }
-        if (!empty($request->from_date)) {
-            $from_date = date('Y-m-d', strtotime($request->from_date));
-            $whereClauses[] = "Validity >= '".$from_date."'";
+        if (!empty($request->end_date)) {
+            $edate = date('Y-m-d', strtotime($request->end_date));
+            $whereClauses[] = "Valid_Till <= '" . $edate . "'";
         }
 
         // Combine where clauses
@@ -483,27 +610,27 @@ class HomeController extends Controller
             $walletbalance_query .= " WHERE " . implode(' AND ', $whereClauses);
         }
 
-        // // Add pagination and ordering
-        $walletbalance_query .= " ORDER BY Validity DESC LIMIT ".$limit." OFFSET ".$offset;
+        // Add pagination and ordering
+        $walletbalance_query .= " ORDER BY Valid_Till DESC LIMIT ".$limit." OFFSET ".$offset;
 
         // Execute the query
         $walletbalance_obj = DB::select($walletbalance_query);
 
-        // foreach ($walletbalance_obj as $item) {
-        //     $day = date('d', strtotime($item->Validity));
-        //     $month = date('M', strtotime($item->Validity));
-        //     $year = date('Y', strtotime($item->Validity));
-        //     $suffix = 'th';
-        //     if ($day == 1 || $day == 21 || $day == 31) {
-        //         $suffix = 'st';
-        //     } elseif ($day == 2 || $day == 22) {
-        //         $suffix = 'nd';
-        //     } elseif ($day == 3 || $day == 23) {
-        //         $suffix = 'rd';
-        //     }
-        //     $item->Formatted_Validity = "{$day}{$suffix} {$month} {$year}";
-        // }
-
+        
+        foreach ($walletbalance_obj as $item) {
+            $day = $item->valid_Day;
+            $month = $item->valid_Month;
+            $year = $item->valid_Year;
+            $suffix = 'th';
+            if ($day == 1 || $day == 21 || $day == 31) {
+                $suffix = 'st';
+            } elseif ($day == 2 || $day == 22) {
+                $suffix = 'nd';
+            } elseif ($day == 3 || $day == 23) {
+                $suffix = 'rd';
+            }
+            $item->Formatted_valid_Date = "{$day}{$suffix} {$month} {$year}";
+        }
         return response()->json([
             'error' => false,
             'message' => 'Balance',
@@ -514,6 +641,7 @@ class HomeController extends Controller
             'current_page' => $page_number,
         ]);
     }
+
 
 
     public function couponscart(Request $request)
