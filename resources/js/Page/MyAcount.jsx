@@ -5,6 +5,7 @@ import { Link, Router, useParams } from 'react-router-dom';
 import axiosSetup from '@/axiosSetup';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import UploadProfilePic from '../components/UploadProfilePic';
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
@@ -367,6 +368,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
     useEffect(() => {
         setFormInstance(form);
     }, [])
+    const [userPp,setUserPp] = useState('')
     useEffect(() => {
         form.setFieldsValue({
             name: data.name,
@@ -409,7 +411,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     <Col xs={24}>
                         <div className="text-center">
                             <Form.Item className='' name="profilePicture">
-                                <Avatar size={70} className='cust-css-ant-avatar' icon={<i className='bi bi-person-fill' />} />
+                                <UploadProfilePic URL={setUserPp} file={userPp}/>
                             </Form.Item>
                         </div>
                     </Col>

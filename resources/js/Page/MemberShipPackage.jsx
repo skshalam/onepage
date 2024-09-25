@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import axiosSetup from '@/axiosSetup';
+import ThemeContext from '../Providers/Contexts/ThemeContext';
 function MemberShipPackage() {
     const [membershipsDesc, setmembershipDesc] = useState({});
     const [loading, setLoading] = useState(true);
+    const {useThemeStyles} = useContext(ThemeContext);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         console.log('Token:', token);
@@ -110,8 +112,12 @@ function MemberShipPackage() {
                                                 </div>
                                             </div>
                                             <div className="membership-status">
-                                                <img src="https://i.imgur.com/euPvujv.png" alt="" />
-                                                <span>Active</span>
+                                                <svg
+                                                    width="73" height="20" viewBox="0 0 73 20" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M0 0H73L63 10L73 20H0V0Z" fill={`${member.expired?"#FF3B3B":"#4DB12A"}`} />
+                                                </svg>
+                                                <span>{`${member.expired?"expired":"Active"}`}</span>
                                             </div>
                                         </div>
                                     </div>

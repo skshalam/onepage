@@ -6,6 +6,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import axiosSetup from '@/axiosSetup';
+import { formatNumberWithCommas } from '../utility/formating';
 
 // import 'react-loading-skeleton/dist/skeleton.css'
 function About() {
@@ -50,7 +51,6 @@ function About() {
         }
     }, []);
     useEffect(() => {
-        const token = localStorage.getItem('access_token');
         axiosSetup.get('/api/onepagehome')
             .then(response => {
                 setData_home(response.data.data);
@@ -127,9 +127,9 @@ function About() {
                                             <p>Credit Balance:</p>
                                             <div className="balance">
                                                 <img src="" alt="" />
-                                                <span className='d-flex gap-1 fw-semibold'>
+                                                <span className='data-amount d-flex gap-1 align-items-center fw-semibold'>
                                                     <img height={25} src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1727175731/Frame_277132290_fpq1oh.svg" alt="" />
-                                                    {data_home.cards.current_points}
+                                                    {formatNumberWithCommas(data_home.cards.current_points)}
                                                 </span>
                                             </div>
                                         </div>
@@ -146,9 +146,9 @@ function About() {
                                             <p>Wallet's Balance:</p>
                                             <div className="balance">
                                                 <img src="" alt="" />
-                                                <span className='d-flex gap-1 fw-semibold'>
+                                                <span className='data-amount align-items-center d-flex gap-1 fw-semibold'>
                                                 <img height={25} src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1727175524/_Group__1_vgentw.svg" alt="" />
-                                                    {data_home.cards.current_wallet_balance}
+                                                    {formatNumberWithCommas(data_home.cards.current_wallet_balance)}
                                                 </span>
                                             </div>
                                         </div>
@@ -171,10 +171,10 @@ function About() {
                                 <Link className='text-decoration-none' to={"/Coupon"}>
                                     <div className="rewards-content">
                                         <div className="content">
-                                            <p>Coupon <br /> Cart</p>
+                                            <p className='text-uppercase mb-2'>Coupon <br /> Cart</p>
                                             <div className="balance">
                                                 <img src="" alt="" />
-                                                <span>{data_getcoupons.active_coupon_count}</span>
+                                                <span className='data-amount'>{data_getcoupons.active_coupon_count}</span>
                                             </div>
 
                                         </div>
@@ -186,11 +186,11 @@ function About() {
                                 <Link className='text-decoration-none' to={"/Reward"}>
                                     <div className="rewards-content">
                                         <div className="content">
-                                            <p>Reward <br /> Menu</p>
+                                            <p className='text-uppercase mb-2'>Reward <br /> Menu</p>
 
                                             <div className="balance">
                                                 <img src="" alt="" />
-                                                <span>{data_getcoupons.active_rewards_count}</span>
+                                                <span className='data-amount'>{data_getcoupons.active_rewards_count}</span>
                                             </div>
                                         </div>
                                         <div className="content">
@@ -201,11 +201,11 @@ function About() {
                                 <Link className='text-decoration-none' to={"/Membership"}>
                                     <div className="rewards-content">
                                         <div className="content">
-                                            <p>Membership Package</p>
+                                            <p className='text-uppercase mb-2'>Membership Package</p>
 
                                             <div className="balance">
                                                 <img src="" alt="" />
-                                                <span>{data_getcoupons.active_membership_count}</span>
+                                                <span className='data-amount'>{data_getcoupons.active_membership_count}</span>
                                             </div>
                                         </div>
                                         <div className="content">
@@ -217,10 +217,10 @@ function About() {
                     </div>
                 </SkeletonTheme>
                 <Link className='text-decoration-none' to={`${data_home.ewards_url}giftcard_claim/${storedMerchantBase}`} target="_blank">
-                    <div className="gift-container overflow-hidden position-relative m-3 d-flex align-items-center justify-content-center text-light rounded-3">
+                    <div className="gift-container overflow-hidden position-relative m-3 d-flex align-items-center justify-content-center text-light">
                         <div className="gift-content d-flex align-items-center gap-2">
                             <img src="https://i.imgur.com/ZoluTbe.png" alt="" />
-                            <span className='text-uppercase'>Gift Card</span>
+                            <span className='text-uppercase mb-2'>Gift Card</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
                                 <path fillRule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
                                 <path fillRule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />

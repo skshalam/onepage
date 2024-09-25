@@ -195,15 +195,15 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                 onClick={() => setModal(false)}
             ></div>
             <div className="position-absolute w-100 px-3 ">
-                <div className="border bg-light p-2 rounded-4 shadow">
-                    <div className="membership-view-header d-flex justify-content-between align-items-center px-3 pb-3">
+                <div className="border bg-light rounded-4 shadow membership-drawer-container">
+                    <div className="membership-view-header d-flex justify-content-between align-items-center">
                         <span className='fw-semibold'>{title}</span>
                         <i className='bi bi-x fs-5' onClick={() => setModal(false)} />
                     </div>
 
                     {title === "e-Wallets Issued" && (
                         <div className='ewallet-issue'>
-                            <table className='membership-view-table'>
+                            <table className='membership-view-table multiple-cell'>
                                 <thead>
                                     <tr>
                                         <th>e-Wallet Name</th>
@@ -235,9 +235,14 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                                 <tbody>
                                     {bookletissueDesc.map((booklet, index) => (
                                         <tr key={index}>
-                                            <td><Link to={`/Bookletissue_details/${membership_id}/${booklet.id}/`}>
-                                                {booklet.name}
-                                            </Link></td>
+                                            <td className='d-flex justify-content-between'>
+                                                <Link className='fw-semibold' to={`/Bookletissue_details/${membership_id}/${booklet.id}/`}>
+                                                    {booklet.name}
+                                                </Link>
+                                                <span>
+                                                    <i className='bi bi-chevron-right'/>
+                                                </span>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -247,7 +252,7 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
 
                     {title === "Coupons Redeemed" && (
                         <div className='coupon-redeem'>
-                            <table className='membership-view-table'>
+                            <table className='membership-view-table multiple-cell'>
                                 <thead>
                                     <tr>
                                         <th>Coupon Name</th>
