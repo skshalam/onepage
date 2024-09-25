@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 const axiosSetup = axios.create();  
 
 const isTokenExpired = () => {
-    const token = sessionStorage.getItem('access_token');
+    const token = localStorage.getItem('access_token');
     if (token) {
         const decodedToken = jwtDecode(token);
         const currentTime = Date.now() / 1000;
@@ -17,12 +17,12 @@ const isTokenExpired = () => {
 // Add a request interceptor to include the access token
 axiosSetup.interceptors.request.use(
     (config) => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
 
         if (isTokenExpired()) {
             // If the token is expired, remove it and redirect to login
-            sessionStorage.removeItem('access_token');
-            sessionStorage.removeItem('expires_in');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('expires_in');
 
             const navigate = useNavigate(); // Use react-router-dom's useNavigate hook
             navigate('/'); // Redirect to login page

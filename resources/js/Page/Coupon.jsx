@@ -9,7 +9,7 @@ function Coupon() {
     const [couponholdData, setCouponholdData] = useState([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/couponscart', [])
@@ -27,7 +27,7 @@ function Coupon() {
         }
     }, []);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/couponhold', [])
@@ -100,7 +100,7 @@ function ActiveCoupons({ data, loading }) {
         return `${day}${daySuffix(day)} ${month}, ${year}`;
     };
     const handleDrawer = (coupon) => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         if (token) {
             // API call to fetch coupon details based on token_id
             axios.post('/api/couponscart',
@@ -217,7 +217,7 @@ function HoldOnCoupons({ data, loading }) {
     const [couponholdDesc, setCouponholdDesc] = useState({});
     const [dataLoading, setDataLoading] = useState(true)
     const handleDrawer = (coupon) => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         if (token) {
             // API call to fetch coupon details based on token_id
             axios.post('/api/couponhold',

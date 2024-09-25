@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 function AuthUser() {
   const navigate = useNavigate();
   const getToken = () => {
-    const tokenString = sessionStorage.getItem('token');
+    const tokenString = localStorage.getItem('token');
     const userToken = JSON.parse(tokenString);
     return userToken;
   };
 
   const getRefreshToken = () => {
-    const refreshTokenString = sessionStorage.getItem('refreshToken');
+    const refreshTokenString = localStorage.getItem('refreshToken');
     const userRefreshToken = JSON.parse(refreshTokenString);
     return userRefreshToken;
   };
@@ -20,8 +20,8 @@ function AuthUser() {
   const [refreshToken, setRefreshToken] = useState(getRefreshToken());
 
   const saveToken = (token, refreshToken) => {
-    sessionStorage.setItem('token', JSON.stringify(token));
-    sessionStorage.setItem('refreshToken', JSON.stringify(refreshToken)); // Fixed: should save refreshToken
+    localStorage.setItem('token', JSON.stringify(token));
+    localStorage.setItem('refreshToken', JSON.stringify(refreshToken)); // Fixed: should save refreshToken
     setToken(token);
     setRefreshToken(refreshToken);
     navigate('/About');
@@ -55,8 +55,8 @@ function AuthUser() {
             originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
             return http(originalRequest);
           } catch (err) {
-            sessionStorage.removeItem('token');
-            sessionStorage.removeItem('refreshToken');
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
             navigate('/');
             return Promise.reject(err);
           }

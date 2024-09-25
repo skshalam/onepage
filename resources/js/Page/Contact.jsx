@@ -18,7 +18,7 @@ function Contact() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         axiosSetup.get('/api/contact')
             .then(response => {
                 setData_contact(response.data);
@@ -38,7 +38,7 @@ function Contact() {
 
         form.validateFields()
             .then(values => {
-                const token = sessionStorage.getItem('access_token');
+                const token = localStorage.getItem('access_token');
                 const merchant_id = localStorage.getItem('merchant_base');
                 if (token) {
                     const payload = {

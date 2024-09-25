@@ -37,6 +37,8 @@ use App\Models\CountryCodes;
 use App\Models\Countries;
 use App\Models\CitisNew;
 use App\Models\MerchantRegion;
+use App\Models\Master;
+use App\Models\ExpireUserPoints;
 use DB;
 use Auth;
 use Illuminate\Support\Facades\Validator;
@@ -75,6 +77,7 @@ class HomeController extends Controller
         $data['homebrandlogo'] = $homebrandlogo->brand_logo_image;
         $data['display_brand_logo_name'] = $homebrandlogo->display_brand_logo_name;
         $data['brand_logo_alignment'] = $homebrandlogo->brand_logo_alignment;
+        $master = Master::where('id',1)->first();
         $merchant_name = MerchantDetails::select('business_name')->where('user_id', $merchant_id)->first();
         $cards=Cards::select('cards.current_points', 'cards.current_wallet_balance')->where('cards.merchant_id', $merchant_id)->where('cards.user_id', $user_id)->first();
         $homebannersData = Onepage_Banner_Space::select('banner_image','hide_show')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show',1)->get();
@@ -86,6 +89,7 @@ class HomeController extends Controller
         }
         $data['merchant_name'] = $merchant_name->business_name;
         $data['cards'] = $cards;
+        $data['ewards_url'] = $master->ewards_url;
         return response()->json([
             'error' => false,
             'message' => 'Home screen data',
@@ -94,20 +98,6 @@ class HomeController extends Controller
         
     }
 
-    public function getTotalCreditBalance(){
-        $user = JWTAuth::parseToken()->authenticate();
-        $user_id = $user->id;
-        // Get the merchant_id from the JWT payload
-        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-
-        $total_bal = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->get('current_points');
-        
-        return response()->json([
-            'error' => false,
-            'message' => 'total_bal',
-            'total_bal' => $total_bal,
-        ]); 
-    }
 
     public function creditbalance(Request $request)
     {
@@ -117,74 +107,142 @@ class HomeController extends Controller
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $current_points = Cards::where('merchant_id', $merchant_id)->where('user_id', $user_id)->value('current_points');
 
-        $creditbalance_query = "SELECT
-                        Type,
-                        Valid_Till,
-                        Invoice_Number,
-                        Points,
-                        DATE_FORMAT(Billing_Date, '%e') AS Billing_Day,
-                        DATE_FORMAT(Billing_Date, '%b') AS Billing_Month,
-                        DATE_FORMAT(Billing_Date, '%Y') AS Billing_Year,
-                        Billing_Amount,
-                        Transaction_id,
-                        Account,
-                        Credit_Name,
-                        feedback_id,
-                        pos_billing_dump_new_id,
-                        usefor,
-                        ebooklet_report_id,
-                        custom_ewallet_marker
-                    FROM (
-                        SELECT
-                            CASE
-                                WHEN up.valid_till < CURRENT_DATE THEN 'Expired'
-                                ELSE 'Earned'
-                            END AS Type,
-                            up.valid_till AS Valid_Till,
-                            up.bill_no AS Invoice_Number,
-                            up.original_points AS Points,
-                            up.original_bill_date AS Billing_Date,
-                            up.bill_amount AS Billing_Amount,
-                            up.transaction_id AS Transaction_id,
-                            up.M_account AS Account,
-                            CASE
-                                WHEN up.custom_ewallet_marker = 1 AND up.ebooklet_report_id IS NOT NULL AND up.ebooklet_report_id != 0 THEN 'eWallet Credits'
-                                WHEN up.usefor != 0 AND up.pos_billing_dump_new_id = 0 THEN 'Loyalty Credits'
-                                WHEN up.feedback_id != 0 THEN 'Feedback Credits'
-                                WHEN up.pos_billing_dump_new_id != 0 THEN 'Bonus Credits'
-                                ELSE 'Other Credits'
-                            END AS Credit_Name,
-                            up.feedback_id AS feedback_id,
-                            up.pos_billing_dump_new_id as pos_billing_dump_new_id,
-                            up.usefor as usefor,
-                            up.ebooklet_report_id as ebooklet_report_id,
-                            up.custom_ewallet_marker as custom_ewallet_marker
-                        FROM user_points up
-                        WHERE up.user_id = ".$user_id."
-                        AND up.merchant_id = ".$merchant_id."
-                        UNION ALL
-                        SELECT
-                            'Redeemed' AS Type,
-                            NULL AS Valid_Till,
-                            rp.bill_no AS Invoice_Number,
-                            rp.point_redeem AS Points,
-                            CONCAT(rp.date, ' ', rp.time) AS Billing_Date,
-                            rp.bill_amount AS Billing_Amount,
-                            NULL AS Transaction_id,
-                            rp.M_account AS Account,
-                            'Redeem Credits' AS Credit_Name,
-                             'null' AS feedback_id,
-                             'null' AS pos_billing_dump_new_id,
-                             'null' AS usefor,
-                             'null' AS ebooklet_report_id,
-                             'null' AS custom_ewallet_marker
-                        FROM redeem_points rp
-                        WHERE rp.user_id = ".$user_id."
-                        AND rp.merchant_id = ".$merchant_id."
-                    ) AS combined_results
-                    ORDER BY Billing_Date DESC";
-        $creditbalance_obj = DB::select($creditbalance_query);    
+        // Pagination parameters
+        $page_number = $request->page_number; 
+        $limit = 10; 
+        $offset = ($page_number - 1) * $limit;
+        // dd($offset);
+        $total_entries_query = "
+            SELECT COUNT(*) as total_entries
+            FROM (
+                SELECT 1
+                FROM user_points up
+                WHERE up.user_id = ".$user_id."
+                AND up.merchant_id = ".$merchant_id."
+                UNION ALL
+                SELECT 1
+                FROM redeem_points rp
+                WHERE rp.user_id = ".$user_id."
+                AND rp.merchant_id = ".$merchant_id."
+            ) as total_count_query
+        ";
+        $total_entries = DB::select($total_entries_query)[0]->total_entries;
+        $total_pages = ceil($total_entries / $limit); 
+        // Main query with pagination (LIMIT and OFFSET)
+        $creditbalance_query = "
+            SELECT
+                Type,
+                Valid_Till,
+                Invoice_Number,
+                Points,
+                DATE_FORMAT(Billing_Date, '%e') AS Billing_Day,
+                DATE_FORMAT(Billing_Date, '%b') AS Billing_Month,
+                DATE_FORMAT(Billing_Date, '%Y') AS Billing_Year,
+                Billing_Date,
+                Billing_Amount,
+                Transaction_id,
+                Account,
+                Credit_Name,
+                feedback_id,
+                pos_billing_dump_new_id,
+                usefor,
+                ebooklet_report_id,
+                custom_ewallet_marker
+            FROM (
+                SELECT
+                    'Earned' AS Type,
+                    up.valid_till AS Valid_Till,
+                    up.bill_no AS Invoice_Number,
+                    up.original_points AS Points,
+                    up.original_bill_date AS Billing_Date,
+                    up.bill_amount AS Billing_Amount,
+                    up.transaction_id AS Transaction_id,
+                    up.M_account AS Account,
+                    CASE
+                        WHEN up.custom_ewallet_marker = 1 AND up.ebooklet_report_id IS NOT NULL AND up.ebooklet_report_id != 0 THEN 'eWallet Credits'
+                        WHEN up.usefor != 0 AND up.pos_billing_dump_new_id = 0 THEN 'Loyalty Credits'
+                        WHEN up.feedback_id != 0 THEN 'Feedback Credits'
+                        WHEN up.pos_billing_dump_new_id != 0 THEN 'Bonus Credits'
+                        ELSE 'Other Credits'
+                    END AS Credit_Name,
+                    up.feedback_id AS feedback_id,
+                    up.pos_billing_dump_new_id as pos_billing_dump_new_id,
+                    up.usefor as usefor,
+                    up.ebooklet_report_id as ebooklet_report_id,
+                    up.custom_ewallet_marker as custom_ewallet_marker
+                FROM user_points up
+                WHERE up.user_id = ".$user_id."
+                AND up.merchant_id = ".$merchant_id."
+                UNION ALL
+                SELECT
+                    'Redeemed' AS Type,
+                    NULL AS Valid_Till,
+                    rp.bill_no AS Invoice_Number,
+                    rp.point_redeem AS Points,
+                    CONCAT(rp.date, ' ', rp.time) AS Billing_Date,
+                    rp.bill_amount AS Billing_Amount,
+                    NULL AS Transaction_id,
+                    rp.M_account AS Account,
+                    'Redeem Credits' AS Credit_Name,
+                    'null' AS feedback_id,
+                    'null' AS pos_billing_dump_new_id,
+                    'null' AS usefor,
+                    'null' AS ebooklet_report_id,
+                    'null' AS custom_ewallet_marker
+                FROM redeem_points rp
+                WHERE rp.user_id = ".$user_id."
+                AND rp.merchant_id = ".$merchant_id."
+                UNION ALL
+                SELECT
+                    'Expired' AS Type,
+                    eup.valid_till AS Valid_Till,
+                    eup.bill_no AS Invoice_Number,
+                    eup.original_points AS Points,
+                    'null' AS Billing_Date,
+                    eup.bill_amount AS Billing_Amount,
+                    'null' AS Transaction_id,
+                    eup.M_account AS Account,
+                    'Expired Credits' AS Credit_Name,
+                    'null' AS feedback_id,
+                    'null' AS pos_billing_dump_new_id,
+                    'null' AS usefor,
+                    'null' AS ebooklet_report_id,
+                    'null' AS custom_ewallet_marker
+                FROM expireUserPoints eup 
+                WHERE eup.user_id = ".$user_id."
+                AND eup.merchant_id = ".$merchant_id."
+            ) AS combined_results";
+            
+            $whereClauses = [];
+
+            // Add filters based on request parameters
+            if (!empty($request->credit_name)) {
+                $whereClauses[] = "Credit_Name IN (" . $request->credit_name . ")";
+            }
+            if (!empty($request->credit_type)) {
+                $whereClauses[] = "Type IN (" . $request->credit_type . ")";
+            }
+            if (!empty($request->start_date)) {
+                $sdate = date('Y-m-d', strtotime($request->start_date));
+                $whereClauses[] = "Billing_Date >= '" . $sdate . "'";
+            }
+            if (!empty($request->end_date)) {
+                $edate = date('Y-m-d', strtotime($request->end_date));
+                $whereClauses[] = "Billing_Date <= '" . $edate . "'";
+            }
+
+            // Combine the where clauses
+            if (count($whereClauses) > 0) {
+                $creditbalance_query .= " WHERE " . implode(' AND ', $whereClauses);
+            }
+
+            
+            $creditbalance_query = $creditbalance_query." ORDER BY Billing_Date DESC
+            LIMIT ".$limit." OFFSET ".$offset;
+            // dd($creditbalance_query);
         
+        $creditbalance_obj = DB::select($creditbalance_query);    
+
         foreach ($creditbalance_obj as $item) {
             $day = $item->Billing_Day;
             $month = $item->Billing_Month;
@@ -198,17 +256,31 @@ class HomeController extends Controller
                 $suffix = 'rd';
             }
             $item->Formatted_Billing_Date = "{$day}{$suffix} {$month} {$year}";
+            if (preg_match('/\d{2}:\d{2}:\d{2}/', $item->Invoice_Number, $matches)) {
+                $timePart = $matches[0]; 
+                $dateTime = DateTime::createFromFormat('H:i:s', $timePart);
+                if ($dateTime) {
+                    $formattedTime = $dateTime->format('g:i A'); // Format to 12-hour time with AM/PM
+                    $item->original_time = $timePart; // 24-hour format
+                    $item->formatted_time = $formattedTime; // 12-hour format
+                }
+            } else {
+                $item->original_time = '';
+                $item->formatted_time = '';
+            }
         }
 
         return response()->json([
             'error' => false,
             'message' => 'Balance',
+            'current_points' => $current_points,
             'creditbalance' => $creditbalance_obj,
-            'current_points' => $current_points
+            'total_pages' => $total_pages, 
+            'total_entries' => $total_entries, 
+            'current_page' => $page_number, 
         ]);
-
-    
     }
+
 
     // public function creditbalance(Request $request)
     // {
@@ -1110,7 +1182,6 @@ class HomeController extends Controller
         // dd($user_id);
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-
         $rewards_id = $request->rewards_id;
         $membership_id = $request->membership_id;
         

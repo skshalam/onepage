@@ -72,7 +72,7 @@ function MyAcount() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.get('/api/accountInfo')
                 .then(response => {
@@ -88,7 +88,7 @@ function MyAcount() {
         }
     }, []);
     const getUserData = () => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.get('/api/infodata')
                 .then(res => {
@@ -106,7 +106,7 @@ function MyAcount() {
     }, [])
     const handleSave = (formData) => {
         console.log(formData);
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         const merchant_id = localStorage.getItem('merchant_base');
         if (token) {
             const payload = {

@@ -30,7 +30,7 @@ function ReferalList() {
         return `${day}${daySuffix(day)} ${month}, ${year}`;
     };    
     useEffect(() => {
-        const token = sessionStorage.getItem('access_token');
+        const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/referral_programview', [])
