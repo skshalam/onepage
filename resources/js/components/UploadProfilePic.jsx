@@ -9,6 +9,8 @@ function UploadProfilePic({ URL, file }) {
     // file - image url state from the parent component
     const { useThemeStyles } = useContext(ThemeContext)
     const handleFileChange = (event) => {
+        console.log('image',event);
+        
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -21,6 +23,8 @@ function UploadProfilePic({ URL, file }) {
             };
             reader.readAsDataURL(file);
         }
+        console.log(file);
+        
     };
     return (
         <>

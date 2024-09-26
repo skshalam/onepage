@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 // Function to mask phone number
 export function maskPhoneNumber(phoneNumber) {
     const fourDigitRegex = /\d{4}(?=\d{5}$)/;
@@ -15,4 +17,9 @@ export function formatNumberWithCommas(number) {
     const decimalPart = parts[1] || '';
     const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return formattedInteger + (decimalPart ? '.' + decimalPart : '');
+}
+
+export function convertDateToISO(dateString) {
+    const date = dayjs(dateString);
+    return date.format('YYYY-MM-DD');
 }

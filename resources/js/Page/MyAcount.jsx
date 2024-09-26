@@ -6,6 +6,9 @@ import axiosSetup from '@/axiosSetup';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import UploadProfilePic from '../components/UploadProfilePic';
+import { convertDateToISO } from '../utility/formating';
+import dayjs from 'dayjs';
+import { label } from 'framer-motion/client';
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
@@ -106,21 +109,14 @@ function MyAcount() {
         getUserData()
     }, [])
     const handleSave = (formData) => {
-        console.log(formData);
         const token = localStorage.getItem('access_token');
         const merchant_id = localStorage.getItem('merchant_base');
+
         if (token) {
             const payload = {
                 ...formData,
                 merchant_id: 15657,
-                state: 'ANDHRA PRADESH',
-                country: 'India',
-                city: 'VISAKHAPATNAM',
-                region: 'fdsaf',
-                dob: '1970-01-01',
                 marital: 'Single',
-                doa: '1970-01-01',
-                gender: 'Male',
             };
             axiosSetup.post('/api/editinfo', payload)
                 .then(response => {
@@ -365,58 +361,168 @@ export default MyAcount
 
 const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
     const [form] = Form.useForm();
+    const [userPp, setUserPp] = useState('');
+    const [countries, setCountries] = useState([]);
+    const [states, setStates] = useState([]);
+    const [cities,setCities] = useState([]);
+    const [regions,setRegions] = useState([]);
+    const [cntryId, setCntryId] = useState(parseInt(data?.country));
+    const [stId, setStId] = useState(parseInt(data?.state));
+    const [ctId,setCtId] = useState(parseInt(data?.city))
+    const [doa, setDoa] = useState(data?.doa);
+    const [dob, setDob] = useState(data?.dob);
+    const [isCountryChange, setIscountryChange] = useState(false);
     const validateMessages = {
         types: {
             email: 'Enter A valid Email',
         },
     };
-    const getCountryList = () => {
+    // Select On Change Handlers
+    const handleCountryChange = (value, option) => {
+        setCntryId(option.value)
+        if (value) {
+            setIscountryChange(true)
+            getState(value)
+        }
+    }
+    const handleStateChange = (value,option)=>{
+        setStId(option.value);
+        if (value) {
+            getCity(value)
+        }
+    }
+    const handleCityChange = (value,option)=>{
+        setCtId(option.value)
+        if (value) {
+            getRegions()
+        }
+    }
+
+    // Select set functions
+    function setCountryById(countryId) {
+        const id = parseInt(countryId)
+        const foundObj = countries?.find(obj => obj.value === id)
+        if (foundObj) {
+            return foundObj.label
+        }
+    }
+    function setStateById(stateId) {
+        const id = parseInt(stateId)
+        const state = states?.find(i => i.value === id)
+        if (state) {
+            return state.label
+        }
+    }
+    function setCityById(cityId) {
+        const id = parseInt(cityId)
+        const city = cities?.find(i=>i.id===id)
+        if (city) {
+            return city.label
+        }
+    }
+
+
+    // API calls
+    const getCountry = () => {
         axiosSetup.get('/api/countries')
             .then(res => {
-                console.log(`country response:`, res);
+                const mappedData = res?.data?.countries.map(country => ({
+                    value: country.id,
+                    label: country.name,
+                }));
+                setCountries(mappedData)
+                getState(cntryId)
             })
             .catch(err => {
                 console.log(err);
             })
     }
+    function getState(cId) {
+        axiosSetup.post('/api/state', { "country_id": cId })
+            .then(res => {
+                const mappedData = res?.data?.states.map(i => ({
+                    value: i.id,
+                    label: i.name
+                }))
+                setStates(mappedData)
+                getCity(stId)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+    function getCity(sId){
+        axiosSetup.post('/api/cities',{"state_id":sId})
+            .then(res=>{
+                const mappedData = res?.data?.cities.map(i => ({
+                    value: i.id,
+                    label: i.name
+                }))
+                setCities(mappedData)
+                getRegions()
+            })
+            .catch(err=>{
+                console.log(err);
+            })
+    }
+    function getRegions(cityId) {
+        axiosSetup.post('/api/gettingregion')
+        .then(res=>{
+            console.log(res);
+            const mappedData = res?.data?.region.map(i => ({
+                value: i.region,
+                label: i.region
+            }))
+            setRegions(mappedData)
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    }
 
-
-    useEffect(() => {
-        setFormInstance(form);
-        getCountryList()
-    }, [])
-
-    const [userPp, setUserPp] = useState('')
-
-    useEffect(() => {
+    // Set fields 
+    const setFields = () => {
         form.setFieldsValue({
             name: data.name,
             email: data.email,
             mobile: data?.mobile,
             address: data?.address,
-            // country:data?.country.,
-            // state:data,
-            city: data?.city,
+            country: setCountryById(data?.country),
+            state: setStateById(data?.state),
+            city: setCityById(data?.city),
             region: data?.region,
             pincode: data?.pincode,
             gender: data?.gender,
-            // dob:data?.birthday.birthday_dynamic_name,
+            dob: dayjs(data?.dob),
             marital: data?.marital,
-            // doa:data,
+            doa: dayjs(data?.doa),
             gstin: data?.gstin,
             pan: data?.pan,
             bank_name: data?.bank_name,
             bank_account_number: data?.bank_account_number,
         })
-    }, [])
+    }
+
+    // Local Handle State
     const handleSave = () => {
         form.validateFields().then(values => {
-            // Call the onSave prop function and pass the form values
-            onSave(values);
+            const formData = { ...values, country: cntryId, dob: dob, doa: doa }
+            // return console.log(formData);
+            onSave(formData);
         }).catch(errorInfo => {
             console.log('Form validation failed:', errorInfo);
         });
     };
+
+    useEffect(() => {
+        setFields()
+    }, [countries])
+
+    useEffect(() => {
+        setFormInstance(form);
+        getCountry();
+    }, [])
+
     return (
         <div className="edit-profile p-3">
             <Form
@@ -508,14 +614,21 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"country"} className='mb-0'
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: `select your country`,
-                                            },
-                                        ]}
+                                    // rules={[
+                                    //     {
+                                    //         required: true,
+                                    //         message: `select your country`,
+                                    //     },
+                                    // ]}
                                     >
-                                        <Select className='cust-css-ant'>
+                                        <Select
+                                            className='cust-css-ant'
+                                            defaultValue={cntryId}
+                                            value={cntryId}
+                                            onChange={handleCountryChange}
+                                            options={countries}
+                                            allowClear
+                                        >
 
                                         </Select>
                                     </Form.Item>
@@ -525,14 +638,22 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"state"} className='mb-0'
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: `please select state`,
-                                            },
-                                        ]}
+                                    // rules={[
+                                    //     {
+                                    //         required: true,
+                                    //         message: `please select state`,
+                                    //     },
+                                    // ]}
                                     >
-                                        <Select className='cust-css-ant'>
+                                        <Select
+                                            disabled={!isCountryChange}
+                                            className='cust-css-ant'
+                                            options={states}
+                                            value={stId}
+                                            defaultValue={stId}
+                                            onChange={handleStateChange}
+                                            allowClear
+                                        >
 
                                         </Select>
                                     </Form.Item>
@@ -542,14 +663,21 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             {acData?.city.display_city_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"city"} className='mb-0'
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: `please select city`,
-                                            },
-                                        ]}
+                                    // rules={[
+                                    //     {
+                                    //         required: true,
+                                    //         message: `please select city`,
+                                    //     },
+                                    // ]}
                                     >
-                                        <Select className='cust-css-ant'>
+                                        <Select 
+                                        disabled={!isCountryChange} 
+                                        className='cust-css-ant'
+                                        options={cities}
+                                        value={ctId}
+                                        defaultValue={ctId}
+                                        onChange={handleCityChange}
+                                        >
 
                                         </Select>
                                     </Form.Item>
@@ -559,14 +687,19 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             {acData?.region.display_region_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"region"} className='mb-0'
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: `please select region`,
-                                            },
-                                        ]}
+                                    // rules={[
+                                    //     {
+                                    //         required: true,
+                                    //         message: `please select region`,
+                                    //     },
+                                    // ]}
                                     >
-                                        <Select className='cust-css-ant'>
+                                        <Select 
+                                        
+                                        disabled={!isCountryChange} 
+                                        className='cust-css-ant'
+                                        options={regions}
+                                        >
 
                                         </Select>
                                     </Form.Item>
@@ -604,7 +737,21 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                                             },
                                         ]}
                                     >
-                                        <Select className='cust-css-ant'>
+                                        <Select className='cust-css-ant'
+                                            options={[{
+                                                value: "male",
+                                                label: "Male"
+                                            },
+                                            {
+                                                value: 'female',
+                                                label: "Female"
+                                            },
+                                            {
+                                                value: "others",
+                                                label: "Others"
+                                            }
+                                            ]}
+                                        >
 
                                         </Select>
                                     </Form.Item>
@@ -621,7 +768,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                                             },
                                         ]}
                                     >
-                                        <DatePicker className='w-100 rounded-5 cust-css-ant-date' />
+                                        <DatePicker onChange={(e) => { setDob(convertDateToISO(e.$d)) }} className='w-100 rounded-5 cust-css-ant-date' />
                                     </Form.Item>
                                     <label className='position-absolute' htmlFor="dob">Birthday</label>
                                 </div>
@@ -653,7 +800,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                                             },
                                         ]}
                                     >
-                                        <DatePicker className='w-100 rounded-5 cust-css-ant-date' />
+                                        <DatePicker onChange={(e) => { setDoa(convertDateToISO(e.$d)) }} className='w-100 rounded-5 cust-css-ant-date' />
                                     </Form.Item>
                                     <label className='position-absolute' htmlFor="doa">Aniversary</label>
                                 </div>
