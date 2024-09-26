@@ -365,10 +365,29 @@ export default MyAcount
 
 const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
     const [form] = Form.useForm();
+    const validateMessages = {
+        types: {
+            email: 'Enter A valid Email',
+        },
+    };
+    const getCountryList = () => {
+        axiosSetup.get('/api/countries')
+            .then(res => {
+                console.log(`country response:`, res);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+
     useEffect(() => {
         setFormInstance(form);
+        // getCountryList()
     }, [])
-    const [userPp,setUserPp] = useState('')
+
+    const [userPp, setUserPp] = useState('')
+
     useEffect(() => {
         form.setFieldsValue({
             name: data.name,
@@ -405,20 +424,28 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                 layout='vertical'
                 className=''
                 onFinish={handleSave}
+                validateMessages={validateMessages}
             >
                 <Row gutter={[0, 25]} >
                     {/* User Profile Pic */}
                     <Col xs={24}>
                         <div className="text-center">
                             <Form.Item className='' name="profilePicture">
-                                <UploadProfilePic URL={setUserPp} file={userPp}/>
+                                <UploadProfilePic URL={setUserPp} file={userPp} />
                             </Form.Item>
                         </div>
                     </Col>
                     {/* UserName */}
                     {acData.name.display_full_name_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"name"} className='mb-0'>
+                            <Form.Item name={"name"} className='mb-0'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: `Name can not be empty`,
+                                    },
+                                ]}
+                            >
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
                             </Form.Item>
                             <label className='position-absolute' htmlFor="name">Name</label>
@@ -427,7 +454,17 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* Email */}
                     {acData?.email.display_email_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"email"} className='mb-0'>
+                            <Form.Item name={"email"} className='mb-0'
+                                rules={[
+                                    {
+                                        type: 'email',
+                                    },
+                                    {
+                                        required: true,
+                                        message: "Please enter email"
+                                    }
+                                ]}
+                            >
                                 <Input className='rounded-5  cust-css-ant-input' type='email'></Input>
                             </Form.Item>
                             <label className='position-absolute' htmlFor="email">Email</label>
@@ -436,7 +473,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* Phone Number */}
                     {acData?.mobile.display_mobile_number_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"mobile"} className='mb-0'>
+                            <Form.Item name={"mobile"} className='mb-0'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: `phone number can not be empty`,
+                                    },
+                                ]}
+                            >
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
                             </Form.Item>
                             <label className='position-absolute' htmlFor="mobile">Phone Number</label>
@@ -445,7 +489,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* Address Line */}
                     {acData?.address.display_address_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"address"} className='mb-0'>
+                            <Form.Item name={"address"} className='mb-0'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: `Address can not be empty`,
+                                    },
+                                ]}
+                            >
                                 <Input className='rounded-5  cust-css-ant-input'></Input>
                             </Form.Item>
                             <label className='position-absolute' htmlFor="address">Address</label>
@@ -456,7 +507,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                         <Row gutter={[10, 25]}>
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"country"} className='mb-0'>
+                                    <Form.Item name={"country"} className='mb-0'
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: `select your country`,
+                                            },
+                                        ]}
+                                    >
                                         <Select className='cust-css-ant'>
 
                                         </Select>
@@ -466,7 +524,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             </Col>
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"state"} className='mb-0'>
+                                    <Form.Item name={"state"} className='mb-0'
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: `please select state`,
+                                            },
+                                        ]}
+                                    >
                                         <Select className='cust-css-ant'>
 
                                         </Select>
@@ -476,7 +541,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             </Col>
                             {acData?.city.display_city_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"city"} className='mb-0'>
+                                    <Form.Item name={"city"} className='mb-0'
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: `please select city`,
+                                            },
+                                        ]}
+                                    >
                                         <Select className='cust-css-ant'>
 
                                         </Select>
@@ -486,7 +558,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             </Col>}
                             {acData?.region.display_region_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"region"} className='mb-0'>
+                                    <Form.Item name={"region"} className='mb-0'
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: `please select region`,
+                                            },
+                                        ]}
+                                    >
                                         <Select className='cust-css-ant'>
 
                                         </Select>
@@ -499,7 +578,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* Pin Code */}
                     {acData?.pincode.display_pincode_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"pincode"} className='mb-0'>
+                            <Form.Item name={"pincode"} className='mb-0'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: `please enter pincode`,
+                                    },
+                                ]}
+                            >
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="pincode">Pin</label>
@@ -510,7 +596,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                         <Row gutter={[10, 25]}>
                             {acData?.gender.display_gender_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"gender"} className='mb-0'>
+                                    <Form.Item name={"gender"} className='mb-0'
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: `please select your gender`,
+                                            },
+                                        ]}
+                                    >
                                         <Select className='cust-css-ant'>
 
                                         </Select>
@@ -520,7 +613,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             </Col>}
                             {acData?.birthday.display_birthday_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"dob"} className='mb-0'>
+                                    <Form.Item name={"dob"} className='mb-0'
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: `please select your D.O.B`,
+                                            },
+                                        ]}
+                                    >
                                         <DatePicker className='w-100 rounded-5 cust-css-ant-date' />
                                     </Form.Item>
                                     <label className='position-absolute' htmlFor="dob">Birthday</label>
@@ -528,7 +628,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             </Col>}
                             {acData?.marital_status.display_marital_status_permission === 1 && <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"marital"} className='mb-0'>
+                                    <Form.Item name={"marital"} className='mb-0'
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: `please select your martial status`,
+                                            },
+                                        ]}
+                                    >
                                         <Select className='cust-css-ant'>
 
                                         </Select>
@@ -538,7 +645,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             </Col>}
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
-                                    <Form.Item name={"doa"} className='mb-0'>
+                                    <Form.Item name={"doa"} className='mb-0'
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: `please select your doa`,
+                                            },
+                                        ]}
+                                    >
                                         <DatePicker className='w-100 rounded-5 cust-css-ant-date' />
                                     </Form.Item>
                                     <label className='position-absolute' htmlFor="doa">Aniversary</label>
@@ -549,7 +663,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* GSTIN */}
                     {acData?.gst.display_gst_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"gstin"} className='mb-0'>
+                            <Form.Item name={"gstin"} className='mb-0'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: `please select your gstin`,
+                                    },
+                                ]}
+                            >
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="gstin">GSTIN</label>
@@ -558,7 +679,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* Pan Number */}
                     {acData?.pan.display_pan_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"pan"} className='mb-0'>
+                            <Form.Item name={"pan"} className='mb-0'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: `please select your pan number`,
+                                    },
+                                ]}
+                            >
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="pan">PAN</label>
@@ -567,7 +695,14 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* Bank Name */}
                     {acData?.bank.display_bank_name_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"bank_name"} className='mb-0'>
+                            <Form.Item name={"bank_name"} className='mb-0'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: `please select your bank name`,
+                                    },
+                                ]}
+                            >
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="bank_name">Bank Name</label>
@@ -576,21 +711,19 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* Bank Account Number */}
                     {acData?.bank.display_bank_account_number_permission === 1 && <Col xs={24}>
                         <div className="position-relative edit-input-div">
-                            <Form.Item name={"bank_account_number"} className='mb-0'>
+                            <Form.Item name={"bank_account_number"} className='mb-0'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: `please enter your account number`,
+                                    },
+                                ]}
+                            >
                                 <Input className='rounded-5  cust-css-ant-input' />
                             </Form.Item>
                             <label className='position-absolute' htmlFor="bank_account_number">Bank A/C No.</label>
                         </div>
                     </Col>}
-                    {/* P.O. Box Number */}
-                    {/* <Col xs={24}>
-                        <div className="position-relative edit-input-div">
-                            <Form.Item name={"poBoxNumber"} className='mb-0'>
-                                <Input className='rounded-5  cust-css-ant-input' />
-                            </Form.Item>
-                            <label className='position-absolute' htmlFor="poBoxNumber">P.O. Box No.</label>
-                        </div>
-                    </Col> */}
                 </Row>
             </Form>
             <div className="powered-ewards">
