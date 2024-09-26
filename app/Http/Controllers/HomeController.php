@@ -551,9 +551,6 @@ class HomeController extends Controller
                 'user_token.token_valide'
             ];
         }
-        // $page_number = $request->page_number;
-        // $limit = 10;
-        // $offset = ($page_number - 1) * $limit;
         
         $data = [];
         $couponcart=UserToken::select($select)
@@ -564,7 +561,6 @@ class HomeController extends Controller
         if(!empty($token_id)){
             $couponcart->where('user_token.token_id', $token_id);
         }
-        // $couponcart = $couponcart->offset($offset)->limit($limit)->get();
         $couponcart = $couponcart->get();
         if(!empty($token_id)){
             $couponcart[0]['token_valid_on'] = $this->getDaysAccoToValidon($couponcart[0]['valid_on']);
@@ -1779,8 +1775,8 @@ class HomeController extends Controller
                                     $LoginWiseParameterDaily = LoginWiseParameterDaily::where('merchant_id',$loyalty->merchant_id)->where('login_id','Others')->lockForUpdate()->first();
                                     $LoginWiseParameterDaily->credits_redeemed = $LoginWiseParameterDaily->credits_redeemed + $added_point;
                                     $LoginWiseParameterDaily->save();
-                                    $MULtable = MULtable::where('merchant_id',$loyalty->merchant_id)->where('user_id', $user_id)->where('login_id','Others')->lockForUpdate()->count();;
-                                    if($MULtable)
+                                    $MULtable = MULtable::where('merchant_id',$loyalty->merchant_id)->where('user_id', $user_id)->where('login_id','Others')->lockForUpdate()->first();
+                                    if(!$MULtable)
                                     {
                                         $MULtable = new MULtable();
                                         $MULtable->merchant_id = $loyalty->merchant_id;
@@ -1805,12 +1801,12 @@ class HomeController extends Controller
                                     }
                                     else
                                     {
-                                        // $MULtable->credits_redeemed = $MULtable->credits_redeemed + $added_point;
-                                        $MULtable->credits_redeemed=$added_point;
+                                        $MULtable->credits_redeemed = $MULtable->credits_redeemed + $added_point;
+                                        // $MULtable->credits_redeemed=$added_point;
                                     }
                                     $MULtable->save();
                                     \DB::commit();
-                                    return Response::json(array(
+                                    return response()->json(array(
                                         'error'=>false,
                                         'message'=>"Successfully claimed",
                                         'data' => array("currentpoints"=>$current_points,'rewardid'=>$userreward->reward_id,'coupoCode'=>$coupon->coupon_code),
@@ -1867,8 +1863,6 @@ class HomeController extends Controller
             }
         }
     }
-
-    
 
     public function createCouponCode() {
         $couponcode = $this->couponCodeGenerator(5);
