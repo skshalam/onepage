@@ -48,6 +48,8 @@ use App\Models\RewardsExceptionDates;
 use App\Models\UserReward;
 use App\Models\Parameter;
 use App\Models\MULtable;
+use App\Models\LoginWiseParameter;
+use App\Models\LoginWiseParameterDaily;
 use DB;
 use Auth;
 use Illuminate\Support\Facades\Validator;
@@ -121,22 +123,22 @@ class HomeController extends Controller
         $limit = 10; 
         $offset = ($page_number - 1) * $limit;
         // dd($offset);
-        $total_entries_query = "
-            SELECT COUNT(*) as total_entries
-            FROM (
-                SELECT 1
-                FROM user_points up
-                WHERE up.user_id = ".$user_id."
-                AND up.merchant_id = ".$merchant_id."
-                UNION ALL
-                SELECT 1
-                FROM redeem_points rp
-                WHERE rp.user_id = ".$user_id."
-                AND rp.merchant_id = ".$merchant_id."
-            ) as total_count_query
-        ";
-        $total_entries = DB::select($total_entries_query)[0]->total_entries;
-        $total_pages = ceil($total_entries / $limit); 
+        // $total_entries_query = "
+        //     SELECT COUNT(*) as total_entries
+        //     FROM (
+        //         SELECT 1
+        //         FROM user_points up
+        //         WHERE up.user_id = ".$user_id."
+        //         AND up.merchant_id = ".$merchant_id."
+        //         UNION ALL
+        //         SELECT 1
+        //         FROM redeem_points rp
+        //         WHERE rp.user_id = ".$user_id."
+        //         AND rp.merchant_id = ".$merchant_id."
+        //     ) as total_count_query
+        // ";
+        // $total_entries = DB::select($total_entries_query)[0]->total_entries;
+        // $total_pages = ceil($total_entries / $limit); 
         // Main query with pagination (LIMIT and OFFSET)
         $creditbalance_query = "
             SELECT
@@ -245,6 +247,9 @@ class HomeController extends Controller
                 $creditbalance_query .= " WHERE " . implode(' AND ', $whereClauses);
             }
 
+            $total_entries_query = "SELECT COUNT(*) as total_entries FROM ($creditbalance_query) as total_count_query";
+            $total_entries = DB::select($total_entries_query)[0]->total_entries;
+            $total_pages = ceil($total_entries / $limit);
             
             $creditbalance_query = $creditbalance_query." ORDER BY Billing_Date DESC
             LIMIT ".$limit." OFFSET ".$offset;
@@ -546,6 +551,9 @@ class HomeController extends Controller
                 'user_token.token_valide'
             ];
         }
+        // $page_number = $request->page_number;
+        // $limit = 10;
+        // $offset = ($page_number - 1) * $limit;
         
         $data = [];
         $couponcart=UserToken::select($select)
@@ -556,7 +564,7 @@ class HomeController extends Controller
         if(!empty($token_id)){
             $couponcart->where('user_token.token_id', $token_id);
         }
-
+        // $couponcart = $couponcart->offset($offset)->limit($limit)->get();
         $couponcart = $couponcart->get();
         if(!empty($token_id)){
             $couponcart[0]['token_valid_on'] = $this->getDaysAccoToValidon($couponcart[0]['valid_on']);
@@ -1018,7 +1026,7 @@ class HomeController extends Controller
 
     public function contactsubmit(Request $request)
     {
-        // $merchant_id=$request->merchant_id;
+        // $merchant_id=$merchant_id;
         // $merchant_id= 15657;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $name=$request->name;
@@ -1429,7 +1437,7 @@ class HomeController extends Controller
     }
     public function referErn(Request $request)
     {
-        // $merchant_id=$request->merchant_id;
+        // $merchant_id=$merchant_id;
         // $user = JWTAuth::parseToken()->authenticate();
         // $user_id = $user->id;
         // Get the merchant_id from the JWT payload
@@ -1553,35 +1561,38 @@ class HomeController extends Controller
 
     public function redeem_rewards(Request $request)
     {
+        
         $rules=[
-            'merchant_id'=>'Required',
+            // 'merchant_id'=>'Required',
             'reward_id'=>'Required',
-            'user_id'=> 'Required'
+            // 'user_id'=> 'Required'
         ];
-        $validator=Validator::make($this->requestData,$rules);
-        if($validator->fails())
-        {
-            $data = ['error'=>true,
-                'message'=>'All field are mandatory',
-                'data' => new \Illuminate\Database\Eloquent\Collection,];
-            $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-            return Response::json($data);
+        $validator = Validator::make($request->all(), $rules);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Validation Failed',
+                'errors' => $validator->errors()
+            ]);
         }
         else
         {
-            DB::disableQueryLog();
-            $merchant = \MerchantDetails::where('user_id', $this->requestData['merchant_id'])->first();
-            if(count($merchant)>0)
+            $user = JWTAuth::parseToken()->authenticate();
+            $user_id = $user->id;
+            // Get the merchant_id from the JWT payload
+            $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+            
+            $merchant = MerchantDetails::where('user_id', $merchant_id)->first();
+            if($merchant)
             {
-                // Rajeevchanges
-                $loyalty=Rewards::where('id',$this->requestData['reward_id'])->where('appDispay_permission',1)->where('merchant_id',$this->requestData['merchant_id'])->first();
-                // end
-                if(count($loyalty)>0)
+                $loyalty=Rewards::where('id',$request->reward_id)->where('merchant_id',$merchant_id)->first();
+                if($loyalty)
                 {
                     $pp = $loyalty->points;
-                    $userinfo=User::where('id',$this->requestData['user_id'])->first();
-                    $cards=Cards::where('merchant_id',$loyalty->merchant_id)->where('user_id',$this->requestData['user_id'])->first();
-                    if(count($cards)>0)
+                    $userinfo=User::where('id',$user_id)->first();
+                    $cards=Cards::where('merchant_id',$loyalty->merchant_id)->where('user_id',$user_id)->first();
+                    if($cards)
                     {
                         $error=false;
                         if($cards->current_points >= $loyalty->points){
@@ -1595,13 +1606,12 @@ class HomeController extends Controller
                                 $current_points=$cards->current_points-$loyalty->points;
                                 if($merchant->card_type_id==2)
                                 {
-                                    $userpoints=\UserPoints::where('merchant_id', $loyalty->merchant_id)->where('user_id', $this->requestData['user_id'])->where('points','!=',0)->OrderBy('valid_till','asc')->get();
+                                    $userpoints=UserPoints::where('merchant_id', $loyalty->merchant_id)->where('user_id', $user_id)->where('points','!=',0)->OrderBy('valid_till','asc')->get();
                                     $added_point=$loyalty->points;
                                     if (count ( $userpoints ) > 0)
                                     {
                                         foreach ( $userpoints as $points ) {
-                                            if($points->points >= $loyalty->points)
-                                            {
+                                            if($points->points >= $loyalty->points){
                                                 $points->points= $points->points - $loyalty->points;
                                                 $userpoints=UserPoints::find($points->id);
 
@@ -1609,15 +1619,13 @@ class HomeController extends Controller
                                                 $userpoints->save();
                                                 break;
                                             }
-                                            elseif($points->points < $loyalty->points)
-                                            {
+
+                                            elseif($points->points < $loyalty->points){
                                                 $pts= $loyalty->points - $points->points;
-                                                if($pts==0)
-                                                {
+                                                if($pts==0){
                                                     break;
                                                 }
-                                                else
-                                                {
+                                                else{
                                                     $userpoints=UserPoints::find($points->id);
                                                     //echo $points->id;
                                                     $userpoints->points=0;
@@ -1631,8 +1639,8 @@ class HomeController extends Controller
                                 }
                                 else
                                 {
-                                    $userstamps=\UserStamps::where('merchant_id', $loyalty->merchant_id)
-                                        ->where('user_id', $this->requestData['user_id'])
+                                    $userstamps=UserStamps::where('merchant_id', $loyalty->merchant_id)
+                                        ->where('user_id', $user_id)
                                         ->where('point_used','!=',0)
                                         ->OrderBy('valid_till','asc')
                                         ->get();
@@ -1653,138 +1661,108 @@ class HomeController extends Controller
                                         }
                                     }
                                 }
+                                //dd($added_point);
                                 //$user->save();
-                                $login_id = '';
-                                if(isset($this->requestData['outlet_id']))
-                                {
-                                    $outlet = WlOutlets::where('id',$this->requestData['outlet_id'])->first();
-                                    if(count($outlet)>0)
-                                    {
-                                        if($outlet->type == 'merchant')
-                                        {
-                                            $login_ids = User::where('id',$merchant->user_id)->select('email')->first();
-                                            if(count($login_ids)>0)
-                                            {
-                                                $login_id = $login_ids->email;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            $login_ids = Employee::where('outlet_id',$this->requestData['outlet_id'])->where('merchant_id',$merchant->user_id)->where('is_active',1)->where('status',1)->where('deleted',0)->select('email')->first();
-                                            if(count($login_ids)>0)
-                                            {
-                                                $login_id = $login_ids->email;
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    $login_ids = User::where('id',$merchant->user_id)->select('email')->first();
-                                    if(count($login_ids)>0)
-                                    {
-                                        $login_id = $login_ids->email;
-                                    }
-                                }
-                                $copyrewards = Rewards::find($this->requestData['reward_id'])->replicate();
+                                $copyrewards = Rewards::find($request->reward_id)->replicate();
                                 $copyrewards->class='rewards';
-                                $copyrewards->base_id=$this->requestData['reward_id'];
+                                $copyrewards->base_id=$request->reward_id;
                                 $copyrewards->valid_till=date('Y-m-d',strtotime("+".$copyrewards->validity." days"));
-                                // here check permission
-                                if($merchant->permission_for_discount_code_handel == 1)
-                                {
-                                    if($copyrewards->discount_code != '')
-                                    {
-                                        if(isset($this->requestData['outlet_id']))
-                                        {
-                                            //$outlet = WlOutlets::where('id',$this->requestData['outlet_id'])->first();
-                                            if(count($outlet)>0)
-                                            {
-                                                $item_discount_code = MerchantLoginMenuItem::where('merchant_id',$merchant->user_id)->where('outlet_id',$this->requestData['outlet_id'])->where('item_id',$copyrewards->discount_code)->select('id','pos_foreign_id')->first();
-                                                if(count($item_discount_code)>0)
-                                                {
-                                                    $copyrewards->discount_code = $item_discount_code->pos_foreign_id;
-                                                    $copyrewards->outlet_id = $this->requestData['outlet_id'];
-                                                }
-                                                else
-                                                {
-                                                    // put proper handling here
-                                                    $data = ['error'=>true,
-                                                        'message'=>'Reward claim failed.',
-                                                        'data' => new \Illuminate\Database\Eloquent\Collection,];
-                                                    $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-                                                    \DB::rollback();
-                                                    return Response::json($data);
-                                                }
-                                            }
-                                            else
-                                            {
-                                                // put proper error msg
-                                                $data = ['error'=>true,
-                                                    'message'=>'Reward claim failed.',
-                                                    'data' => new \Illuminate\Database\Eloquent\Collection,];
-                                                $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-                                                \DB::rollback();
-                                                return Response::json($data);
-                                            }
-                                        }
-                                    }
+
+                                if (empty($copyrewards->start_date) || $copyrewards->start_date == '0000-00-00') {
+                                    $copyrewards->start_date = date('Y-m-d');  // Set current date if start_date is invalid
+                                } else {
+                                    $copyrewards->start_date = date('Y-m-d', strtotime($copyrewards->start_date));
+                                }
+                                
+                                if (empty($copyrewards->end_date) || $copyrewards->end_date == '0000-00-00') {
+                                    $copyrewards->end_date = date('Y-m-d',strtotime("+".$copyrewards->validity." days"));  // Set null if end_date is invalid
+                                } else {
+                                    $copyrewards->end_date = date('Y-m-d', strtotime($copyrewards->end_date));
                                 }
                                 //$loyalty->class='rewards';
                                 $cards->current_points=$current_points;
                                 $cards->redeem_points = $cards->redeem_points + $loyalty->points;
                                 if($cards->save() && $copyrewards->save())
                                 {
-                                    $reward_exception_dates = RewardsExceptionDates::where('token_id',$this->requestData['reward_id'])->get();
-                                    if ($reward_exception_dates) {
-                                        foreach ($reward_exception_dates as $key => $value) {
-                                            $exception_day_data = new RewardsExceptionDates();
-                                            $exception_day_data->token_id = $copyrewards->id;
-                                            $exception_day_data->exception_date = $value->exception_date;
-                                            $exception_day_data->status = 1;
-                                            $exception_day_data->save();
-                                        }
-                                    }
-
-                                    $timezonedata = $this->timeZoneData($merchant->timezone,'');
-                                    if(isset($this->requestData['outlet_id']))
-                                    {
-                                        //$outlet = WlOutlets::where('id',$this->requestData['outlet_id'])->first();
-                                        if($outlet)
-                                        {
-                                            $timezonedata = $this->timeZoneData($outlet->timezone,'');
-                                        }
-                                    }
                                     $userreward=new UserReward();
                                     $userreward->reward_id=$copyrewards->id;
                                     $userreward->user_id=$cards->user_id;
                                     $userreward->merchant_id=$cards->merchant_id;
-                                    $userreward->base_id=$this->requestData['reward_id'];
+                                    $userreward->base_id=$request->reward_id;
                                     $userreward->save();
                                     //$iid=$userreward->id;
-                                    $trakredeem=new Redeempoint();
+                                    $trakredeem=new Redeempoints();
                                     $trakredeem->merchant_id=$loyalty->merchant_id;
-                                    $trakredeem->user_id=$this->requestData['user_id'];
+                                    $trakredeem->user_id=$user_id;
                                     $trakredeem->mobile_no=$userinfo->mobile;
                                     $trakredeem->point_redeem=$pp; //$loyalty->points;
                                     $trakredeem->feedback=$loyalty->name;
-                                    //$trakredeem->M_account = $login_id;
                                     $trakredeem->redeem_by='user';
                                     $trakredeem->source = 'Custom App';
                                     $trakredeem->url = 'loyaltyredeem';
-                                    $trakredeem->date = $timezonedata['date'];
-                                    $trakredeem->time = $timezonedata['time'];
-                                    $trakredeem->day = $timezonedata['day'];
+                                    $trakredeem->date = date('Y-m-d');
+                                    $trakredeem->time = date("H:i:s");
+                                    $trakredeem->day = date("l");
+                                    //old function not
+                                    $trakredeem->pos_billing_dump_id= 0; 
+                                    $trakredeem->gms_id= 0;
+                                    $trakredeem->bill_no= '';
+                                    $trakredeem->bill_amount='';
+                                    $trakredeem->point_redeem_value=0;
+                                    $trakredeem->M_account='';
+                                    $trakredeem->tag='';
+                                    $trakredeem->server='';
+                                    $trakredeem->services='';
+                                    $trakredeem->section='';
+                                    $trakredeem->table_counter='';
+                                    $trakredeem->outlet_id='';
+                                    $trakredeem->reversal_bill_amount='';
+                                    $trakredeem->original_bill_number='';
+                                    $trakredeem->original_bill_date=date('Y-m-d');
+                                    $trakredeem->reversal_entry=0;
+                                    $trakredeem->actual_creditgiven=0;
+                                    $trakredeem->online_ordering_redemption=0;
+
+                                    //old function not
                                     $trakredeem->save();
-                                    $coupon=new \Coupon();
+
+                                    $coupon=new Coupon();
                                     $coupon->user_id=$cards->user_id;
                                     $coupon->coupon_code=$this->createCouponCode();
                                     $coupon->class='rewards';
                                     $coupon->foreign_id=$userreward->reward_id;
                                     $coupon->merchant_id=$cards->merchant_id;
                                     $coupon->is_active=1;
+                                    //old function not
+                                    $coupon->pos_billing_dump_id=0;
+                                    $coupon->gms_id=0;
+                                    $coupon->feedback = '';
+                                    $coupon->is_used = 0;
+                                    $coupon->base_id = 0;
+                                    $coupon->M_account = '';
+                                    $coupon->source = '';
+                                    $coupon->url = '';
+                                    $coupon->date = date('Y-m-d');
+                                    $coupon->time = date("H:i:s");
+                                    $coupon->day = date("l");
+                                    $coupon->bill_amount = '';
+                                    $coupon->tag ='';
+                                    $coupon->server ='';
+                                    $coupon->services ='';
+                                    $coupon->section ='';
+                                    $coupon->table_counter ='';
+                                    $coupon->bill_number ='';
+                                    $coupon->outlet_id ='';
+                                    $coupon->online_redeem_coupon_temp_id =0;
+                                    $coupon->online_order_class =0;
+                                    $coupon->pp_before_discount ='';
+                                    $coupon->pp_discount_value ='';
+                                    $coupon->pp_after_discount ='';
+
+                                    //old function not
                                     $coupon->save();
-                                    $parameter = \Parameter::where('merchant_id','=',$loyalty->merchant_id)->where('user_id','=',$this->requestData['user_id'])->first();
+                                    
+                                    $parameter = Parameter::where('merchant_id','=',$loyalty->merchant_id)->where('user_id','=',$user_id)->lockForUpdate()->first();
                                     if($merchant->card_type_id==2)
                                     {
                                         $parameter->totalCreditRedeemed = $parameter->totalCreditRedeemed + $added_point;
@@ -1795,24 +1773,40 @@ class HomeController extends Controller
                                     }
                                     $parameter->totalRewardGiven = $parameter->totalRewardGiven + 1;
                                     $parameter->save();
-                                    $LoginWiseParameter = LoginWiseParameter::where('merchant_id',$loyalty->merchant_id)->where('login_id','Others')->first();
+                                    $LoginWiseParameter = LoginWiseParameter::where('merchant_id',$loyalty->merchant_id)->where('login_id','Others')->lockForUpdate()->first();
                                     $LoginWiseParameter->credits_redeemed = $LoginWiseParameter->credits_redeemed + $added_point;
                                     $LoginWiseParameter->save();
-                                    $LoginWiseParameterDaily = LoginWiseParameterDaily::where('merchant_id',$loyalty->merchant_id)->where('login_id','Others')->first();
+                                    $LoginWiseParameterDaily = LoginWiseParameterDaily::where('merchant_id',$loyalty->merchant_id)->where('login_id','Others')->lockForUpdate()->first();
                                     $LoginWiseParameterDaily->credits_redeemed = $LoginWiseParameterDaily->credits_redeemed + $added_point;
                                     $LoginWiseParameterDaily->save();
-                                    $MULtable = MULtable::where('merchant_id',$loyalty->merchant_id)->where('user_id', $this->requestData['user_id'])->where('login_id','Others')->first();
-                                    if(count($MULtable)<1)
+                                    $MULtable = MULtable::where('merchant_id',$loyalty->merchant_id)->where('user_id', $user_id)->where('login_id','Others')->lockForUpdate()->count();;
+                                    if($MULtable)
                                     {
                                         $MULtable = new MULtable();
                                         $MULtable->merchant_id = $loyalty->merchant_id;
-                                        $MULtable->user_id = $this->requestData['user_id'];
+                                        $MULtable->user_id = $user_id;
                                         $MULtable->login_id = 'Others';
-                                        $MULtable->credits_redeemed = $MULtable->credits_redeemed + $added_point;
+                                        //old function not
+                                        $MULtable->added_by = '';
+                                        $MULtable->first_visit = date('Y-m-d');
+                                        $MULtable->last_visit = date('Y-m-d');
+                                        $MULtable->actual_total_visits = 0;
+                                        $MULtable->next_visit_date =date('Y-m-d');
+                                        $MULtable->second_visit = date('Y-m-d');
+                                        $MULtable->upload_date = date('Y-m-d');
+                                        $MULtable->average_visit_per_month ='';
+                                        $MULtable->wallet_issued_counter =0;
+                                        $MULtable->wallet_redeemed_counter =0;
+                                        // dd($added_point);
+                                        //old function not
+                                        // $MULtable->credits_redeemed = $MULtable->credits_redeemed + $added_point; 
+                                        $MULtable->credits_redeemed=$added_point;
+
                                     }
                                     else
                                     {
-                                        $MULtable->credits_redeemed = $MULtable->credits_redeemed + $added_point;
+                                        // $MULtable->credits_redeemed = $MULtable->credits_redeemed + $added_point;
+                                        $MULtable->credits_redeemed=$added_point;
                                     }
                                     $MULtable->save();
                                     \DB::commit();
@@ -1824,61 +1818,92 @@ class HomeController extends Controller
                                 }
                                 else
                                 {
-                                    $data = ['error'=>true,
-                                        'message'=>'Reward claim failed.',
-                                        'data' => new \Illuminate\Database\Eloquent\Collection,];
-                                    $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-                                    \DB::rollback();
-                                    return Response::json($data);
+                                    return response()->json([
+                                        'error' => false,
+                                        'message' => "Reward claim failed."
+                                    ]);
                                 }
                             }
                             catch (Exception $e)
                             {
                                 \DB::rollback();
-                                $data = ['error'=>true,
-                                    'message'=>'Transaction unsuccessful. Please try again.',
-                                    'data' => new \Illuminate\Database\Eloquent\Collection,];
-                                $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-                                return Response::json($data);
+                                return response()->json([
+                                    'error' => false,
+                                    'message' => "Transaction unsuccessful. Please try again."
+                                ]);
                             }
                         }
                         else
                         {
-                            $data = ['error'=>true,
-                                'message'=>"You don't have enough points to claim this reward",
-                                'data' => new \Illuminate\Database\Eloquent\Collection,];
-                            $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-                            return Response::json($data);
+                            return response()->json([
+                                'error' => false,
+                                'message' => "You don't have enough points to claim this reward"
+                            ]);
                         }
                     }
                     else
                     {
-                        $data = ['error'=>true,
-                            'message'=>'This number is not registered in the membership program. Please contact reception',
-                            'data' => new \Illuminate\Database\Eloquent\Collection,];
-                        $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-                        return Response::json($data);
+                        return response()->json([
+                            'error' => false,
+                            'message' => "This number is not registered in the membership program. Please contact reception"
+                        ]);
                     }
                 }
                 else
                 {
-                    $data = ['error'=>true,
-                        'message'=>'Incorrect reward id',
-                        'data' => new \Illuminate\Database\Eloquent\Collection,];
-                    $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-                    return Response::json($data);
+                    return response()->json([
+                        'error' => false,
+                        'message' => "Incorrect reward id"
+                    ]);
                 }
 
             }
             else
             {
-                $data = ['error'=>true,
-                    'message'=>'Incorrect Merchant Id',
-                    'data' => new \Illuminate\Database\Eloquent\Collection,];
-                $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-                return Response::json($data);
+                return response()->json([
+                    'error' => false,
+                    'message' => "Incorrect Merchant Id",
+                ]);
             }
         }
+    }
+
+    
+
+    public function createCouponCode() {
+        $couponcode = $this->couponCodeGenerator(5);
+        $couponcode_select = Coupon::where('coupon_code',$couponcode)->first();
+        $couponcode_retry = $this->recreatecouponcode($couponcode_select,$couponcode);
+        return $couponcode_retry;
+    }
+    function recreatecouponcode($couponcode_select,$couponcode)
+    {
+        if($couponcode_select) {
+            $newCouponCode = $this->couponCodeGenerator(6);
+            if($couponcode == $newCouponCode) {
+                $this->createCouponCode();
+            } else {
+                return $couponcode;
+            }
+        } else {
+            return $couponcode;
+        }
+    }
+    function couponCodeGenerator($loop)
+    {
+        $input = range('A','Z');
+        $random_generator="";
+        $count = 0;
+        for($i=1;$i<$loop+1;$i++) {
+            if($i%3 == 0){
+                $random_generator .=rand(0,9).rand(0,9);
+                $count = 0;
+            } else {
+                $random_generator .=$input[array_rand($input)];
+                $count++;
+            }
+        }
+        return $random_generator;
     }
     
 }
