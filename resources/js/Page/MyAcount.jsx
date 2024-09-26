@@ -383,7 +383,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
 
     useEffect(() => {
         setFormInstance(form);
-        // getCountryList()
+        getCountryList()
     }, [])
 
     const [userPp, setUserPp] = useState('')

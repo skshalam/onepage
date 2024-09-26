@@ -1511,8 +1511,21 @@ class HomeController extends Controller
 
     public function gettingregion(Request $request)
     {
-    //   $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-      $region = MerchantRegion::select('city', 'region')->get();
+      $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $rules = [
+            'merchant_id' => 'required',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Validation Failed',
+                'errors' => $validator->errors()
+            ]);
+        } 
+
+      $region = MerchantRegion::select('city', 'region')->where('merchant_id',$merchant_id)->orderBy('region')->get();
       return response()->json([
           'error' => false,
           'message' => 'all regions',
