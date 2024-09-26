@@ -812,15 +812,27 @@ class HomeController extends Controller
         
         // $ewallet_ids = explode(',', $ewallet_issued);
         $ewallet_ids = array_map('trim', explode(',', $ewallet_issued));
+        $page_number = $request->page_number;
+        $limit = 10; 
+        $offset = ($page_number - 1) * $limit; 
         $ewallet = Ebooklets::select('ebooklets.name', 'ebooklets.credit', 'ebooklets.credit_validity')
             ->whereIn('ebooklets.id', $ewallet_ids)
             ->where('ebooklets.merchant_id', $merchant_id)
+            ->offset($offset)
+            ->limit($limit)
             ->get();
+        $total_records = Ebooklets::whereIn('ebooklets.id', $ewallet_ids)
+        ->where('ebooklets.merchant_id', $merchant_id)
+        ->count();
+        $total_pages = ceil($total_records / $limit);
         
         return response()->json([
             'error' => false,
             'message' => 'E-Wallet',
             'data' => $ewallet,
+            'current_page' => $page_number,
+            'total_pages' => $total_pages,
+            'total_records' => $total_records,
         ]);
     }
 
@@ -838,15 +850,26 @@ class HomeController extends Controller
             ->first();
         // $booklet_ids = explode(',', $booklet_issued);
         $booklet_ids = array_map('trim', explode(',', $booklet_issued));
+        $page_number = $request->page_number ;
+        $limit = 10; 
+        $offset = ($page_number - 1) * $limit;
         $booklet = Booklets::select('booklets.name','booklets.id')
             ->whereIn('booklets.id', $booklet_ids)
             ->where('booklets.merchant_id', $merchant_id)
+            ->offset($offset)
+            ->limit($limit)
             ->get();
-        
+        $total_records = Booklets::whereIn('booklets.id', $booklet_ids)
+        ->where('booklets.merchant_id', $merchant_id)
+        ->count();
+        $total_pages = ceil($total_records / $limit);
         return response()->json([
             'error' => false,
             'message' => 'Booklet',
             'data' => $booklet,
+            'current_page' => $page_number,
+            'total_pages' => $total_pages,
+            'total_records' => $total_records,
         ]);
 
     }
@@ -913,32 +936,49 @@ class HomeController extends Controller
             'data' => $data,
         ]);
     }
-
+    
     public function couponsRedeem(Request $request)
     {
-        // $user_id =9;
+
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
-        $membership_id=$request->membership_id;
+        $membership_id = $request->membership_id;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $page_number = $request->page_number; 
+        $limit = 10; 
+        $offset = ($page_number - 1) * $limit;
+        $total_count = TokenRedeem::join('membership_log', 'token_redeem.user_id', '=', 'membership_log.user_id')
+            ->where('membership_log.user_id', $user_id)
+            ->where('membership_log.membership_id', $membership_id)
+            ->where('token_redeem.merchant_id', $merchant_id)
+            ->count();
+        $total_pages = ceil($total_count / $limit);
         $coupon_redeem = TokenRedeem::select('token_redeem.token_code', 'tokens.name', DB::raw('count(token_redeem.token_code) as redeem_count'))
-        ->join('membership_log', 'token_redeem.user_id', '=', 'membership_log.user_id')
-        ->join('tokens', 'token_redeem.token_id', '=', 'tokens.id')
-        ->where('membership_log.user_id', $user_id)
-        ->where('membership_log.membership_id', $membership_id)
-        ->where('token_redeem.merchant_id', $merchant_id)
-        ->groupBy('token_redeem.token_code', 'tokens.name')
-        ->get();
+            ->join('membership_log', 'token_redeem.user_id', '=', 'membership_log.user_id')
+            ->join('tokens', 'token_redeem.token_id', '=', 'tokens.id')
+            ->where('membership_log.user_id', $user_id)
+            ->where('membership_log.membership_id', $membership_id)
+            ->where('token_redeem.merchant_id', $merchant_id)
+            ->groupBy('token_redeem.token_code', 'tokens.name')
+            ->limit($limit)  
+            ->offset($offset)
+            ->get();
         $data = [];
-        if(count($coupon_redeem)>0){
+        if (count($coupon_redeem) > 0) {
             $data['coupon_redeem'] = $coupon_redeem;
         }
+
         return response()->json([
             'error' => false,
             'message' => 'Coupon Redeem',
             'data' => $data,
+            'current_page' => $page_number,
+            'total_count' => $total_count,  
+            'total_pages' => $total_pages, 
         ]);
     }
+
+
     public function about()
     {
         // $merchant_id= 15657;
