@@ -123,12 +123,22 @@ body {
                     margin-top: 10px;
 
                     :is(h4) {
-                        margin: 0px;
+                        margin: 4px 0px;
                         color: #000;
                         font-size: 20px;
                         font-style: normal;
                         font-weight: 600;
                         line-height: normal;
+                        position: relative;
+                    }
+                    :is(h4)::before{
+                        content: "";
+                        bottom:-2px;
+                        position: absolute;
+                        width: 17px;
+                        height: 2px;
+                        border-radius: 10px;
+                        background-color: var(--primary-color);
                     }
                 }
             }
@@ -369,7 +379,7 @@ body {
 
 .wallet-container .wallet-content {
     height: 100px;
-    border-radius: 7px;
+    border-radius: 16px;
     background: var(--primary-color);
     color: #ffffff;
     padding: 12px;
@@ -380,7 +390,8 @@ body {
 .wallet-container .wallet-content .content:nth-child(2),
 .rewards-container .rewards-content .content:nth-child(2) {
     border-left: 1px dashed;
-    padding-left: 10px;
+    padding-left: 5px;
+    margin-left: 2px;
     display: flex;
     justify-content: center;
 }
@@ -391,11 +402,11 @@ body {
 }
 
 .rewards-content {
-    height: 100px;
-    border-radius: 7px;
+    /* height: 100px; */
+    border-radius: 13px;
     background: var(--primary-color);
     color: #ffffff;
-    padding: 9px;
+    padding: 16px 16px 18px 16px;
     display: flex;
     justify-content: space-between;
     gap: 3px;
@@ -404,6 +415,7 @@ body {
 .gift-container {
     height: 100px;
     background: var(--primary-color);
+    border-radius: 16px;
 }
 
 .gift-content img {
@@ -419,8 +431,13 @@ body {
     display: flex;
 }
 
+.data-amount{
+    font-size: 20px;
+}
+
 .rewards-content .content p {
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: 400;
 }
 
 .rewards-content .content span {
@@ -597,8 +614,9 @@ body {
 .view-coupon button {
     background: none;
     padding: 3px 10px;
-    border: 1px solid;
+    border: 1px solid var(--primary-color);
     border-radius: 5px;
+    color: var(--primary-color);
 }
 
 .fade-in {
@@ -1019,7 +1037,8 @@ body {
     }
 
     .membership-action button {
-        border: 1px solid;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
         font-size: 13px;
         background: none;
         border-radius: 5px;
@@ -1037,14 +1056,14 @@ body {
     left: -5px;
 }
 
-.membership-status img {
-    width: 80px;
-}
-
 .membership-status span {
     color: #fff;
     position: absolute;
     left: 15px;
+    top: 5px;
+    font-weight: 400;
+    font-size: 12px;
+    text-transform: capitalize;
 }
 
 .onepage-set-body-about {
@@ -1071,9 +1090,20 @@ body {
     transform: translateY(0);
 }
 
+.membership-drawer-container{
+    padding: 13px;
+    span{
+        font-size: 14px;
+    }
+    .membership-view-header{
+        margin: 0px 0px 10px 0px ;
+    }
+}
+
 .membership-view-table {
     width: 100%;
     table-layout: auto;
+    
 }
 
 .membership-view-table thead th {
@@ -1082,19 +1112,21 @@ body {
     color: #fff;
     text-align: center;
     font-weight: 400;
-    padding: 7px 0px;
+    font-size: 12px;
+    padding: 8px 10px;
 }
 
 .membership-view-table tbody tr td {
     text-align: center;
     font-weight: 400;
+    font-size: 12px;
     color: #7A7680;
-    padding: 5px 0px;
+    padding: 7px 5.5px;
     border-bottom: 1px solid #7A7680;
 }
 
-.membership-view-table tbody tr td:nth-child(1) {
-    border-right: 1px solid #7A7680;
+.membership-view-table.multiple-cell tbody tr td:nth-child(1) {
+        border-right: 1px solid #7A7680;
 }
 
 .membership-view-table tbody tr td:nth-child(2) {
@@ -1133,8 +1165,8 @@ body {
     }
 
     .filter-header-right i {
-        color: #0B0B59;
-        border: 1px solid #0B0B59;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
         cursor: pointer;
     }
 
@@ -1536,6 +1568,7 @@ body {
             border-radius: 10px;
         }
     }
+    
 
     span {
         font-size: 12px;
@@ -1552,9 +1585,18 @@ body {
     }
 }
 
+.filter-actions button:nth-child(1) {
+    color: var(--primary-color);
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 12px;
+}
 .filter-actions button:nth-child(2) {
-    background-color: #0B0B59;
+    background-color: var(--primary-color);
     color: #fff;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 400;
 }
 
 .filter-by-type-nav {
@@ -1566,13 +1608,26 @@ body {
 
 .filter-by-type-checkbox {
     gap: 7px;
+    .ant-checkbox-checked{
+        .ant-checkbox-inner{
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+    }
+    .ant-checkbox-inner{
+        width: 20px;
+        height: 20px;
+        border: 1px solid #d9d9d9;
+        border-radius: 2px;
+        transition: all 0.3s;
+    }
 }
 
 /* Antd Drawer custom css*/
 
 /* Antd datepicker css */
 .filter-date-input {
-    border: 1px solid #0B0B59;
+    border: 1px solid var(--primary-color);
     padding: 0px 0px 0px 5px;
     overflow: hidden;
     border-radius: 4px;
@@ -1581,7 +1636,7 @@ body {
 .filter-date-input .ant-picker-input .ant-picker-suffix {
     padding: 7px;
     background-color: #EBECF7;
-    color: #0b0b59;
+    color: var(--primary-color);
 }
 
 /* Antd datepicker css */
