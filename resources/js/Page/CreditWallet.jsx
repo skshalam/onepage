@@ -5,38 +5,48 @@ import { Link, Router, useParams } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import axiosSetup from '@/axiosSetup';
 function CreditWallet() {
-    const items = [
-        {
-            key: '1',
-            label: 'Type',
-            children: <FilterByType />,
-        },
-        {
-            key: '2',
-            label: 'Source',
-            children: <FilterBySource />,
-        },
-    ];
+    // const items = [
+    //     {
+    //         key: '1',
+    //         label: 'Type',
+    //         children: <FilterByType />,
+    //     },
+    //     {
+    //         key: '2',
+    //         label: 'Source',
+    //         children: <FilterBySource />,
+    //     },
+    // ];
     const [openFilter1, setOpenFilter1] = useState(false);
     const [openFilter2, setOpenFilter2] = useState(false);
     const [creditwalletData, setCreditWalletData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // Track the current page
     const [totalPages, setTotalPages] = useState(0); // Track total pages
     const [isLoading, setIsLoading] = useState(false); // To prevent multiple API calls at the same time
-
+    const [selectedTypes, setSelectedTypes] = useState("");
+    const [pendingSelectedTypes, setPendingSelectedTypes] = useState("");
+    const [form] = Form.useForm();
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token) {
-            loadCreditWalletData(currentPage);
+            loadCreditWalletData(currentPage, selectedTypes); // Load data on page or filter change
         }
-    }, [currentPage]);
+    }, [currentPage, selectedTypes]);
 
-    const loadCreditWalletData = async (page) => {
+    const loadCreditWalletData = async (page, types = "") => {
         setIsLoading(true);
         try {
-            const response = await axiosSetup.post('/api/creditbalance', { page_number: page });
+            const response = await axiosSetup.post('/api/creditbalance', {
+                page_number: page,
+                credit_type: types
+            });
             const { creditbalance, total_pages } = response.data;
-            setCreditWalletData(prevData => [...prevData, ...creditbalance]); // Append new data
+            setOpenFilter2(false);
+            if (page === 1) {
+                setCreditWalletData(creditbalance); // On first page, replace data
+            } else {
+                setCreditWalletData(prevData => [...prevData, ...creditbalance]); // Append data for pagination
+            }
             setTotalPages(total_pages); // Set total pages
         } catch (error) {
             console.error('API Error:', error);
@@ -44,6 +54,31 @@ function CreditWallet() {
         setIsLoading(false);
     };
 
+    const clearFilters = () => {
+        form.resetFields(); // Reset all checkbox fields in the form
+        setPendingSelectedTypes(""); // Clear the pending selected types
+        setSelectedTypes(""); // Clear the actual selected types
+        setOpenFilter2(false); // Close the drawer popup
+        setCurrentPage(1); // Reset pagination to the first page
+    };
+
+    const handleTypeChange = (checkedValues) => {
+        const typeString = checkedValues.map(type => {
+            switch (type) {
+                case 'earned': return 'Earned';
+                case 'redeemed': return 'Redeemed';
+                case 'expired': return 'Expired';
+                default: return type;
+            }
+        }).join(","); 
+        setPendingSelectedTypes(typeString); // Temporarily store the selected types
+    };
+
+    const applyFilters = () => {
+        setSelectedTypes(pendingSelectedTypes); // Set the actual selected types when 'Apply' is clicked
+        setCurrentPage(1); // Reset to first page
+        loadCreditWalletData(1, pendingSelectedTypes); // Load data based on selected filters
+    };
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight && !isLoading) {
             if (currentPage < totalPages) {
@@ -55,10 +90,10 @@ function CreditWallet() {
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [currentPage, isLoading]);
+    }, [currentPage, selectedTypes, isLoading]);
     return (
         <div className='onepage-main-body'>
-            <div className='onepage-set-body onepage-set-body-about'>
+            <div className='onepage-set-body creditpage-body'>
                 <div className="position-sticky top-0 z-1 shadow-sm">
                     <div className="navHeader">
                         <div className="prev-btn">
@@ -87,31 +122,31 @@ function CreditWallet() {
                     {
                         isLoading
                         ?
-                            <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
-                                {[...new Array(5)].map((i, iIndex) => (<div key={iIndex} className="membership position-relative p-1">
-                                    <div className="membership-inner">
-                                        <div className="membership-info h-100">
-                                            <div className="icon">
-                                                <Skeleton className='' style={{ height: "85px", width: "110px" }} />
+                        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+                            {[...new Array(5)].map((i, iIndex) => (<div key={iIndex} className="membership position-relative p-1">
+                                <div className="membership-inner">
+                                    <div className="membership-info h-100">
+                                        <div className="icon">
+                                            <Skeleton className='' style={{ height: "85px", width: "110px" }} />
+                                        </div>
+                                        <div className="membership-info-details d-flex flex-column justify-content-around">
+                                            <div className="membership-name">
+                                                <Skeleton className='' style={{ height: "15px", width: "150px" }} />
                                             </div>
-                                            <div className="membership-info-details d-flex flex-column justify-content-around">
-                                                <div className="membership-name">
-                                                    <Skeleton className='' style={{ height: "15px", width: "150px" }} />
-                                                </div>
-                                                <div className="membership-validity">
-                                                    <Skeleton className='ms-2' style={{ height: "15px", width: "90px" }} />
-                                                </div>
-                                                <div className="membership-price">
-                                                    <Skeleton className='' style={{ height: "15px", width: "60px" }} />
-                                                </div>
-                                                <div className="membership-action">
-                                                    <Skeleton className='' style={{ height: "25px", width: "60px" }} />
-                                                </div>
+                                            <div className="membership-validity">
+                                                <Skeleton className='ms-2' style={{ height: "15px", width: "90px" }} />
+                                            </div>
+                                            <div className="membership-price">
+                                                <Skeleton className='' style={{ height: "15px", width: "60px" }} />
+                                            </div>
+                                            <div className="membership-action">
+                                                <Skeleton className='' style={{ height: "25px", width: "60px" }} />
                                             </div>
                                         </div>
                                     </div>
-                                </div>))}
-                            </SkeletonTheme>
+                                </div>
+                            </div>))}
+                        </SkeletonTheme>
                             :
                             (
                             <div className="wallet-table-body">
@@ -199,7 +234,7 @@ function CreditWallet() {
                         <button className='border-0 p-2'>Apply</button>
                     </div>
                 </Drawer>
-                <Drawer
+                {/* <Drawer
                     rootClassName='filter-drawer'
                     open={openFilter2}
                     onClose={() => setOpenFilter2(false)}
@@ -214,7 +249,32 @@ function CreditWallet() {
                     <Tabs defaultActiveKey="1" rootClassName='filter-by-type-nav' items={items} />
                     <div className="filter-actions">
                         <button className='border-0 p-2'>Clear</button>
-                        <button className='border-0 p-2'>Apply</button>
+                        <button className='border-0 p-2'>Apply type</button>
+                    </div>
+                </Drawer> */}
+                 <Drawer
+                    rootClassName='filter-drawer'
+                    open={openFilter2}
+                    onClose={() => setOpenFilter2(false)}
+                    getContainer={false}
+                    closable={false}
+                >
+                    <Tabs defaultActiveKey="1" rootClassName='filter-by-type-nav' items={[
+                        {
+                            key: '1',
+                            label: 'Type',
+                            children: <FilterByType form={form} handleTypeChange={handleTypeChange} />,
+                        },
+                        {
+                            key: '2',
+                            label: 'Source',
+                            children: <FilterBySource />,
+                        }
+                    ]} />
+                    <div className="filter-actions">
+                        <button className='border-0 p-2' onClick={clearFilters}>Clear</button>
+                        {/* <button className='border-0 p-2' onClick={() => loadCreditWalletData(currentPage, selectedTypes)}>Apply type</button> */}
+                        <button className='border-0 p-2' onClick={applyFilters}>Apply type</button>
                     </div>
                 </Drawer>
             </div>
@@ -224,41 +284,28 @@ function CreditWallet() {
 
 export default CreditWallet
 
-const FilterByType = () => {
-    const [form] = Form.useForm();
+const FilterByType = ({ form, handleTypeChange }) => {
     const options = [
-        {
-            label: 'Earned',
-            value: 'earned',
-        },
-        {
-            label: 'Redeemed',
-            value: 'redeemed',
-        },
-        {
-            label: 'Expired',
-            value: 'expired',
-        },
+        { label: 'Earned', value: '"Earned"' },
+        { label: 'Redeemed', value: '"Redeemed"' },
+        { label: 'Expired', value: '"Expired"' },
     ];
     return (
         <Form
-            form={form}
+            form={form} // Form instance passed from parent
             layout='vertical'
             className=''
         >
-            <Form.Item name={'earned'} className='my-3'>
-                <Row gutter={[0, 10]} justify={'center'}>
-                    <Col span={15} className=''>
-                        <div className="">
-                            <Checkbox.Group options={options}
-                                rootClassName='filter-by-type-checkbox' />
-                        </div>
-                    </Col>
-                </Row>
+            <Form.Item name='checkbox-group'>
+                <Checkbox.Group
+                    options={options}
+                    rootClassName='filter-by-type-checkbox'
+                    onChange={handleTypeChange}
+                />
             </Form.Item>
         </Form>
-    )
-}
+    );
+};
 const FilterBySource = () => {
     const [form] = Form.useForm();
     const options = [
