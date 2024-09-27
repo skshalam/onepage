@@ -1280,8 +1280,6 @@ class HomeController extends Controller
                 }
             }
         
-        
-        
         $user->name = $request->name ?? '';
         $user->email = $request->email ?? '';
         $user->mobile = $request->mobile ?? '';
