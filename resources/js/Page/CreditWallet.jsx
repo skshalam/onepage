@@ -5,18 +5,6 @@ import { Link, Router, useParams } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import axiosSetup from '@/axiosSetup';
 function CreditWallet() {
-    // const items = [
-    //     {
-    //         key: '1',
-    //         label: 'Type',
-    //         children: <FilterByType />,
-    //     },
-    //     {
-    //         key: '2',
-    //         label: 'Source',
-    //         children: <FilterBySource />,
-    //     },
-    // ];
     const [openFilter1, setOpenFilter1] = useState(false);
     const [openFilter2, setOpenFilter2] = useState(false);
     const [creditwalletData, setCreditWalletData] = useState([]);
@@ -25,7 +13,27 @@ function CreditWallet() {
     const [isLoading, setIsLoading] = useState(false); // To prevent multiple API calls at the same time
     const [selectedTypes, setSelectedTypes] = useState("");
     const [pendingSelectedTypes, setPendingSelectedTypes] = useState("");
+    const [currentPoints, setCurrentPoints] = useState(0);
     const [form] = Form.useForm();
+    const formatDate = (dateStr) => {
+        if (!dateStr) return 'No Date Available';
+
+        const date = new Date(dateStr);
+        const day = date.getDate();
+        const month = date.toLocaleString('default', { month: 'long' });
+        const year = date.getFullYear();
+        const daySuffix = (d) => {
+            if (d > 3 && d < 21) return 'th';
+            switch (d % 10) {
+                case 1: return 'st';
+                case 2: return 'nd';
+                case 3: return 'rd';
+                default: return 'th';
+            }
+        };
+
+        return `${day}${daySuffix(day)} ${month}, ${year}`;
+    };
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token) {
@@ -42,6 +50,7 @@ function CreditWallet() {
             });
             const { creditbalance, total_pages } = response.data;
             setOpenFilter2(false);
+            setCurrentPoints(response.data.current_points);
             if (page === 1) {
                 setCreditWalletData(creditbalance); // On first page, replace data
             } else {
@@ -106,7 +115,7 @@ function CreditWallet() {
                 </div>
                 <div className="px-3 text-center my-4 wallet-credit-info">
                     <h6>TOTAL CREDIT BALANCE</h6>
-                    <span>5,124</span><span> points</span>
+                    <span>{currentPoints}</span><span>Points</span>
                 </div>
                 <div className="mx-4 rounded-4 wallet-balance-table ">
                     <div className="wallet-filter-header d-flex justify-content-between align-items-center py-2 px-3">
@@ -154,29 +163,30 @@ function CreditWallet() {
                                     creditwalletData.map((crwallet, index) => (
                                         <div key={crwallet + index} className="wallet-detail-container p-2 px-3">
                                             <div className="wallet-detail-container-top d-flex justify-content-between align-items-center">
-                                                <span>{index}</span>
+                                                {/* <span>{index}</span> */}
                                                 <div className="wallet-name">
                                                     <p className='fw-bold mb-0'>
-                                                        Sky Wallet
+                                                        {crwallet.Credit_Name}
                                                     </p>
                                                 </div>
                                                 <div className="wallet-expire">
                                                     <p className='mb-0'>
-                                                        Valid till <span>30th Jun,25</span>
+                                                        Valid till <span>{crwallet.Valid_Till !== "0000-00-00" ? formatDate(crwallet.Valid_Till) : '-'}
+                                                        <b className='credit-expired'>{crwallet.Type === "Expired" ? " | Expired" : ""}</b></span>
                                                     </p>
                                                 </div>
                                             </div>
                                             <div className="wallet-detail-container-middle d-flex justify-content-between align-items-center">
                                                 <div className="invoice-number">
-                                                    Invoice Number: <span>INVG78945GTSZ</span>
+                                                    Invoice Number: <span>{crwallet.Invoice_Number}</span>
                                                 </div>
                                                 <div className="wallet-transaction-value d-flex gap-1">
-                                                    <p className='mb-0'>+1,000</p><i className='bi bi-chevron-down' />
+                                                    <p className='mb-0'>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className='bi bi-chevron-down' />
                                                 </div>
                                             </div>
                                             <div className="wallet-detail-container-bottom d-flex justify-content-between align-items-center">
                                                 <div className="wallet-balance">
-                                                    <p className='mb-2'>value <span>₹ 147,854</span></p>
+                                                    <p className='mb-2'>{crwallet.Formatted_Billing_Date} <span>{crwallet.formatted_time}</span></p>
                                                 </div>
                                             </div>
                                         </div>
