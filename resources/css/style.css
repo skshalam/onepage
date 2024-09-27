@@ -1296,7 +1296,7 @@ body {
 
 .cust-css-ant-input {
     border: 1px solid var(--primary-color);
-    line-height: 1.7rem;
+    /* line-height: 1.7rem; */
     padding: 6px 17px;
 }
 
@@ -1304,7 +1304,7 @@ body {
     .ant-select-selector {
         border-radius: 20px;
         border: 1px solid var(--primary-color) !important;
-        line-height: 40px;
+        /* line-height: 40px; */
     }
 }
 
