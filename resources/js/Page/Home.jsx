@@ -11,8 +11,10 @@ import { Input } from 'antd';
 import { ThemeProvider } from '../Providers/ContextProviders/ThemeProvider';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import { maskPhoneNumber } from '../utility/formating';
+import { p } from 'framer-motion/client';
 const Home = () => {
     const { merchant_base } = useParams();
+    const [timer,setTimer] = useState(15);
     const [data, setData] = useState([]);
     const [cCode, setcCode] = useState('in');
     const [dialCode,setDialCode] = useState('')
@@ -46,6 +48,16 @@ const Home = () => {
             });
     }, [merchant_base]);
 
+    const otpRefresh = ()=>{
+        let tValue = 15;
+        let countdown = setInterval(function () {
+            tValue--;
+            if (tValue === 0) {
+                clearInterval(countdown); // stop the interval when the timer reaches 0
+            }
+            setTimer(tValue)
+        }, 1000); // run this code every second (1000 milliseconds)
+    }
 
     const handlePhoneChange = (value, data) => {
         if (value === '') {
@@ -69,11 +81,13 @@ const Home = () => {
             });
             setApiResponse(response.data);
             console.log('API Response:', response.data);
+            if (response) {
+                otpRefresh()
+            }
         } catch (error) {
             console.error('Error making API call:', error);
         }
     };
-
     const handleButtonClick_verify = async () => {
         try {
             const formattedMobile = mobile.slice(-10);
@@ -96,6 +110,22 @@ const Home = () => {
             console.error('Error making API call:', error);
         }
     };
+    const resendOtpHandler = async () => {
+        try {
+            const formattedMobile = mobile.slice(-10);
+            const res = await axios.post('/api/onePageLoginResendOtp', {
+                mobile: formattedMobile,
+                merchant_id,
+                otp_msg: apiResponse?.data?.otp_msg
+            });
+            console.log('API Response:', res.data);
+            if (res) {
+                otpRefresh()
+            }
+        } catch (error) {
+            console.error('Error making API call:', error);
+        }
+    }
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error loading data: {error.message}</p>;
@@ -178,7 +208,18 @@ const Home = () => {
                                                 </div>
                                                 <button onClick={handleButtonClick_verify}>Verify OTP</button>
                                             </div>
-                                            <h5 className='text-decoration-underline fw-semibold' style={{color:useThemeStyles.primary_color}}>Resend OTP</h5>
+
+                                            {
+                                                timer === 0
+                                                    ? <h5
+                                                        className='text-decoration-underline fw-semibold'
+                                                        style={{ color: useThemeStyles.primary_color,cursor:"pointer" }}
+                                                        onClick={()=>resendOtpHandler()}
+                                                    >
+                                                        Resend OTP
+                                                    </h5>
+                                                    : <h5 className='fw-semibold'>OTP expires in {timer}sec</h5>
+                                            }
                                         </div>}
                             </div>
                             <div className='socail-linkppart'>
