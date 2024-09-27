@@ -1751,3 +1751,22 @@ body {
   .rounded-4 {
     position: relative;
   }
+  .creditpage-body{
+    position: relative;
+  }
+  .credit-expired{
+    color: #f00;
+  }
+  .wallet-paginate .pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    .page-item{
+        :is(span){
+            font-size: 12px;
+        }
+        .page-link{
+            font-size: 12px;
+        }
+    }
+  }

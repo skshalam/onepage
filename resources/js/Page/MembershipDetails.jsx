@@ -2,24 +2,41 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import axiosSetup from '@/axiosSetup';
+import Pagination from 'react-bootstrap/Pagination';
 function MembershipDetails() {
     const [showModal, setModal] = useState(false);
     const [title, setTitle] = useState(null);
-    const [eWalletissueDesc, seteWalletissueDesc] = useState({});
-    const [bookletissueDesc, setbookletissueDesc] = useState({});
-    const [couponsredeemDesc, setcouponsredeemDesc] = useState({});
+    
     const { membership_id } = useParams();
     const {useThemeStyles} = useContext(ThemeContext);
+
+   // State for e-Wallets
+    const [eWalletissueDesc, seteWalletissueDesc] = useState([]);
+    const [eWalletCurrentPage, seteWalletCurrentPage] = useState(1);
+    const [eWalletTotalPages, seteWalletTotalPages] = useState(1);
+
+    // State for Booklets
+    const [bookletissueDesc, setbookletissueDesc] = useState([]);
+    const [bookletCurrentPage, setBookletCurrentPage] = useState(1);
+    const [bookletTotalPages, setBookletTotalPages] = useState(1);
+
+    // State for Coupons
+    const [couponsredeemDesc, setcouponsredeemDesc] = useState([]);
+    const [couponsCurrentPage, setCouponsCurrentPage] = useState(1);
+    const [couponsTotalPages, setCouponsTotalPages] = useState(1);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/eWalletissue',
                 {
-                    membership_id: membership_id
+                    membership_id: membership_id,
+                    page_number: eWalletCurrentPage
                 })
                 .then(response => {
                     seteWalletissueDesc(response.data.data);
+                    seteWalletCurrentPage(response.data.current_page);
+                    seteWalletTotalPages(response.data.total_pages);
                 })
                 .catch(error => {
                     console.error('API Error:', error);
@@ -27,17 +44,20 @@ function MembershipDetails() {
         } else {
             console.log('No token available, API call skipped');
         }
-    }, []);
+    }, [membership_id, eWalletCurrentPage]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/bookletissue',
                 {
-                    membership_id: membership_id
+                    membership_id: membership_id,
+                    page_number: bookletCurrentPage
                 })
                 .then(response => {
                     setbookletissueDesc(response.data.data);
+                    setBookletCurrentPage(response.data.current_page);
+                    setBookletTotalPages(response.data.total_pages);
                 })
                 .catch(error => {
                     console.error('API Error:', error);
@@ -45,17 +65,20 @@ function MembershipDetails() {
         } else {
             console.log('No token available, API call skipped');
         }
-    }, []);
+    }, [membership_id, bookletCurrentPage]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/couponsredeem',
                 {
-                    membership_id: membership_id
+                    membership_id: membership_id,
+                    page_number: couponsCurrentPage
                 })
                 .then(response => {
                     setcouponsredeemDesc(response.data.data.coupon_redeem);
+                    setCouponsCurrentPage(response.data.current_page);
+                    setCouponsTotalPages(response.data.total_pages);
                 })
                 .catch(error => {
                     console.error('API Error:', error);
@@ -63,7 +86,7 @@ function MembershipDetails() {
         } else {
             console.log('No token available, API call skipped');
         }
-    }, []);
+    }, [membership_id, couponsCurrentPage]);
     return (
         <div className='body-container membership-package-body'>
             <div className="border-0 border-bottom">
@@ -176,14 +199,38 @@ function MembershipDetails() {
             <div className="bg-shape position-absolute w-100 two">
                 <img src="https://i.imgur.com/6bAQtCI.png" alt="" />
             </div>
-            <ViewMemberShip showModal={showModal} setModal={setModal} title={title} eWalletissueDesc={eWalletissueDesc} bookletissueDesc={bookletissueDesc} couponsredeemDesc={couponsredeemDesc} membership_id={membership_id} />
+            <ViewMemberShip showModal={showModal} setModal={setModal} title={title} membership_id={membership_id} eWalletissueDesc={eWalletissueDesc}  bookletissueDesc={bookletissueDesc} couponsredeemDesc={couponsredeemDesc} membership_id={membership_id}
+                
+                eWalletCurrentPage={eWalletCurrentPage}
+                seteWalletCurrentPage={seteWalletCurrentPage}
+                eWalletTotalPages={eWalletTotalPages}
+
+                bookletCurrentPage={bookletCurrentPage}
+                setBookletCurrentPage={setBookletCurrentPage}
+                bookletTotalPages={bookletTotalPages}
+
+                couponsCurrentPage={couponsCurrentPage}
+                setCouponsCurrentPage={setCouponsCurrentPage}
+                couponsTotalPages={couponsTotalPages}/>
         </div>
     )
 }
 
 export default MembershipDetails
 
-function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookletissueDesc, couponsredeemDesc, membership_id }) {
+function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookletissueDesc, couponsredeemDesc, 
+    membership_id, eWalletCurrentPage, seteWalletCurrentPage, eWalletTotalPages,
+    bookletCurrentPage, setBookletCurrentPage, bookletTotalPages,
+    couponsCurrentPage, setCouponsCurrentPage, couponsTotalPages }) {
+    const handlePagination = (pageNumber, type) => {
+        if (type === 'eWallet') {
+            seteWalletCurrentPage(pageNumber);
+        } else if (type === 'Booklets') {
+            setBookletCurrentPage(pageNumber);
+        } else if (type === 'Coupons') {
+            setCouponsCurrentPage(pageNumber);
+        }
+    };
     return (
         <div
             className={`position-absolute h-100 top-0 w-100 view-membership-details
@@ -194,7 +241,7 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                 className="exit-table w-100 h-100 position-absolute"
                 onClick={() => setModal(false)}
             ></div>
-            <div className="position-absolute w-100 px-3 ">
+            <div className="position-absolute w-100 px-3 wallet-paginate">
                 <div className="border bg-light rounded-4 shadow membership-drawer-container">
                     <div className="membership-view-header d-flex justify-content-between align-items-center">
                         <span className='fw-semibold'>{title}</span>
@@ -221,9 +268,28 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                                     ))}
                                 </tbody>
                             </table>
+                            {eWalletTotalPages > 1 && (
+                                <Pagination>
+                                    <Pagination.Prev 
+                                        onClick={() => handlePagination(eWalletCurrentPage - 1, 'eWallet')} 
+                                        disabled={eWalletCurrentPage === 1} 
+                                    />
+                                    {Array.from({ length: eWalletTotalPages }, (_, index) => (
+                                        <Pagination.Item 
+                                            key={index + 1} 
+                                            active={index + 1 === eWalletCurrentPage} 
+                                            onClick={() => handlePagination(index + 1, 'eWallet')} size="sm">
+                                            {index + 1}
+                                        </Pagination.Item>
+                                    ))}
+                                    <Pagination.Next 
+                                        onClick={() => handlePagination(eWalletCurrentPage + 1, 'eWallet')} 
+                                        disabled={eWalletCurrentPage === eWalletTotalPages} 
+                                    />
+                                </Pagination>
+                            )}
                         </div>
                     )}
-
                     {title === "Booklets Issued" && (
                         <div className='booklet-issue'>
                             <table className='membership-view-table'>
@@ -247,6 +313,26 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                                     ))}
                                 </tbody>
                             </table>
+                            {bookletTotalPages > 1 && (
+                                <Pagination>
+                                    <Pagination.Prev 
+                                        onClick={() => handlePagination(bookletCurrentPage - 1, 'Booklets')} 
+                                        disabled={bookletCurrentPage === 1} 
+                                    />
+                                    {Array.from({ length: bookletTotalPages }, (_, index) => (
+                                        <Pagination.Item 
+                                            key={index + 1} 
+                                            active={index + 1 === bookletCurrentPage} 
+                                            onClick={() => handlePagination(index + 1, 'Booklets')}>
+                                            {index + 1}
+                                        </Pagination.Item>
+                                    ))}
+                                    <Pagination.Next 
+                                        onClick={() => handlePagination(bookletCurrentPage + 1, 'Booklets')} 
+                                        disabled={bookletCurrentPage === bookletTotalPages} 
+                                    />
+                                </Pagination>
+                            )}
                         </div>
                     )}
 
@@ -270,6 +356,26 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                                     ))}
                                 </tbody>
                             </table>
+                            {title === "Coupons Redeemed" && couponsTotalPages > 1 && (
+                                <Pagination>
+                                    <Pagination.Prev 
+                                        onClick={() => handlePagination(couponsCurrentPage - 1, 'Coupons')} 
+                                        disabled={couponsCurrentPage === 1} 
+                                    />
+                                    {Array.from({ length: couponsTotalPages }, (_, index) => (
+                                        <Pagination.Item 
+                                            key={index + 1} 
+                                            active={index + 1 === couponsCurrentPage} 
+                                            onClick={() => handlePagination(index + 1, 'Coupons')}>
+                                            {index + 1}
+                                        </Pagination.Item>
+                                    ))}
+                                    <Pagination.Next 
+                                        onClick={() => handlePagination(couponsCurrentPage + 1, 'Coupons')} 
+                                        disabled={couponsCurrentPage === couponsTotalPages} 
+                                    />
+                                </Pagination>
+                            )}
                         </div>
                     )}
                 </div>
