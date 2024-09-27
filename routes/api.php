@@ -28,7 +28,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::POST('/couponsredeem', [\App\Http\Controllers\HomeController::class, 'couponsRedeem']);  
 
     Route::get('/about', [\App\Http\Controllers\HomeController::class, 'about']);
-    // Route::get('/referral_program', [\App\Http\Controllers\HomeController::class, 'referral_program']);
+    Route::post('/referral_programsubmit', [\App\Http\Controllers\HomeController::class, 'referral_programsubmit']);
     Route::POST('/referErn', [\App\Http\Controllers\HomeController::class, 'referErn']);
     Route::post('/referral_programview', [\App\Http\Controllers\HomeController::class, 'referral_programview']);
     Route::get('/contact', [\App\Http\Controllers\HomeController::class, 'contact']);

@@ -1240,8 +1240,8 @@ class HomeController extends Controller
             ]);
         }
 
-        if ($request->hasFile('profile_image')) {
-            $image = $request->file('profile_image');
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
             $imageext = strtoupper($image->getClientOriginalExtension());
             $allowedExtensions = ['JPEG', 'PNG', 'JPG'];
     
@@ -1307,7 +1307,6 @@ class HomeController extends Controller
             'profile' => $profile,
         ]);
     }
-
 
 
     //count homescreen coouponcart,rewardsmenu,memebership package
@@ -1939,5 +1938,73 @@ class HomeController extends Controller
         }
         return $random_generator;
     }
+    function referral_programsubmit(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+
+        $merchant = MerchantDetails::where('user_id', $merchant_id)->first();
+
+        $master = Master::where('id',1)->first();
+        $ewards_url = $master->ewards_url;
+        $checkuser_url = $ewards_url.'onepage/checkuseronepage';
+        $checkuser_data = [
+            'mobile_no'=> $request->mobile,
+            'country_code' => $request->country_code,
+            'refer_name'=> $request->name,
+            'refer_dob'=> $request->dob,
+            'refer_email'=> $request->email,
+            'login_id' => $merchant->email,
+            'login_type' => 'merchant',
+            'merchant_id' => $merchant_id
+        ];
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $checkuser_url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $checkuser_data,
+        ));
+
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        if ($httpCode == 200) {
+            $curl_res = json_decode($response);
+            if($curl_res->error == false){
+                
+                return response()->json(
+                    $curl_res
+                );
+                // return response()->json(array(
+                //     'error'=>false,
+                //     'message'=>'Referral Added Successfully',
+                // ));
+            }else{
+                return response()->json(
+                    $curl_res
+                );
+            }
+
+            
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Some Error occured!!',
+                'error_code' => $httpCode
+            ], $httpCode);
+        }
+
+        
+    }
+
     
 }
