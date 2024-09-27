@@ -206,7 +206,7 @@ function MyAcount() {
                                     >
                                         <div className="d-flex gap-2 flex-column">
                                             <div className="profile-pic text-center mb-3">
-                                                <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
+                                                <Avatar size={70} className='bg-light' src={userData?.image} icon={<i className='bi bi-person-fill text-dark' />} />
                                             </div>
                                             {data_account.name.display_full_name_permission === 1 && (
                                                 <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
@@ -386,7 +386,7 @@ export default MyAcount
 
 const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
     const [form] = Form.useForm();
-    const [userPp, setUserPp] = useState('');
+    const [userPp, setUserPp] = useState(data?.image);
     const [countries, setCountries] = useState([]);
     const [states, setStates] = useState([]);
     const [cities, setCities] = useState([]);
