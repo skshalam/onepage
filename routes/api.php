@@ -13,6 +13,7 @@ Route::get('/onepage/{m_id}', [\App\Http\Controllers\LoginController::class, 'lo
 Route::post('/websiteLogin', [\App\Http\Controllers\OtpLoginController::class, 'websiteLogin']);
 Route::post('/onePageLoginOtpVerifyNew', [\App\Http\Controllers\OtpLoginController::class, 'onePageLoginOtpVerifyNew']);
 Route::post('/onePageLoginResendOtp', [\App\Http\Controllers\OtpLoginController::class, 'onePageLoginResendOtp']);
+Route::post('/onePageLogout', [\App\Http\Controllers\OtpLoginController::class, 'onePageLogout']);
 
 Route::middleware(['auth:api'])->group(function () {
     
@@ -44,6 +45,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/state', [\App\Http\Controllers\HomeController::class, 'state']);
     Route::get('/themecolor', [\App\Http\Controllers\HomeController::class, 'themecolor']);
     Route::post('/redeem_rewards', [\App\Http\Controllers\HomeController::class, 'redeem_rewards']);
+    Route::post('/onePageLogout', [\App\Http\Controllers\OtpLoginController::class, 'onePageLogout']);
 });
 
 

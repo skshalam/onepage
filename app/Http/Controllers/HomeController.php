@@ -54,6 +54,7 @@ use DB;
 use Auth;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Storage;
 use DateTime;
 
 
@@ -554,8 +555,8 @@ class HomeController extends Controller
         
         $data = [];
         $couponcart=UserToken::select($select)
-        ->leftjoin('users','user_token.user_id','=','users.id')
-        ->leftjoin('tokens', 'user_token.token_id', '=', 'tokens.id')
+        ->join('users','user_token.user_id','=','users.id')
+        ->join('tokens', 'user_token.token_id', '=', 'tokens.id')
         ->where('user_token.merchant_id', $merchant_id)
         ->where('user_token.user_id', $user_id);
         if(!empty($token_id)){
@@ -659,8 +660,8 @@ class HomeController extends Controller
         $data = [];
         $currentDate = date('Y-m-d');
         $onHoldCoupons = UserToken::select($select)
-        ->leftJoin('users', 'user_token.user_id', '=', 'users.id')
-        ->leftJoin('tokens', 'user_token.token_id', '=', 'tokens.id')
+        ->join('users', 'user_token.user_id', '=', 'users.id')
+        ->join('tokens', 'user_token.token_id', '=', 'tokens.id')
         ->where('user_token.merchant_id', $merchant_id)
         ->where('user_token.user_id', $user_id)
         ->where('user_token.temp_hold', 1)
@@ -718,8 +719,8 @@ class HomeController extends Controller
         }
         $data = [];
         $rewards = Rewards::select($select)
-            ->leftJoin('coupon', 'rewards.id', '=', 'coupon.foreign_id')
-            ->leftJoin('users', 'coupon.user_id', '=', 'users.id')
+            ->join('coupon', 'rewards.id', '=', 'coupon.foreign_id')
+            ->join('users', 'coupon.user_id', '=', 'users.id')
             ->where('coupon.merchant_id', $merchant_id)
             ->where('coupon.user_id', $user_id);
             if(!empty($rewards_id)){
@@ -770,8 +771,8 @@ class HomeController extends Controller
         $data = [];
         $currentDate = date('Y-m-d');
         $membership=MembershipLog::select($select)
-        ->leftJoin('users', 'membership_log.user_id', '=', 'users.id')
-        ->leftJoin('membership_structure', 'membership_log.membership_id', '=', 'membership_structure.id')
+        ->join('users', 'membership_log.user_id', '=', 'users.id')
+        ->join('membership_structure', 'membership_log.membership_id', '=', 'membership_structure.id')
         ->where('membership_log.user_id', $user_id)
         ->where('membership_structure.merchant_id', $merchant_id);    
         if(!empty($membership_id)){
@@ -1208,6 +1209,9 @@ class HomeController extends Controller
     
     public function editinfo(Request $request)
     {
+        // echo "<pre>";
+        // print_r($request->all());
+        // exit;
         // $merchant_id = 15657;
         // $user_id = 15882661; //test userid
         // $user_id = 9;
@@ -1242,35 +1246,55 @@ class HomeController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageext = strtoupper($image->getClientOriginalExtension());
-            $allowedExtensions = ['JPEG', 'PNG', 'JPG'];
-    
+            $allowedExtensions = ['jpeg', 'png', 'jpg'];
+            $imageext = strtolower($image->getClientOriginalExtension());
+            
             if (in_array($imageext, $allowedExtensions)) {
-                $img_extension = $image->getClientOriginalExtension();
-                $img_name = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
-                $filename = $img_name . rand(10000, 99999) . '.' . $img_extension;
+                $filename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . rand(10000, 99999) . '.' . $imageext;
                 $path = public_path('/profile/images');
                 $image->move($path, $filename);
-    
-                $s3 = AWS::get('s3');
-                $data = $s3->putObject([
-                    'Bucket'     => 'ewardsmain',
-                    'Key'        => 'merchants/businessimage/' . $filename,
-                    'SourceFile' => $path . $filename,
-                    'ACL'        => 'public-read',
-                ]);
-    
-                $profile_logo_image = $data['ObjectURL'];
-                $user->image = $profile_logo_image;
-                unlink($path . $filename);
+                $localFilePath = $path . '/' . $filename;
+                \Log::info('Local file path: ' . $localFilePath);
+                if (file_exists($localFilePath)) {
+                    $result = Storage::disk('s3')->put('merchants/businessimage/' . $filename, file_get_contents($localFilePath), 'public');
+                    if ($result) {
+                        $profile_logo_image = Storage::disk('s3')->url('merchants/businessimage/' . $filename);
+                        $user->image = $profile_logo_image;
+                        if ($user->save()) {
+                            // Clean up local file after saving to database
+                            unlink($localFilePath);
+        
+                            // Upload the same image again to a different S3 path
+                            $filePath = 'feedback/Feedback_banner/' . $filename;
+                            Storage::disk('s3')->put($filePath, file_get_contents($localFilePath), 'public');
+                        } else {
+                            return response()->json([
+                                'error' => true,
+                                'message' => 'Failed to save the image URL in the database.'
+                            ]);
+                        }
+                    } else {
+                        return response()->json([
+                            'error' => true,
+                            'message' => 'Failed to upload to S3.'
+                        ]);
+                    }
+                } else {
+                    return response()->json([
+                        'error' => true,
+                        'message' => 'The file could not be found after upload at: ' . $localFilePath
+                    ]);
+                }
             } else {
                 return response()->json([
                     'error' => true,
                     'message' => 'Only JPEG, PNG, JPG formats are accepted'
                 ]);
             }
-        }
-
+        }   
+        
+        
+        
         $user->name = $request->name ?? '';
         $user->email = $request->email ?? '';
         $user->mobile = $request->mobile ?? '';
@@ -1288,9 +1312,11 @@ class HomeController extends Controller
         }
 
         $profile->gender = $request->gender ?? '';
-        $profile->dob = $request->dob ?? '';
+        // $profile->dob = $request->dob ?? '';
+        $profile->dob = !empty($request->dob) ? $request->dob : null;
         $profile->marital = $request->marital ?? '';
-        $profile->doa = $request->doa ?? '';
+        // $profile->doa = $request->doa ?? '';
+        $profile->doa = !empty($request->doa) ? $request->doa : null;
         $profile->address = $request->address ?? '';
         $profile->gstin = $request->gstin ?? '';
         $profile->pan = $request->pan ?? '';
@@ -1356,8 +1382,8 @@ class HomeController extends Controller
         }
         
         $couponcart = UserToken::select($select)
-            ->leftJoin('users', 'user_token.user_id', '=', 'users.id')
-            ->leftJoin('tokens', 'user_token.token_id', '=', 'tokens.id')
+            ->join('users', 'user_token.user_id', '=', 'users.id')
+            ->join('tokens', 'user_token.token_id', '=', 'tokens.id')
             ->where('user_token.merchant_id', $merchant_id)
             ->where('user_token.user_id', $user_id);
             
@@ -1389,8 +1415,8 @@ class HomeController extends Controller
         }
         
         $rewards = Rewards::select($select)
-            ->leftJoin('coupon', 'rewards.id', '=', 'coupon.foreign_id')
-            ->leftJoin('users', 'coupon.user_id', '=', 'users.id')
+            ->join('coupon', 'rewards.id', '=', 'coupon.foreign_id')
+            ->join('users', 'coupon.user_id', '=', 'users.id')
             ->where('coupon.merchant_id', $merchant_id)
             ->where('coupon.user_id', $user_id);
             
@@ -1426,8 +1452,8 @@ class HomeController extends Controller
         }
         
         $membership = MembershipLog::select($select)
-            ->leftJoin('users', 'membership_log.user_id', '=', 'users.id')
-            ->leftJoin('membership_structure', 'membership_log.membership_id', '=', 'membership_structure.id')
+            ->join('users', 'membership_log.user_id', '=', 'users.id')
+            ->join('membership_structure', 'membership_log.membership_id', '=', 'membership_structure.id')
             ->where('membership_log.user_id', $user_id);
             
         if (!empty($membership_id)) {
@@ -1452,8 +1478,8 @@ class HomeController extends Controller
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $refercards=Cards::select('u2.name','cards.dob','cards.created_at','u2.mobile','u2.email','u2.id')
-        ->leftJoin('users','cards.refer_by','=','users.id')
-        ->leftJoin('users as u2', 'cards.user_id', '=', 'u2.id')
+        ->join('users','cards.refer_by','=','users.id')
+        ->join('users as u2', 'cards.user_id', '=', 'u2.id')
         ->where('cards.refer_by', $user_id)
         ->where('cards.merchant_id', $merchant_id)
         ->orderBy('cards.created_at', 'desc')
@@ -1980,7 +2006,7 @@ class HomeController extends Controller
         if ($httpCode == 200) {
             $curl_res = json_decode($response);
             if($curl_res->error == false){
-                
+
                 return response()->json(
                     $curl_res
                 );

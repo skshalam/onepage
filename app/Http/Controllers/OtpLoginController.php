@@ -513,4 +513,54 @@ class OtpLoginController extends Controller
             ], $httpCode);
         }
     }
+    public function onePageLogout()
+    {
+        // Check if token exists
+        $token = JWTAuth::getToken();
+
+        if (!$token) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Token not provided'
+            ], 400); // Bad Request
+        }
+
+        try {
+            // Validate the token
+            $user = JWTAuth::authenticate($token);
+
+            if (!$user) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'User not found'
+                ], 404); // Not Found
+            }
+
+            // Invalidate the token and log out the user
+            JWTAuth::invalidate($token);
+
+            return response()->json([
+                'error' => false,
+                'message' => 'Successfully logged out'
+            ], 200); // Success
+
+        } catch (TokenExpiredException $e) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Token expired'
+            ], 401); // Unauthorized
+
+        } catch (TokenInvalidException $e) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Token invalid'
+            ], 401); // Unauthorized
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Could not log out, please try again'
+            ], 500); // Internal Server Error
+        }
+    }
 }
