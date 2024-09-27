@@ -1209,12 +1209,6 @@ class HomeController extends Controller
     
     public function editinfo(Request $request)
     {
-        // echo "<pre>";
-        // print_r($request->all());
-        // exit;
-        // $merchant_id = 15657;
-        // $user_id = 15882661; //test userid
-        // $user_id = 9;
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
@@ -1255,43 +1249,36 @@ class HomeController extends Controller
                 $image->move($path, $filename);
                 $localFilePath = $path . '/' . $filename;
                 \Log::info('Local file path: ' . $localFilePath);
-                if (file_exists($localFilePath)) {
-                    $result = Storage::disk('s3')->put('merchants/businessimage/' . $filename, file_get_contents($localFilePath), 'public');
-                    if ($result) {
-                        $profile_logo_image = Storage::disk('s3')->url('merchants/businessimage/' . $filename);
-                        $user->image = $profile_logo_image;
-                        if ($user->save()) {
-                            // Clean up local file after saving to database
-                            unlink($localFilePath);
-        
-                            // Upload the same image again to a different S3 path
-                            $filePath = 'feedback/Feedback_banner/' . $filename;
-                            Storage::disk('s3')->put($filePath, file_get_contents($localFilePath), 'public');
+          
+                    $uploadStatus = true;
+                    try {
+                        $result = Storage::disk('s3')->put('merchants/businessimage/' . $filename, file_get_contents($localFilePath), 'public');
+                        if ($result) {
+                            $profile_logo_image = Storage::disk('s3')->url('merchants/businessimage/' . $filename);
+                            $user->image = $profile_logo_image;
+                            if (!$user->save()) {
+                                return response()->json([
+                                    'error' => true,
+                                    'message' => 'Failed to save the image URL in the database.'
+                                ]);
+                            }
                         } else {
-                            return response()->json([
-                                'error' => true,
-                                'message' => 'Failed to save the image URL in the database.'
-                            ]);
+                            $uploadStatus = false; 
                         }
-                    } else {
-                        return response()->json([
-                            'error' => true,
-                            'message' => 'Failed to upload to S3.'
-                        ]);
+                    } catch (\Exception $e) {
+                        \Log::error('S3 upload error: ' . $e->getMessage());
+                    }
+
+                    if (file_exists($localFilePath)) {
+                        unlink($localFilePath);
                     }
                 } else {
                     return response()->json([
                         'error' => true,
-                        'message' => 'The file could not be found after upload at: ' . $localFilePath
+                        'message' => 'Only JPEG, PNG, JPG formats are accepted'
                     ]);
                 }
-            } else {
-                return response()->json([
-                    'error' => true,
-                    'message' => 'Only JPEG, PNG, JPG formats are accepted'
-                ]);
             }
-        }   
         
         
         
