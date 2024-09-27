@@ -508,7 +508,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
         form.validateFields().then(values => {
             
             const formData = { ...values,
-                image:userPp,
+                profile_image:userPp,
                 country: cntryId, 
                 dob: dob, 
                 doa: doa,
@@ -544,7 +544,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* User Profile Pic */}
                     <Col xs={24}>
                         <div className="text-center">
-                            <Form.Item className='' name="image">
+                            <Form.Item className='' name="profile_image">
                                 <UploadProfilePic imageUrl={setUserPp} file={userPp} />
                             </Form.Item>
                         </div>
@@ -622,12 +622,12 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"country"} className='mb-0'
-                                    // rules={[
-                                    //     {
-                                    //         required: true,
-                                    //         message: `select your country`,
-                                    //     },
-                                    // ]}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: `select your country`,
+                                        },
+                                    ]}
                                     >
                                         <Select
                                             className='cust-css-ant'

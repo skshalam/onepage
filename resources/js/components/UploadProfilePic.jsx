@@ -12,12 +12,9 @@ function UploadProfilePic({ imageUrl, file }) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            console.log(reader);
-            
             reader.onload = () => {
                 imageUrl(reader.result);
             };
-
             reader.onerror = (error) => {
                 console.error('Error reading file:', error);
             };
