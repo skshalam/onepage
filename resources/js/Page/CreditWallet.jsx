@@ -84,7 +84,7 @@ function CreditWallet() {
     };
 
     const applyFilters = () => {
-        setSelectedTypes(pendingSelectedTypes); // Set the actual selected types when 'Apply' is clicked
+        // setSelectedTypes(pendingSelectedTypes); // Set the actual selected types when 'Apply' is clicked
         setCurrentPage(1); // Reset to first page
         loadCreditWalletData(1, pendingSelectedTypes); // Load data based on selected filters
     };

@@ -241,7 +241,7 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                 className="exit-table w-100 h-100 position-absolute"
                 onClick={() => setModal(false)}
             ></div>
-            <div className="position-absolute w-100 px-3 ">
+            <div className="position-absolute w-100 px-3 wallet-paginate">
                 <div className="border bg-light rounded-4 shadow membership-drawer-container">
                     <div className="membership-view-header d-flex justify-content-between align-items-center">
                         <span className='fw-semibold'>{title}</span>
@@ -315,6 +315,10 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                             </table>
                             {bookletTotalPages > 1 && (
                                 <Pagination>
+                                    <Pagination.Prev 
+                                        onClick={() => handlePagination(bookletCurrentPage - 1, 'Booklets')} 
+                                        disabled={bookletCurrentPage === 1} 
+                                    />
                                     {Array.from({ length: bookletTotalPages }, (_, index) => (
                                         <Pagination.Item 
                                             key={index + 1} 
@@ -323,6 +327,10 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                                             {index + 1}
                                         </Pagination.Item>
                                     ))}
+                                    <Pagination.Next 
+                                        onClick={() => handlePagination(bookletCurrentPage + 1, 'Booklets')} 
+                                        disabled={bookletCurrentPage === bookletTotalPages} 
+                                    />
                                 </Pagination>
                             )}
                         </div>
@@ -350,6 +358,10 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                             </table>
                             {title === "Coupons Redeemed" && couponsTotalPages > 1 && (
                                 <Pagination>
+                                    <Pagination.Prev 
+                                        onClick={() => handlePagination(couponsCurrentPage - 1, 'Coupons')} 
+                                        disabled={couponsCurrentPage === 1} 
+                                    />
                                     {Array.from({ length: couponsTotalPages }, (_, index) => (
                                         <Pagination.Item 
                                             key={index + 1} 
@@ -358,6 +370,10 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                                             {index + 1}
                                         </Pagination.Item>
                                     ))}
+                                    <Pagination.Next 
+                                        onClick={() => handlePagination(couponsCurrentPage + 1, 'Coupons')} 
+                                        disabled={couponsCurrentPage === couponsTotalPages} 
+                                    />
                                 </Pagination>
                             )}
                         </div>
