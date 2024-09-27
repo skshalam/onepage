@@ -1980,13 +1980,18 @@ class HomeController extends Controller
         if ($httpCode == 200) {
             $curl_res = json_decode($response);
             if($curl_res->error == false){
-
-                return response()->json(array(
-                    'error'=>false,
-                    'message'=>'Referral Added Successfully',
-                ));
+                
+                return response()->json(
+                    $curl_res
+                );
+                // return response()->json(array(
+                //     'error'=>false,
+                //     'message'=>'Referral Added Successfully',
+                // ));
             }else{
-                return response()->$curl_res;
+                return response()->json(
+                    $curl_res
+                );
             }
 
             
