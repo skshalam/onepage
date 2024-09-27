@@ -1309,7 +1309,6 @@ class HomeController extends Controller
     }
 
 
-
     //count homescreen coouponcart,rewardsmenu,memebership package
     public function getDataCounts(Request $request)
     {
@@ -1939,5 +1938,13 @@ class HomeController extends Controller
         }
         return $random_generator;
     }
+    function referral_programsubmit(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        
+    }
+
     
 }
