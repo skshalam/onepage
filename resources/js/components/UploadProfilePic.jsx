@@ -7,22 +7,25 @@ import ThemeContext from '../Providers/Contexts/ThemeContext';
 function UploadProfilePic({ imageUrl, file }) {
     // URL - set function to return the base64Url to parent component state,
     // file - image url state from the parent component
+    console.log(file);
+    
     const { useThemeStyles } = useContext(ThemeContext)
     const handleFileChange = (event) => {
         const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            console.log(reader);
+        imageUrl(event.target.value);
+        // if (file) {
+        //     const reader = new FileReader();
+        //     console.log(reader);
             
-            reader.onload = () => {
-                imageUrl(reader.result);
-            };
+        //     reader.onload = () => {
+        //         imageUrl(reader.result);
+        //     };
 
-            reader.onerror = (error) => {
-                console.error('Error reading file:', error);
-            };
-            reader.readAsDataURL(file);
-        }
+        //     reader.onerror = (error) => {
+        //         console.error('Error reading file:', error);
+        //     };
+        //     reader.readAsDataURL(file);
+        // }
         
     };
     return (
