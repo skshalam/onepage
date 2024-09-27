@@ -364,11 +364,11 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
     const [userPp, setUserPp] = useState('');
     const [countries, setCountries] = useState([]);
     const [states, setStates] = useState([]);
-    const [cities,setCities] = useState([]);
-    const [regions,setRegions] = useState([]);
+    const [cities, setCities] = useState([]);
+    const [regions, setRegions] = useState([]);
     const [cntryId, setCntryId] = useState(parseInt(data?.country));
     const [stId, setStId] = useState(parseInt(data?.state));
-    const [ctId,setCtId] = useState(parseInt(data?.city))
+    const [ctId, setCtId] = useState(parseInt(data?.city))
     const [doa, setDoa] = useState(data?.doa);
     const [dob, setDob] = useState(data?.dob);
     const [isCountryChange, setIscountryChange] = useState(false);
@@ -377,6 +377,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
             email: 'Enter A valid Email',
         },
     };
+    
     // Select On Change Handlers
     const handleCountryChange = (value, option) => {
         setCntryId(option.value)
@@ -385,13 +386,13 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
             getState(value)
         }
     }
-    const handleStateChange = (value,option)=>{
+    const handleStateChange = (value, option) => {
         setStId(option.value);
         if (value) {
             getCity(value)
         }
     }
-    const handleCityChange = (value,option)=>{
+    const handleCityChange = (value, option) => {
         setCtId(option.value)
         if (value) {
             getRegions()
@@ -415,7 +416,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
     }
     function setCityById(cityId) {
         const id = parseInt(cityId)
-        const city = cities?.find(i=>i.id===id)
+        const city = cities?.find(i => i.id === id)
         if (city) {
             return city.label
         }
@@ -451,9 +452,9 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                 console.log(err)
             })
     }
-    function getCity(sId){
-        axiosSetup.post('/api/cities',{"state_id":sId})
-            .then(res=>{
+    function getCity(sId) {
+        axiosSetup.post('/api/cities', { "state_id": sId })
+            .then(res => {
                 const mappedData = res?.data?.cities.map(i => ({
                     value: i.id,
                     label: i.name
@@ -461,23 +462,22 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                 setCities(mappedData)
                 getRegions()
             })
-            .catch(err=>{
+            .catch(err => {
                 console.log(err);
             })
     }
     function getRegions(cityId) {
         axiosSetup.post('/api/gettingregion')
-        .then(res=>{
-            console.log(res);
-            const mappedData = res?.data?.region.map(i => ({
-                value: i.region,
-                label: i.region
-            }))
-            setRegions(mappedData)
-        })
-        .catch(err=>{
-            console.log(err);
-        })
+            .then(res => {
+                const mappedData = res?.data?.region.map(i => ({
+                    value: i.region,
+                    label: i.region
+                }))
+                setRegions(mappedData)
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     // Set fields 
@@ -506,7 +506,15 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
     // Local Handle State
     const handleSave = () => {
         form.validateFields().then(values => {
-            const formData = { ...values, country: cntryId, dob: dob, doa: doa }
+            
+            const formData = { ...values,
+                image:userPp,
+                country: cntryId, 
+                dob: dob, 
+                doa: doa,
+                city:ctId,
+                state:stId
+             }
             // return console.log(formData);
             onSave(formData);
         }).catch(errorInfo => {
@@ -536,8 +544,8 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* User Profile Pic */}
                     <Col xs={24}>
                         <div className="text-center">
-                            <Form.Item className='' name="profilePicture">
-                                <UploadProfilePic URL={setUserPp} file={userPp} />
+                            <Form.Item className='' name="image">
+                                <UploadProfilePic imageUrl={setUserPp} file={userPp} />
                             </Form.Item>
                         </div>
                     </Col>
@@ -670,13 +678,13 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                                     //     },
                                     // ]}
                                     >
-                                        <Select 
-                                        disabled={!isCountryChange} 
-                                        className='cust-css-ant'
-                                        options={cities}
-                                        value={ctId}
-                                        defaultValue={ctId}
-                                        onChange={handleCityChange}
+                                        <Select
+                                            disabled={!isCountryChange}
+                                            className='cust-css-ant'
+                                            options={cities}
+                                            value={ctId}
+                                            defaultValue={ctId}
+                                            onChange={handleCityChange}
                                         >
 
                                         </Select>
@@ -694,11 +702,11 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                                     //     },
                                     // ]}
                                     >
-                                        <Select 
-                                        
-                                        disabled={!isCountryChange} 
-                                        className='cust-css-ant'
-                                        options={regions}
+                                        <Select
+
+                                            disabled={!isCountryChange}
+                                            className='cust-css-ant'
+                                            options={regions}
                                         >
 
                                         </Select>
@@ -783,7 +791,18 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                                             },
                                         ]}
                                     >
-                                        <Select className='cust-css-ant'>
+                                        <Select className='cust-css-ant'
+                                            options={[
+                                                {
+                                                    value: "single",
+                                                    label: "Single",
+                                                },
+                                                {
+                                                    value: "married",
+                                                    label: "Married"
+                                                }
+                                            ]}
+                                        >
 
                                         </Select>
                                     </Form.Item>

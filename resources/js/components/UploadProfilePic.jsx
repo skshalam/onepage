@@ -4,18 +4,18 @@ import { Avatar } from 'antd';
 import React, { useContext } from 'react';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 
-function UploadProfilePic({ URL, file }) {
+function UploadProfilePic({ imageUrl, file }) {
     // URL - set function to return the base64Url to parent component state,
     // file - image url state from the parent component
     const { useThemeStyles } = useContext(ThemeContext)
     const handleFileChange = (event) => {
-        console.log('image',event);
-        
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
+            console.log(reader);
+            
             reader.onload = () => {
-                URL(reader.result);
+                imageUrl(reader.result);
             };
 
             reader.onerror = (error) => {
@@ -23,7 +23,6 @@ function UploadProfilePic({ URL, file }) {
             };
             reader.readAsDataURL(file);
         }
-        console.log(file);
         
     };
     return (
