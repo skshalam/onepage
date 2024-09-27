@@ -8,7 +8,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import UploadProfilePic from '../components/UploadProfilePic';
 import { convertDateToISO } from '../utility/formating';
 import dayjs from 'dayjs';
-import { label } from 'framer-motion/client';
+import { label, p } from 'framer-motion/client';
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
@@ -73,6 +73,7 @@ function MyAcount() {
         }
     });
     const [userData, setUserData] = useState({});
+    const [loaded, setLoaded] = useState(true)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     useEffect(() => {
@@ -82,6 +83,7 @@ function MyAcount() {
                 .then(response => {
                     // console.log('API Response:', response);
                     setData_getaccount(response.data.accountheading);
+                    setLoaded(false)
                 })
                 .catch(error => {
                     console.error('API Error:', error);
@@ -182,133 +184,156 @@ function MyAcount() {
                     :
                     <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
                         <div className="profile-info m-3" ref={targetDiv}>
-                            <div className="d-flex gap-2 flex-column">
-                                <div className="profile-pic text-center mb-3">
-                                    <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
-                                </div>
-                                {data_account.name.display_full_name_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">Name</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.name === "" ? data_account.name.full_name_dynamic_name : userData?.name}</span>
-                                            }
+
+                            {
+                                loaded
+                                    ? <div className="d-flex gap-2 flex-column">
+                                        <div className="profile-pic text-center mb-3">
+                                            <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
                                         </div>
+                                        {[...new Array(10)].map((i, iIndex) => (<div key={iIndex} className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                            {/* <label htmlFor="">Name</label> */}
+                                            <div className="">
+                                                <Skeleton className='mb-1' style={{ height: "15px", width: "150px" }} />
+                                            </div>
+                                        </div>))}
                                     </div>
-                                )}
-                                {data_account.gender.display_gender_permission == 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">Gender</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.gender === "" ? data_account.gender.gender_dynamic_name : userData?.gender}</span>}
+                                    :
+                                    <motion.div
+                                        initial={{ opacity: 0, }}
+                                        animate={{ opacity: 1, }}
+                                        transition={{ duration: 0.6 }}
+                                    >
+                                        <div className="d-flex gap-2 flex-column">
+                                            <div className="profile-pic text-center mb-3">
+                                                <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
+                                            </div>
+                                            {data_account.name.display_full_name_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">Name</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.name === "" ? data_account.name.full_name_dynamic_name : userData?.name}</span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.gender.display_gender_permission == 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">Gender</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.gender === "" ? data_account.gender.gender_dynamic_name : userData?.gender}</span>}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.email.display_email_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">E-mail</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.email === "" ? data_account.email.email_dynamic_name : userData?.email}</span>}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.mobile.display_mobile_number_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">Phone</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.mobile === "" ? data_account.mobile.mobile_number_dynamic_name : userData?.mobile}</span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.birthday.display_birthday_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">Birthday</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.dob === "" ? data_account.birthday.birthday_dynamic_name : userData?.dob}</span>}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.marital_status.display_marital_status_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">Relationship</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.marital === "" ? data_account.marital_status.marital_status_dynamic_name : userData?.marital}</span>}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.address.display_address_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">Address</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.address === "" ? data_account.address.address_dynamic_name : userData?.address}</span>}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.gst.display_gst_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">GSTIN</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.gstin === "" ? data_account.address.gst_dynamic_name : userData?.gstin}</span>}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.pan.display_pan_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">PAN</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.pan === "" ? data_account.pan.pan_dynamic_name : userData?.pan}</span>}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.bank.display_bank_name_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">Bank Name</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.bank_name === "" ? data_account.bank.bank_name : userData?.bank_name}</span>}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.bank.display_bank_account_number_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">Bank A/C No.</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.bank_account_number === "" ? data_account.bank.bank_account_number : userData?.bank_account_number}</span>}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {data_account.pincode.display_pincode_permission === 1 && (
+                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                    <label htmlFor="">Pincode.</label>
+                                                    <div className="">
+                                                        {loading ?
+                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                            : <span>{userData?.pincode === "" ? data_account.pincode.pincode_dynamic_name : userData?.pincode}</span>}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
-                                    </div>
-                                )}
-                                {data_account.email.display_email_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">E-mail</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.email === "" ? data_account.email.email_dynamic_name : userData?.email}</span>}
-                                        </div>
-                                    </div>
-                                )}
-                                {data_account.mobile.display_mobile_number_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">Phone</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.mobile === "" ? data_account.mobile.mobile_number_dynamic_name : userData?.mobile}</span>
-                                            }
-                                        </div>
-                                    </div>
-                                )}
-                                {data_account.birthday.display_birthday_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">Birthday</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.dob === "" ? data_account.birthday.birthday_dynamic_name : userData?.dob}</span>}
-                                        </div>
-                                    </div>
-                                )}
-                                {data_account.marital_status.display_marital_status_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">Relationship</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.marital === "" ? data_account.marital_status.marital_status_dynamic_name : userData?.marital}</span>}
-                                        </div>
-                                    </div>
-                                )}
-                                {data_account.address.display_address_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">Address</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.address === "" ? data_account.address.address_dynamic_name : userData?.address}</span>}
-                                        </div>
-                                    </div>
-                                )}
-                                {data_account.gst.display_gst_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">GSTIN</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.gstin === "" ? data_account.address.gst_dynamic_name : userData?.gstin}</span>}
-                                        </div>
-                                    </div>
-                                )}
-                                {data_account.pan.display_pan_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">PAN</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.pan === "" ? data_account.pan.pan_dynamic_name : userData?.pan}</span>}
-                                        </div>
-                                    </div>
-                                )}
-                                {data_account.bank.display_bank_name_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">Bank Name</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.bank_name === "" ? data_account.bank.bank_name : userData?.bank_name}</span>}
-                                        </div>
-                                    </div>
-                                )}
-                                {data_account.bank.display_bank_account_number_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">Bank A/C No.</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.bank_account_number === "" ? data_account.bank.bank_account_number : userData?.bank_account_number}</span>}
-                                        </div>
-                                    </div>
-                                )}
-                                {data_account.pincode.display_pincode_permission === 1 && (
-                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                        <label htmlFor="">Pincode.</label>
-                                        <div className="">
-                                            {loading ?
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                : <span>{userData?.pincode === "" ? data_account.pincode.pincode_dynamic_name : userData?.pincode}</span>}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
+                                    </motion.div>
+                            }
+
                             <div className="powered-ewards">
                                 <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
                                     <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
@@ -377,7 +402,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
             email: 'Enter A valid Email',
         },
     };
-    
+
     // Select On Change Handlers
     const handleCountryChange = (value, option) => {
         setCntryId(option.value)
@@ -506,15 +531,16 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
     // Local Handle State
     const handleSave = () => {
         form.validateFields().then(values => {
-            
-            const formData = { ...values,
-                profile_image:userPp,
-                country: cntryId, 
-                dob: dob, 
+
+            const formData = {
+                ...values,
+                profile_image: userPp,
+                country: cntryId,
+                dob: dob,
                 doa: doa,
-                city:ctId,
-                state:stId
-             }
+                city: ctId,
+                state: stId
+            }
             // return console.log(formData);
             onSave(formData);
         }).catch(errorInfo => {
@@ -622,12 +648,12 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                             <Col xs={12}>
                                 <div className="position-relative edit-input-div">
                                     <Form.Item name={"country"} className='mb-0'
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: `select your country`,
-                                        },
-                                    ]}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: `select your country`,
+                                            },
+                                        ]}
                                     >
                                         <Select
                                             className='cust-css-ant'
