@@ -2050,10 +2050,10 @@ class HomeController extends Controller
         $delect_acc= Cards::where('user_id', $user_id)->where('merchant_id', $merchant_id)->update(['deactivate_account' => 1]);
         if($delect_acc)
         {
-            return response()->json(array(
-                'error'=>false,
-                'message'=>"Account Deleted Successfully",
-            ));
+            return response()->json([
+                'error' => false,
+                'message' => 'Account Deleted Successfully',
+            ]);
         }
         
     }
