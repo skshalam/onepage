@@ -58,7 +58,8 @@ function CreditWallet() {
         }
     }, [currentPage, selectedTypes, selectedSources, startDate, endDate]);
 
-    const loadCreditWalletData = async (page, types = "") => {
+    const loadCreditWalletData = async (page, types = "", sources = "", start_date = "", end_date = "") => {
+        setIsLoading(true);
         if (page === 1) {
             setIsLoading(true);
         }
@@ -69,9 +70,9 @@ function CreditWallet() {
             const response = await axiosSetup.post('/api/creditbalance', {
                 page_number: page,
                 credit_type: types,
-                credit_name: selectedSources,
-                start_date: startDate,
-                end_date: endDate
+                credit_name: sources,
+                start_date: start_date,
+                end_date: end_date
             });
             const { creditbalance, total_pages } = response.data;
             setOpenFilter2(false);
