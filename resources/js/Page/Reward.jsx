@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
 import axiosSetup from '@/axiosSetup';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { motion } from 'framer-motion';
+
 
 function Reward() {
     const [open, setOpen] = useState(false);
+    const [rewardId, setRewardId] = useState(null);
     const [openConfirm, setOpenConfirm] = useState(false);
     const [rewardsData, setrewardsData] = useState([]);
     const [rewardsDesc, setRewardsDesc] = useState({});
@@ -119,9 +122,14 @@ function Reward() {
                                                 <div className="reward-view-bnt">
                                                     <button onClick={() => { handleDrawer(reward), setOpen(!open) }}>view details</button>
                                                 </div>
-                                                <div className="reward-redeem-bnt">
-                                                    <button onClick={() => { setOpenConfirm(!openConfirm) }}><span>{reward.coupon_code} |</span> redeem</button>
-                                                </div>
+                                                {
+                                                    calculateValidity(reward.valid_till) === "Expired" ? null
+                                                        : <div className="reward-redeem-bnt">
+
+                                                            <button
+                                                                disabled={calculateValidity(reward.valid_till) === "Expired" ? true : null}
+                                                                onClick={() => { setOpenConfirm(!openConfirm), setRewardId(reward?.rewards_id) }}><span>{reward.coupon_code} |</span> redeem</button>
+                                                        </div>}
                                             </div>
                                         </div>
                                     </div>
@@ -138,7 +146,7 @@ function Reward() {
                     <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
             </div>
             <RewardDescDrawer open={open} rewardsCartData={rewardsDesc} setOpen={setOpen} dataLoading={dataLoading} setDataLoading={setDataLoading} />
-            <RewardPopConfirm openConfirm={openConfirm} setOpenConfirm={setOpenConfirm} />
+            <RewardPopConfirm openConfirm={openConfirm} setOpenConfirm={setOpenConfirm} rewardId={rewardId} />
         </div>
     )
 }
@@ -239,23 +247,66 @@ function RewardDescDrawer({ open, rewardsCartData, setOpen, dataLoading, setData
     )
 }
 
-function RewardPopConfirm({ openConfirm, setOpenConfirm }) {
+function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
     const [proceed, setProceed] = useState(false);
+    const [msg, setMsg] = useState('');
+    console.log(rewardId);
+    const handleClick = (id) => {
+        setProceed(false)
+        axiosSetup.post('/api/redeem_rewards', { "reward_id": rewardId })
+            .then(res => {
+                if (res.data.error) {
+                    setMsg(res.data.message)
+                }
+                else if (!res.data.error) {
+                    console.log("success");
+                    setProceed(true)
+                }
+                setTimeout(() => {
+                    setOpenConfirm(false)
+                    setProceed(false)
+                }, 2000);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
     return (
         <div className={`reward-pop-confirm ${openConfirm ? "show" : ""}`}>
-            <div className="pop-confirm-container">
-                <div className="pop-confirm-img">
-                    <img src="https://i.imgur.com/2FOfgVm.png" alt="" />
-                </div>
-                <div className="pop-confirm-qn">
-                    Redeem Rewards?
-                </div>
-                <div className="pop-confirm-action">
-                    <button onClick={() => setOpenConfirm(false)}>Cancel</button>
-                    <button>Yes Redeem</button>
-                </div>
-                <div className="pop-confirm-onCancel" onClick={() => setOpenConfirm(false)}><i className='bi bi-x' /></div>
-            </div>
+            {
+                proceed ?
+
+                    <div className="pop-confirm-container">
+                        <motion.div
+                            initial={{ opacity: 0, }}
+                            animate={{ opacity: 1, }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <div className="pop-confirm-img">
+                                <img src="https://i.imgur.com/2FOfgVm.png" alt="" />
+                            </div>
+                            <div className="pop-confirm-qn">
+                                Congratulations!
+                            </div>
+                            <p className=''>
+                                You have successfully redeemed your reward!
+                            </p>
+                        </motion.div>
+                    </div>
+                    : <div className="pop-confirm-container">
+                        <div className="pop-confirm-img">
+                            <img src="https://i.imgur.com/2FOfgVm.png" alt="" />
+                        </div>
+                        <div className="pop-confirm-qn">
+                            Redeem Rewards?
+                        </div>
+                        <div className="pop-confirm-action">
+                            <button onClick={() => setOpenConfirm(false)}>Cancel</button>
+                            <button onClick={() => handleClick(rewardId)}>Yes Redeem</button>
+                        </div>
+                        <div className="pop-confirm-onCancel" onClick={() => setOpenConfirm(false)}><i className='bi bi-x' /></div>
+                    </div>
+            }
             <div className="backdrop-cancel" onClick={() => setOpenConfirm(false)}></div>
         </div>
     )

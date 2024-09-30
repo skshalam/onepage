@@ -8,7 +8,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import UploadProfilePic from '../components/UploadProfilePic';
 import { convertDateToISO } from '../utility/formating';
 import dayjs from 'dayjs';
-import { label, p } from 'framer-motion/client';
+import FileUploader from '../components/testUploader';
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
@@ -206,7 +206,7 @@ function MyAcount() {
                                     >
                                         <div className="d-flex gap-2 flex-column">
                                             <div className="profile-pic text-center mb-3">
-                                                <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
+                                                <Avatar size={70} className='bg-light' src={userData?.image} icon={<i className='bi bi-person-fill text-dark' />} />
                                             </div>
                                             {data_account.name.display_full_name_permission === 1 && (
                                                 <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
@@ -386,7 +386,7 @@ export default MyAcount
 
 const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
     const [form] = Form.useForm();
-    const [userPp, setUserPp] = useState('');
+    const [userPp, setUserPp] = useState(data?.image);
     const [countries, setCountries] = useState([]);
     const [states, setStates] = useState([]);
     const [cities, setCities] = useState([]);
@@ -534,7 +534,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
 
             const formData = {
                 ...values,
-                profile_image: userPp,
+                image: userPp,
                 country: cntryId,
                 dob: dob,
                 doa: doa,
@@ -570,8 +570,9 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* User Profile Pic */}
                     <Col xs={24}>
                         <div className="text-center">
-                            <Form.Item className='' name="profile_image">
+                            <Form.Item className='' name="image">
                                 <UploadProfilePic imageUrl={setUserPp} file={userPp} />
+                                {/* <FileUploader/> */}
                             </Form.Item>
                         </div>
                     </Col>
