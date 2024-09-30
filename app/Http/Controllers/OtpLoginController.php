@@ -102,7 +102,16 @@ class OtpLoginController extends Controller
                            $cards = Cards::where('user_id',$user->id)->where('merchant_id',$request->merchant_id)->first();
                            if($cards)
                            {
-                              $cardscheck = 1;
+                                if($cards->deactivate_account == 1)
+                                {
+                                    $data = ['error'=>true,
+                                        'message'=>'This number is deleted from the App . Please Contact Store Manager.',
+                                        'data' => new \Illuminate\Database\Eloquent\Collection,];
+                                    $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
+                                    gc_collect_cycles();
+                                    return response()->json($data);
+                                }
+                                $cardscheck = 1;
                            }
                            else
                            {

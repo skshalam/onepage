@@ -2047,13 +2047,47 @@ class HomeController extends Controller
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-        $delect_acc= Cards::where('user_id', $user_id)->where('merchant_id', $merchant_id)->update(['deactivate_account' => 1]);
+        $delect_acc= Cards::where('user_id', $user_id)->where('merchant_id', $merchant_id)->first();
         if($delect_acc)
         {
-            return response()->json([
-                'error' => false,
-                'message' => 'Account Deleted Successfully',
-            ]);
+            $token = JWTAuth::getToken();
+
+            if (!$token) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Token not provided'
+                ], 400); // Bad Request
+            }
+
+            try {
+                // Validate the token
+                $user = JWTAuth::authenticate($token);
+
+                if (!$user) {
+                    return response()->json([
+                        'error' => true,
+                        'message' => 'User not found'
+                    ], 404); // Not Found
+                }
+
+                // Invalidate the token and log out the user
+                $delect_acc->deactivate_account = 1;
+                $delect_acc->save();
+
+                JWTAuth::invalidate($token);
+
+                return response()->json([
+                    'error' => false,
+                    'message' => 'Account Deleted Successfully'
+                ], 200); // Success
+
+            } catch (TokenExpredException $e) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Token expired'
+                ], 401); // Unauthorized
+
+            }
         }
         
     }
