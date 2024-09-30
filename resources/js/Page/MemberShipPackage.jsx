@@ -88,7 +88,7 @@ function MemberShipPackage() {
                         (
                             membershipsDesc?.length > 0 ? (
                                 membershipsDesc.map((member, index) => (
-                                    <div className="membership position-relative p-1">
+                                    <div key={index} className="membership position-relative p-1">
                                         <div className="membership-inner">
                                             <div className="membership-info h-100">
                                                 <div className="icon">

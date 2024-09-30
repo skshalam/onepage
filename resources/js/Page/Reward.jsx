@@ -128,7 +128,7 @@ function Reward() {
 
                                                             <button
                                                                 disabled={calculateValidity(reward.valid_till) === "Expired" ? true : null}
-                                                                onClick={() => { setOpenConfirm(!openConfirm), setRewardId(reward?.rewards_id) }}><span>{reward.coupon_code} |</span> redeem</button>
+                                                                onClick={() => { setOpenConfirm(!openConfirm), setRewardId(reward?.rewards_id) }}><span>{reward.coupon_code} |</span> claim</button>
                                                         </div>}
                                             </div>
                                         </div>
@@ -298,11 +298,11 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
                             <img src="https://i.imgur.com/2FOfgVm.png" alt="" />
                         </div>
                         <div className="pop-confirm-qn">
-                            Redeem Rewards?
+                            Claim Rewards?
                         </div>
                         <div className="pop-confirm-action">
                             <button onClick={() => setOpenConfirm(false)}>Cancel</button>
-                            <button onClick={() => handleClick(rewardId)}>Yes Redeem</button>
+                            <button onClick={() => handleClick(rewardId)}>Yes Claim</button>
                         </div>
                         <div className="pop-confirm-onCancel" onClick={() => setOpenConfirm(false)}><i className='bi bi-x' /></div>
                     </div>

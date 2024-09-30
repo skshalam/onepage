@@ -72,7 +72,7 @@ function Contact() {
             <div className="position-sticky top-0 z-1 shadow-sm">
                 <div className="navHeader">
                     <div className="prev-btn">
-                        <Link to={"/Profile"}>
+                        <Link to={"/userProfile"}>
                             <i className="bi bi-chevron-left"></i>
                         </Link>
                         <span>CONTACT</span>

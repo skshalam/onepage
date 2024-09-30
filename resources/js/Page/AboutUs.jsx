@@ -100,7 +100,7 @@ function AboutUs() {
                         )}
                     </div>
                     <div className="head-profile">
-                        <Link to={"/Profile"}>
+                        <Link to={"/userProfile"}>
                             <i className='bi bi-person-fill fs-5'></i>
                         </Link>
                     </div>
