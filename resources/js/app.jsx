@@ -93,7 +93,7 @@ const App = () => {
             <Route path="/Membership/:membership_id" element={<MembershipDetails />} />
             <Route path="/Wallet" element={<Wallet />} />
             <Route path="/Creditwallet" element={<CreditWallet />} />
-            <Route path="/Profile" element={<Profile />} />
+            <Route path="/userProfile" element={<Profile />} />
             <Route path="/Myaccount" element={<MyAcount />} />
             <Route path="/T&c" element={<TermsAndCondition />} />
             <Route path="/Contact" element={<Contact />} />
