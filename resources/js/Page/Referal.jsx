@@ -1,14 +1,58 @@
-import { Button, Col, DatePicker, Form, Input, Row } from 'antd'
-import React, { useState } from 'react'
+import { Button, Col, DatePicker, Form, Input, message, Modal, Row } from 'antd'
+import React, { useRef, useState } from 'react'
 import PhoneInput from 'react-phone-input-2';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import axiosSetup from '@/axiosSetup';
+import { convertDateToISO } from '../utility/formating';
 
 function Referal() {
     const [form] = Form.useForm();
+    const [mobile, setMobile] = useState(null);
+    const [cCode, setcCode] = useState('in');
+    const [dialCode, setDialCode] = useState(null);
+    const [messageApi, contextHolder] = message.useMessage();
+    const success = (msg) => {
+        messageApi.open({
+            type: 'success',
+            content: `${msg}`,
+        });
+    };
+    const warning = (msg) => {
+        messageApi.open({
+            type: 'warning',
+            content: `${msg}`,
+        });
+    };
+    const handlePhoneChange = (value, data) => {
+        if (value === '') {
+            setMobile(data.dialCode); // set dial code of the selected country
+        } else {
+            setMobile(value); // set the phone value
+        }
+        setcCode(data.countryCode);
+        setDialCode(data.dialCode)
+    };
     const handleSubmit = () => {
         form.validateFields()
             .then(values => {
-                console.log(values);
+                axiosSetup.post('/api/referral_programsubmit', {
+                    ...values, dob: convertDateToISO(values.dob),
+                    mobile: mobile.slice(-10),
+                    country_code: dialCode
+                })
+                    .then(res => {
+                        if (res.data.error) {
+                            warning(res.data.msg)
+                        }
+                        else if (!res.data.error) {
+                            success(res.data.msg)
+                            form.resetFields()
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err.msg);
+                    })
+
             })
             .catch(err => {
                 console.log("Validation Error", err);
@@ -16,6 +60,7 @@ function Referal() {
     }
     return (
         <div className='onepage-main-body position-relative'>
+            {contextHolder}
             <div className="position-sticky top-0 z-1 shadow-sm">
                 <div className="navHeader">
                     <div className="prev-btn">
@@ -52,7 +97,7 @@ function Referal() {
                         </Col>
                         <Col xs={24}>
                             <div className="position-relative edit-input-div contact-us">
-                                <Form.Item name={"phone"} className='mb-0'
+                                <Form.Item name={"mobile"} className='mb-0'
                                     rules={[
                                         {
                                             required: true,
@@ -61,7 +106,9 @@ function Referal() {
                                     ]}
                                 >
                                     <PhoneInput
-                                        country={'in'}
+                                        country={cCode}
+                                        onChange={handlePhoneChange}
+                                        value={mobile}
                                     />
                                 </Form.Item>
                                 <label className='position-absolute z-3 ps-0' htmlFor="userName">Phone No.</label>

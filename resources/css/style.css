@@ -953,6 +953,13 @@ body {
     margin: 211px 65px;
 }
 
+.pop-confirm-container p{
+    font-size: 14px;
+    margin-top: 10px;
+    opacity: 50%;
+    text-align: center !important;
+}
+
 .pop-confirm-success {
     position: absolute;
     width: 300px;
