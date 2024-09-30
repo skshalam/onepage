@@ -55,6 +55,7 @@ use Auth;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use DateTime;
 
 
@@ -1238,47 +1239,95 @@ class HomeController extends Controller
             ]);
         }
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $allowedExtensions = ['jpeg', 'png', 'jpg'];
-            $imageext = strtolower($image->getClientOriginalExtension());
-            
-            if (in_array($imageext, $allowedExtensions)) {
-                $filename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . rand(10000, 99999) . '.' . $imageext;
-                $path = public_path('/profile/images');
-                $image->move($path, $filename);
-                $localFilePath = $path . '/' . $filename;
-                \Log::info('Local file path: ' . $localFilePath);
-          
-                    $uploadStatus = true;
-                    try {
-                        $result = Storage::disk('s3')->put('merchants/businessimage/' . $filename, file_get_contents($localFilePath), 'public');
-                        if ($result) {
-                            $profile_logo_image = Storage::disk('s3')->url('merchants/businessimage/' . $filename);
-                            $user->image = $profile_logo_image;
-                            if (!$user->save()) {
-                                return response()->json([
-                                    'error' => true,
-                                    'message' => 'Failed to save the image URL in the database.'
-                                ]);
-                            }
-                        } else {
-                            $uploadStatus = false; 
-                        }
-                    } catch (\Exception $e) {
-                        \Log::error('S3 upload error: ' . $e->getMessage());
-                    }
+        $base64Image = $request->input('image'); // Get base64 image from request
 
-                    if (file_exists($localFilePath)) {
-                        unlink($localFilePath);
-                    }
-                } else {
-                    return response()->json([
-                        'error' => true,
-                        'message' => 'Only JPEG, PNG, JPG formats are accepted'
-                    ]);
-                }
+        // Split the base64 string to get the file type and the actual base64 data
+        @list($type, $fileData) = explode(';', $base64Image);
+        @list(, $fileData) = explode(',', $fileData);
+    
+        // Decode the base64 data to binary
+        $fileData = base64_decode($fileData);
+    
+        $allowedMimeTypes = ['image/jpeg', 'image/png'];
+        $mimeType = mime_content_type($base64Image);
+
+        if (!in_array($mimeType, $allowedMimeTypes)) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Only JPEG, PNG, JPG formats are accepted'
+            ], 400);
+        }
+
+        // Get the file extension (e.g., jpeg, png) from the MIME type
+        $extension = explode('/', mime_content_type($base64Image))[1];
+    
+        // Create a unique file name
+        $fileName = Str::random(10) . '.' . $extension;
+    
+        try {
+            //code...
+            Storage::disk('s3')->put('merchants/businessimage/' . $fileName, $fileData, 'public');
+    
+            // Get the public URL of the uploaded file
+            $fileUrl = Storage::disk('s3')->url('merchants/businessimage/' . $fileName);
+        
+            $user->image = $fileUrl;
+            if (!$user->save()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Failed to save the image URL in the database.'
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Failed to save the image URL in the database.'
+            ], 500);
+        }
+        // Upload to S3
+
+       
+        // if ($request->hasFile('image')) {
+        //     $image = $request->file('image');
+        //     $allowedExtensions = ['jpeg', 'png', 'jpg'];
+        //     $imageext = strtolower($image->getClientOriginalExtension());
+            
+        //     if (in_array($imageext, $allowedExtensions)) {
+        //         $filename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . rand(10000, 99999) . '.' . $imageext;
+        //         $path = public_path('/profile/images');
+        //         $image->move($path, $filename);
+        //         $localFilePath = $path . '/' . $filename;
+        //         \Log::info('Local file path: ' . $localFilePath);
+          
+        //             $uploadStatus = true;
+        //             try {
+        //                 $result = Storage::disk('s3')->put('merchants/businessimage/' . $filename, file_get_contents($localFilePath), 'public');
+        //                 if ($result) {
+        //                     $profile_logo_image = Storage::disk('s3')->url('merchants/businessimage/' . $filename);
+        //                     $user->image = $profile_logo_image;
+        //                     if (!$user->save()) {
+        //                         return response()->json([
+        //                             'error' => true,
+        //                             'message' => 'Failed to save the image URL in the database.'
+        //                         ]);
+        //                     }
+        //                 } else {
+        //                     $uploadStatus = false; 
+        //                 }
+        //             } catch (\Exception $e) {
+        //                 \Log::error('S3 upload error: ' . $e->getMessage());
+        //             }
+
+        //             if (file_exists($localFilePath)) {
+        //                 unlink($localFilePath);
+        //             }
+        //         } else {
+        //             return response()->json([
+        //                 'error' => true,
+        //                 'message' => 'Only JPEG, PNG, JPG formats are accepted'
+        //             ]);
+        //         }
+        //     }
         
         $user->name = $request->name ?? '';
         $user->email = $request->email ?? '';
@@ -1316,6 +1365,7 @@ class HomeController extends Controller
             'message' => 'Info Data Updated Successfully',
             'user' => $user,
             'profile' => $profile,
+            // 'fileUrl' =>$fileUrl
         ]);
     }
 

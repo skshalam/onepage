@@ -8,7 +8,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import UploadProfilePic from '../components/UploadProfilePic';
 import { convertDateToISO } from '../utility/formating';
 import dayjs from 'dayjs';
-import { label, p } from 'framer-motion/client';
+import FileUploader from '../components/testUploader';
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
@@ -534,7 +534,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
 
             const formData = {
                 ...values,
-                profile_image: userPp,
+                image: userPp,
                 country: cntryId,
                 dob: dob,
                 doa: doa,
@@ -570,8 +570,9 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
                     {/* User Profile Pic */}
                     <Col xs={24}>
                         <div className="text-center">
-                            <Form.Item className='' name="profile_image">
+                            <Form.Item className='' name="image">
                                 <UploadProfilePic imageUrl={setUserPp} file={userPp} />
+                                {/* <FileUploader/> */}
                             </Form.Item>
                         </div>
                     </Col>
