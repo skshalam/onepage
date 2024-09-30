@@ -45,6 +45,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/themecolor', [\App\Http\Controllers\HomeController::class, 'themecolor']);
     Route::post('/redeem_rewards', [\App\Http\Controllers\HomeController::class, 'redeem_rewards']);
     Route::post('/onePageLogout', [\App\Http\Controllers\OtpLoginController::class, 'onePageLogout']);
+    Route::get('/deletaccount', [\App\Http\Controllers\HomeController::class, 'deletaccount']);
 });
 
 

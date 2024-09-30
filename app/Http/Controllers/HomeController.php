@@ -1304,49 +1304,6 @@ class HomeController extends Controller
             }
         }
         // Upload to S3
-
-       
-        // if ($request->hasFile('image')) {
-        //     $image = $request->file('image');
-        //     $allowedExtensions = ['jpeg', 'png', 'jpg'];
-        //     $imageext = strtolower($image->getClientOriginalExtension());
-            
-        //     if (in_array($imageext, $allowedExtensions)) {
-        //         $filename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME) . rand(10000, 99999) . '.' . $imageext;
-        //         $path = public_path('/profile/images');
-        //         $image->move($path, $filename);
-        //         $localFilePath = $path . '/' . $filename;
-        //         \Log::info('Local file path: ' . $localFilePath);
-          
-        //             $uploadStatus = true;
-        //             try {
-        //                 $result = Storage::disk('s3')->put('merchants/businessimage/' . $filename, file_get_contents($localFilePath), 'public');
-        //                 if ($result) {
-        //                     $profile_logo_image = Storage::disk('s3')->url('merchants/businessimage/' . $filename);
-        //                     $user->image = $profile_logo_image;
-        //                     if (!$user->save()) {
-        //                         return response()->json([
-        //                             'error' => true,
-        //                             'message' => 'Failed to save the image URL in the database.'
-        //                         ]);
-        //                     }
-        //                 } else {
-        //                     $uploadStatus = false; 
-        //                 }
-        //             } catch (\Exception $e) {
-        //                 \Log::error('S3 upload error: ' . $e->getMessage());
-        //             }
-
-        //             if (file_exists($localFilePath)) {
-        //                 unlink($localFilePath);
-        //             }
-        //         } else {
-        //             return response()->json([
-        //                 'error' => true,
-        //                 'message' => 'Only JPEG, PNG, JPG formats are accepted'
-        //             ]);
-        //         }
-        //     }
         
         $user->name = $request->name ?? '';
         $user->email = $request->email ?? '';
@@ -2083,6 +2040,21 @@ class HomeController extends Controller
             ], $httpCode);
         }
 
+        
+    }
+    public function deletaccount(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
+        $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+        $delect_acc= Cards::where('user_id', $user_id)->where('merchant_id', $merchant_id)->update(['deactivate_account' => 1]);
+        if($delect_acc)
+        {
+            return response()->json(array(
+                'error'=>false,
+                'message'=>"Account Deleted Successfully",
+            ));
+        }
         
     }
 
