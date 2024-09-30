@@ -67,8 +67,8 @@ function Wallet() {
             const response = await axiosSetup.post('/api/walletbalance', {
                 page_number: page,
                 credit_type: types,
-                start_date: start_date,
-                end_date: end_date
+                start_date: startDate,
+                end_date: endDate
             });
             const { walletbalance, total_pages } = response.data;
             setOpenFilter2(false);

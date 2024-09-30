@@ -250,7 +250,7 @@ function RewardDescDrawer({ open, rewardsCartData, setOpen, dataLoading, setData
 function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
     const [proceed, setProceed] = useState(false);
     const [msg, setMsg] = useState('');
-    console.log(rewardId);
+    const [redeemData, setRedeemData] = useState(null)
     const handleClick = (id) => {
         setProceed(false)
         axiosSetup.post('/api/redeem_rewards', { "reward_id": rewardId })
@@ -259,7 +259,10 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
                     setMsg(res.data.message)
                 }
                 else if (!res.data.error) {
-                    console.log("success");
+                    setMsg(res.data.message)
+                    if (res.data) {
+                        setRedeemData(true)
+                    }
                     setProceed(true)
                 }
                 setTimeout(() => {
@@ -282,14 +285,29 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
                             animate={{ opacity: 1, }}
                             transition={{ duration: 0.3 }}
                         >
-                            <div className="pop-confirm-img">
-                                <img src="https://i.imgur.com/2FOfgVm.png" alt="" />
-                            </div>
-                            <div className="pop-confirm-qn">
-                                Congratulations!
-                            </div>
+                            {
+                                redeemData
+                                    ? <div className="">
+
+                                        <div className="pop-confirm-img">
+                                            <img src="https://i.imgur.com/2FOfgVm.png" alt="" />
+                                        </div>
+                                        <div className="pop-confirm-qn">
+                                            Congratulations!
+                                        </div>
+                                    </div>
+                                    : <div className="">
+
+                                        <div className="pop-confirm-img">
+                                            <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1727696657/OBJECTS_1_sehxw8.svg" alt="" />
+                                        </div>
+                                        <div className="pop-confirm-qn">
+                                            Insuficient Balance !
+                                        </div>
+                                    </div>
+                            }
                             <p className=''>
-                                You have successfully redeemed your reward!
+                                {msg}
                             </p>
                         </motion.div>
                     </div>
