@@ -1239,50 +1239,69 @@ class HomeController extends Controller
             ]);
         }
 
-        $base64Image = $request->input('image'); // Get base64 image from request
 
-        // Split the base64 string to get the file type and the actual base64 data
-        @list($type, $fileData) = explode(';', $base64Image);
-        @list(, $fileData) = explode(',', $fileData);
-    
-        // Decode the base64 data to binary
-        $fileData = base64_decode($fileData);
-    
-        $allowedMimeTypes = ['image/jpeg', 'image/png'];
-        $mimeType = mime_content_type($base64Image);
+        // Image processing
+        if ($request->has('image')) {
+            $imageInput = $request->input('image');
 
-        if (!in_array($mimeType, $allowedMimeTypes)) {
-            return response()->json([
-                'error' => true,
-                'message' => 'Only JPEG, PNG, JPG formats are accepted'
-            ], 400);
-        }
+            // Check if the image is a valid URL
+            if (filter_var($imageInput, FILTER_VALIDATE_URL)) {
+                // If the input is a valid URL, save it directly
+                $user->image = $imageInput;
 
-        // Get the file extension (e.g., jpeg, png) from the MIME type
-        $extension = explode('/', mime_content_type($base64Image))[1];
-    
-        // Create a unique file name
-        $fileName = Str::random(10) . '.' . $extension;
-    
-        try {
-            //code...
-            Storage::disk('s3')->put('merchants/businessimage/' . $fileName, $fileData, 'public');
-    
-            // Get the public URL of the uploaded file
-            $fileUrl = Storage::disk('s3')->url('merchants/businessimage/' . $fileName);
-        
-            $user->image = $fileUrl;
+            } else {
+                // If not a valid URL, assume it's Base64 and process it as Base64-encoded data
+                $base64Image = $imageInput;
+
+                // Split the base64 string to get the file type and the actual base64 data
+                @list($type, $fileData) = explode(';', $base64Image);
+                @list(, $fileData) = explode(',', $fileData);
+
+                // Decode the base64 data to binary
+                $fileData = base64_decode($fileData);
+
+                // Validate that the file type is JPEG, PNG, or JPG
+                $allowedMimeTypes = ['image/jpeg', 'image/png'];
+                $mimeType = mime_content_type($base64Image);
+
+                if (!in_array($mimeType, $allowedMimeTypes)) {
+                    return response()->json([
+                        'error' => true,
+                        'message' => 'Only JPEG, PNG, JPG formats are accepted.',
+                    ], 400);
+                }
+
+                // Get the file extension (e.g., jpeg, png) from the MIME type
+                $extension = explode('/', mime_content_type($base64Image))[1];
+
+                // Create a unique file name
+                $fileName = Str::random(10) . '.' . $extension;
+
+                try {
+                    // Upload to S3
+                    Storage::disk('s3')->put('merchants/businessimage/' . $fileName, $fileData, 'public');
+
+                    // Get the public URL of the uploaded file
+                    $fileUrl = Storage::disk('s3')->url('merchants/businessimage/' . $fileName);
+
+                    // Save the file URL to the user
+                    $user->image = $fileUrl;
+
+                } catch (\Exception $e) {
+                    return response()->json([
+                        'error' => true,
+                        'message' => 'Failed to upload the image or save the URL: ' . $e->getMessage(),
+                    ], 500);
+                }
+            }
+
+            // Save the user with the image (either URL or base64-converted URL)
             if (!$user->save()) {
                 return response()->json([
                     'error' => true,
-                    'message' => 'Failed to save the image URL in the database.'
-                ]);
+                    'message' => 'Failed to save the image URL in the database.',
+                ], 500);
             }
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => true,
-                'message' => 'Failed to save the image URL in the database.'
-            ], 500);
         }
         // Upload to S3
 

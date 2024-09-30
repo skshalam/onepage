@@ -1,9 +1,10 @@
 import { Checkbox, Col, DatePicker, Drawer, Form, Row, Tabs, Spin } from 'antd';
 import { form } from 'framer-motion/client';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import axiosSetup from '@/axiosSetup';
+import ThemeContext from '../Providers/Contexts/ThemeContext';
 
 function Wallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
@@ -12,6 +13,7 @@ function Wallet() {
     const [currentPage, setCurrentPage] = useState(1); // Track the current page
     const [totalPages, setTotalPages] = useState(0); // Track total pages
     const [isLoading, setIsLoading] = useState(false); // To prevent multiple API calls at the same time
+    const [scrollLoad, setScrollLoad] = useState(false);
     const [selectedTypes, setSelectedTypes] = useState("");
     const [pendingSelectedTypes, setPendingSelectedTypes] = useState("");
     const [currentPoints, setCurrentPoints] = useState(0);
@@ -20,6 +22,7 @@ function Wallet() {
     const [pendingStartDate, setPendingStartDate] = useState(""); // Temporary state for start date
     const [pendingEndDate, setPendingEndDate] = useState(""); // Temporary state for end date
     const [form] = Form.useForm();
+    const { useThemeStyles } = useContext(ThemeContext)
     const formatDate = (dateStr) => {
         if (!dateStr) return 'No Date Available';
 
@@ -54,7 +57,12 @@ function Wallet() {
     }, [currentPage, selectedTypes, startDate, endDate]);
 
     const loadCreditWalletData = async (page, types = "", start_date = "", end_date = "") => {
-        setIsLoading(true);
+        if (page === 1) {
+            setIsLoading(true);
+        }
+        if (page > 1) {
+            setScrollLoad(true)
+        }
         try {
             const response = await axiosSetup.post('/api/walletbalance', {
                 page_number: page,
@@ -75,6 +83,7 @@ function Wallet() {
             console.error('API Error:', error);
         }
         setIsLoading(false);
+        setScrollLoad(false)
     };
 
     const clearFilters = () => {
@@ -93,7 +102,7 @@ function Wallet() {
                 case 'expired': return 'Expired';
                 default: return type;
             }
-        }).join(","); 
+        }).join(",");
         setPendingSelectedTypes(typeString); // Temporarily store the selected types
     };
 
@@ -148,64 +157,96 @@ function Wallet() {
                     </div>
                     {
                         isLoading
-                        ?
-                        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
-                            {[...new Array(5)].map((i, iIndex) => (<div key={iIndex} className="membership position-relative p-1">
-                                <div className="membership-inner">
-                                    <div className="membership-info h-100">
-                                        <div className="icon">
-                                            <Skeleton className='' style={{ height: "85px", width: "110px" }} />
-                                        </div>
-                                        <div className="membership-info-details d-flex flex-column justify-content-around">
-                                            <div className="membership-name">
-                                                <Skeleton className='' style={{ height: "15px", width: "150px" }} />
+                            ?
+                            <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+                                {[...new Array(5)].map((i, iIndex) => (<div key={iIndex} className="membership position-relative p-1">
+                                    <div className="membership-inner">
+                                        <div className="membership-info h-100">
+                                            <div className="icon">
+                                                <Skeleton className='' style={{ height: "85px", width: "110px" }} />
                                             </div>
-                                            <div className="membership-validity">
-                                                <Skeleton className='ms-2' style={{ height: "15px", width: "90px" }} />
-                                            </div>
-                                            <div className="membership-price">
-                                                <Skeleton className='' style={{ height: "15px", width: "60px" }} />
-                                            </div>
-                                            <div className="membership-action">
-                                                <Skeleton className='' style={{ height: "25px", width: "60px" }} />
+                                            <div className="membership-info-details d-flex flex-column justify-content-around">
+                                                <div className="membership-name">
+                                                    <Skeleton className='' style={{ height: "15px", width: "150px" }} />
+                                                </div>
+                                                <div className="membership-validity">
+                                                    <Skeleton className='ms-2' style={{ height: "15px", width: "90px" }} />
+                                                </div>
+                                                <div className="membership-price">
+                                                    <Skeleton className='' style={{ height: "15px", width: "60px" }} />
+                                                </div>
+                                                <div className="membership-action">
+                                                    <Skeleton className='' style={{ height: "25px", width: "60px" }} />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>))}
-                        </SkeletonTheme>
+                                </div>))}
+                            </SkeletonTheme>
                             :
                             (
-                            <div className="wallet-table-body">
-                                {creditwalletData?.length > 0 ? (
-                                    creditwalletData.map((crwallet, index) => (
-                                        <div key={crwallet + index} className="wallet-detail-container p-2 px-3">
-                                            <div className="wallet-detail-container-top d-flex justify-content-between align-items-center">
-                                                {/* <span>{index}</span> */}
-                                                <div className="wallet-name">
-                                                    <p className='fw-bold mb-0'>
-                                                        {crwallet.Wallet_Name}
-                                                    </p>
+                                <div className="wallet-table-body">
+                                    {creditwalletData?.length > 0 ? (
+                                        creditwalletData.map((crwallet, index) => (
+                                            <div key={crwallet + index} className="wallet-detail-container p-2 px-3">
+                                                <div className="wallet-detail-container-top d-flex justify-content-between align-items-center">
+                                                    {/* <span>{index}</span> */}
+                                                    <div className="wallet-name">
+                                                        <p className='fw-bold mb-0'>
+                                                            {crwallet.Wallet_Name}
+                                                        </p>
+                                                    </div>
+                                                    <div className="wallet-expire">
+                                                        <p className='mb-0'>
+                                                            Valid till <span>{crwallet.Valid_Till !== "0000-00-00" ? formatDate(crwallet.Valid_Till) : '-'}
+                                                                <b className='credit-expired'>{crwallet.Type === "Expired" ? " | Expired" : ""}</b></span>
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div className="wallet-expire">
-                                                    <p className='mb-0'>
-                                                        Valid till <span>{crwallet.Valid_Till !== "0000-00-00" ? formatDate(crwallet.Valid_Till) : '-'}
-                                                        <b className='credit-expired'>{crwallet.Type === "Expired" ? " | Expired" : ""}</b></span>
-                                                    </p>
+                                                <div className="wallet-detail-container-middle d-flex justify-content-end align-items-center">
+                                                    <div className="wallet-transaction-value d-flex gap-1">
+                                                        <p className='mb-0'>{crwallet.Wallet_Type === "Earned" ? "+" : "-"}{crwallet.Wallet_Balance}</p><i className='bi bi-chevron-down' />
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="wallet-detail-container-middle d-flex justify-content-end align-items-center">
-                                                <div className="wallet-transaction-value d-flex gap-1">
-                                                    <p className='mb-0'>{crwallet.Wallet_Type === "Earned" ? "+" : "-"}{crwallet.Wallet_Balance}</p><i className='bi bi-chevron-down' />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p>No Credit Wallet Available</p>
-                                )}
-                            </div>
+                                        ))
+                                    ) : (
+                                        <p>No Credit Wallet Available</p>
+                                    )}
+                                </div>
                             )
+                    }
+                    {
+                        scrollLoad && <div className='text-center my-3'>
+                            <div className='d-flex justify-content-center'>
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 100 100"
+                                    preserveAspectRatio="xMidYMid"
+                                    width="70"
+                                    height="70"
+                                    style={{ shapeRendering: "auto", display: "block", background: "transparent" }}>
+                                    <g>
+                                        <circle strokeDasharray="117.80972450961724 41.269908169872416"
+                                            r="25"
+                                            strokeWidth="3"
+                                            stroke={useThemeStyles.primary_color}
+                                            fill="none"
+                                            cy="50"
+                                            cx="50">
+                                            <animateTransform keyTimes="0;1"
+                                                values="0 50 50;360 50 50"
+                                                dur="1.1904761904761905s"
+                                                repeatCount="indefinite"
+                                                type="rotate"
+                                                attributeName="transform" />
+                                        </circle>
+                                        <g></g>
+                                    </g>
+                                </svg>
+
+                            </div>
+                        </div>
                     }
                 </div>
                 <Drawer

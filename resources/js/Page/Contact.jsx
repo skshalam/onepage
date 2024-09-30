@@ -51,6 +51,7 @@ function Contact() {
                             Modal.success({
                                 content: 'Message sent successfully!',
                             });
+                            // setOpen(true)
                             form.resetFields(); // Clear form after successful submission
                         })
                         .catch(error => {
