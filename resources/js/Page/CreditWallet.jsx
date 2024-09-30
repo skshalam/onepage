@@ -59,7 +59,6 @@ function CreditWallet() {
     }, [currentPage, selectedTypes, selectedSources, startDate, endDate]);
 
     const loadCreditWalletData = async (page, types = "", sources = "", start_date = "", end_date = "") => {
-        setIsLoading(true);
         if (page === 1) {
             setIsLoading(true);
         }
