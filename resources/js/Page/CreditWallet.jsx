@@ -58,7 +58,7 @@ function CreditWallet() {
         }
     }, [currentPage, selectedTypes, selectedSources, startDate, endDate]);
 
-    const loadCreditWalletData = async (page, types = "") => {
+    const loadCreditWalletData = async (page, types = "", sources = "", start_date = "", end_date = "") => {
         if (page === 1) {
             setIsLoading(true);
         }
@@ -69,9 +69,9 @@ function CreditWallet() {
             const response = await axiosSetup.post('/api/creditbalance', {
                 page_number: page,
                 credit_type: types,
-                credit_name: selectedSources,
-                start_date: startDate,
-                end_date: endDate
+                credit_name: sources,
+                start_date: start_date,
+                end_date: end_date
             });
             const { creditbalance, total_pages } = response.data;
             setOpenFilter2(false);
@@ -274,6 +274,7 @@ function CreditWallet() {
                     onClose={() => setOpenFilter1(false)}
                     getContainer={false}
                     closable={false}
+                    styles={{body:{padding:"0"}}}
                 >
                     <div className="border-bottom py-2 px-4">
                         <span className='fw-semibold'>Filter By Date</span>
@@ -324,6 +325,7 @@ function CreditWallet() {
                     onClose={() => setOpenFilter2(false)}
                     getContainer={false}
                     closable={false}
+                    styles={{body:{padding:"0"}}}
                 >
                     <Tabs defaultActiveKey="1" rootClassName='filter-by-type-nav' items={[
                         {
@@ -382,7 +384,7 @@ const FilterBySource = ({ handleSourceChange }) => {
     return (
         <Form layout='vertical'>
             <Form.Item name='checkbox-group'>
-                <Checkbox.Group options={options} onChange={handleSourceChange} />
+                <Checkbox.Group className='filter-by-type-checkbox' options={options} onChange={handleSourceChange} />
             </Form.Item>
         </Form>
     );

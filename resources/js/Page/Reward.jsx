@@ -255,12 +255,14 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
         setProceed(false)
         axiosSetup.post('/api/redeem_rewards', { "reward_id": rewardId })
             .then(res => {
+                console.log(res.data);
+
                 if (res.data.error) {
                     setMsg(res.data.message)
                 }
                 else if (!res.data.error) {
                     setMsg(res.data.message)
-                    if (res.data) {
+                    if (res?.data) {
                         setRedeemData(true)
                     }
                     setProceed(true)
@@ -269,6 +271,7 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
                     setOpenConfirm(false)
                     setProceed(false)
                 }, 2000);
+                setRedeemData(false)
             })
             .catch(err => {
                 console.log(err);
@@ -295,6 +298,9 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
                                         <div className="pop-confirm-qn">
                                             Congratulations!
                                         </div>
+                                        <p className=''>
+                                            {msg}
+                                        </p>
                                     </div>
                                     : <div className="">
 
@@ -304,11 +310,11 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
                                         <div className="pop-confirm-qn">
                                             Insuficient Balance !
                                         </div>
+                                        <p className=''>
+                                            {msg}
+                                        </p>
                                     </div>
                             }
-                            <p className=''>
-                                {msg}
-                            </p>
                         </motion.div>
                     </div>
                     : <div className="pop-confirm-container">

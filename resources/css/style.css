@@ -1614,6 +1614,9 @@ body {
 }
 
 .filter-by-type-checkbox {
+    flex-direction: column;
+    padding-inline: 20px;
+    padding-top: 10px;
     gap: 7px;
     .ant-checkbox-checked{
         .ant-checkbox-inner{
