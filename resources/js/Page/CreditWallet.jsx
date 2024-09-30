@@ -274,6 +274,7 @@ function CreditWallet() {
                     onClose={() => setOpenFilter1(false)}
                     getContainer={false}
                     closable={false}
+                    styles={{body:{padding:"0"}}}
                 >
                     <div className="border-bottom py-2 px-4">
                         <span className='fw-semibold'>Filter By Date</span>
@@ -324,6 +325,7 @@ function CreditWallet() {
                     onClose={() => setOpenFilter2(false)}
                     getContainer={false}
                     closable={false}
+                    styles={{body:{padding:"0"}}}
                 >
                     <Tabs defaultActiveKey="1" rootClassName='filter-by-type-nav' items={[
                         {
@@ -382,7 +384,7 @@ const FilterBySource = ({ handleSourceChange }) => {
     return (
         <Form layout='vertical'>
             <Form.Item name='checkbox-group'>
-                <Checkbox.Group options={options} onChange={handleSourceChange} />
+                <Checkbox.Group className='cust-checkbox' options={options} onChange={handleSourceChange} />
             </Form.Item>
         </Form>
     );

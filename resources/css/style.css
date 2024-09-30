@@ -1777,3 +1777,6 @@ body {
         }
     }
   }
+  .cust-checkbox{
+    flex-direction: column;
+  }

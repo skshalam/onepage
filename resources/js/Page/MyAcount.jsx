@@ -136,6 +136,21 @@ function MyAcount() {
         }
     };
 
+    const handleDelete =()=>{
+        // return console.log('thus');
+        axiosSetup.get('/api/deletaccount')
+        .then(res=>{
+            setDeleteModal(false); // Close modal after success
+            localStorage.removeItem('access_token');
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    }
+
     return (
         <div className='body-container position-relative'>
             <div className="position-sticky top-0 z-1 shadow-sm">
@@ -349,6 +364,7 @@ function MyAcount() {
                 getContainer={targetDiv.current}
                 width={300}
                 rootClassName='cust-css-ant-modal'
+                onOk={()=>handleDelete()}
                 styles={{
                     footer: {
                         display: "grid",
