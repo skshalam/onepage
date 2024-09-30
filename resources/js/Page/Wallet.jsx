@@ -15,6 +15,10 @@ function Wallet() {
     const [selectedTypes, setSelectedTypes] = useState("");
     const [pendingSelectedTypes, setPendingSelectedTypes] = useState("");
     const [currentPoints, setCurrentPoints] = useState(0);
+    const [startDate, setStartDate] = useState(null); // To store start date
+    const [endDate, setEndDate] = useState(null);
+    const [pendingStartDate, setPendingStartDate] = useState(""); // Temporary state for start date
+    const [pendingEndDate, setPendingEndDate] = useState(""); // Temporary state for end date
     const [form] = Form.useForm();
     const formatDate = (dateStr) => {
         if (!dateStr) return 'No Date Available';
@@ -35,19 +39,28 @@ function Wallet() {
 
         return `${day}${daySuffix(day)} ${month}, ${year}`;
     };
+    const handleStartDateChange = (date, dateString) => {
+        setStartDate(dateString); // Store the selected start date
+    };
+
+    const handleEndDateChange = (date, dateString) => {
+        setEndDate(dateString); // Store the selected end date
+    };
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token) {
-            loadCreditWalletData(currentPage, selectedTypes); // Load data on page or filter change
+            loadCreditWalletData(currentPage, selectedTypes, startDate, endDate); // Load data on page or filter change
         }
-    }, [currentPage, selectedTypes]);
+    }, [currentPage, selectedTypes, startDate, endDate]);
 
-    const loadCreditWalletData = async (page, types = "") => {
+    const loadCreditWalletData = async (page, types = "", start_date = "", end_date = "") => {
         setIsLoading(true);
         try {
             const response = await axiosSetup.post('/api/walletbalance', {
                 page_number: page,
-                credit_type: types
+                credit_type: types,
+                start_date: start_date,
+                end_date: end_date
             });
             const { walletbalance, total_pages } = response.data;
             setOpenFilter2(false);
@@ -87,7 +100,11 @@ function Wallet() {
     const applyFilters = () => {
         setSelectedTypes(pendingSelectedTypes); // Set the actual selected types when 'Apply' is clicked
         setCurrentPage(1); // Reset to first page
-        loadCreditWalletData(1, pendingSelectedTypes); // Load data based on selected filters
+        loadCreditWalletData(1, pendingSelectedTypes, startDate, endDate); // Load data based on selected filters
+    };
+    const applyDateFilters = () => {
+        loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, pendingStartDate, pendingEndDate);
+        setOpenFilter1(false); // Close the drawer after applying
     };
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight && !isLoading) {
@@ -100,7 +117,7 @@ function Wallet() {
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [currentPage, selectedTypes, isLoading]);
+    }, [currentPage, selectedTypes, startDate, endDate, isLoading]);
     return (
         <div className='onepage-main-body'>
             <div className='onepage-set-body creditpage-body'>
@@ -197,44 +214,30 @@ function Wallet() {
                     onClose={() => setOpenFilter1(false)}
                     getContainer={false}
                     closable={false}
-                    styles={{
-                        body: {
-                            padding: 0,
-                        }
-                    }}
                 >
                     <div className="border-bottom py-2 px-4">
                         <span className='fw-semibold'>Filter By Date</span>
                     </div>
                     <div className="p-3 d-flex flex-column gap-3">
-                        <Row className=''>
-                            <Col span={7}>
-                                <div className="">
-                                    To:
-                                </div>
-                            </Col>
+                        <Row>
+                            <Col span={7}>From:</Col>
                             <Col span={17}>
-                                <div className="">
-                                    <DatePicker className='filter-date-input' />
-                                </div>
+                                <DatePicker className='filter-date-input' onChange={handleStartDateChange} />
                             </Col>
                         </Row>
-                        <Row className=''>
-                            <Col span={7}>
-                                <div className="">
-                                    From:
-                                </div>
-                            </Col>
+                        <Row>
+                            <Col span={7}>To:</Col>
                             <Col span={17}>
-                                <div className="">
-                                    <DatePicker className='filter-date-input' />
-                                </div>
+                                <DatePicker className='filter-date-input' onChange={handleEndDateChange} />
                             </Col>
                         </Row>
                     </div>
                     <div className="filter-actions">
-                        <button className='border-0 p-2'>Clear</button>
-                        <button className='border-0 p-2'>Apply</button>
+                        <button className='border-0 p-2' onClick={() => {
+                            setStartDate(null);
+                            setEndDate(null);
+                        }}>Clear</button>
+                        <button className='border-0 p-2' onClick={applyDateFilters}>Apply</button>
                     </div>
                 </Drawer>
                 <Drawer
