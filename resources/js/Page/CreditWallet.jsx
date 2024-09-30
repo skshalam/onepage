@@ -69,9 +69,9 @@ function CreditWallet() {
             const response = await axiosSetup.post('/api/creditbalance', {
                 page_number: page,
                 credit_type: types,
-                credit_name: sources,
-                start_date: start_date,
-                end_date: end_date
+                credit_name: selectedSources,
+                start_date: startDate,
+                end_date: endDate
             });
             const { creditbalance, total_pages } = response.data;
             setOpenFilter2(false);
@@ -122,9 +122,9 @@ function CreditWallet() {
         loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, startDate, endDate); // Load data based on selected filters
     };
     const applyDateFilters = () => {
-        setCurrentPage(1); 
-        loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, pendingStartDate, pendingEndDate); 
-        setOpenFilter1(false); 
+        setCurrentPage(1);
+        loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, pendingStartDate, pendingEndDate);
+        setOpenFilter1(false);
     };
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight && !isLoading) {
@@ -294,9 +294,9 @@ function CreditWallet() {
                     </div>
                     <div className="filter-actions">
                         <button className='border-0 p-2' onClick={() => {
-                        setPendingStartDate(null);
-                        setPendingEndDate(null);
-                    }}>Clear</button>
+                            setPendingStartDate(null);
+                            setPendingEndDate(null);
+                        }}>Clear</button>
                         <button className='border-0 p-2' onClick={applyDateFilters}>Apply</button>
                     </div>
                 </Drawer>
@@ -334,7 +334,7 @@ function CreditWallet() {
                         {
                             key: '2',
                             label: 'Source',
-                            children: <FilterBySource  handleSourceChange={handleSourceChange} />,
+                            children: <FilterBySource handleSourceChange={handleSourceChange} />,
                         }
                     ]} />
                     <div className="filter-actions">
