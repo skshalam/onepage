@@ -384,7 +384,7 @@ const FilterBySource = ({ handleSourceChange }) => {
     return (
         <Form layout='vertical'>
             <Form.Item name='checkbox-group'>
-                <Checkbox.Group className='cust-checkbox' options={options} onChange={handleSourceChange} />
+                <Checkbox.Group className='filter-by-type-checkbox' options={options} onChange={handleSourceChange} />
             </Form.Item>
         </Form>
     );

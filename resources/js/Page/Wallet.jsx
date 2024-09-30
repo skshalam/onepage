@@ -256,6 +256,7 @@ function Wallet() {
                     onClose={() => setOpenFilter1(false)}
                     getContainer={false}
                     closable={false}
+                    styles={{body:{padding:"0"}}}
                 >
                     <div className="border-bottom py-2 px-4">
                         <span className='fw-semibold'>Filter By Date</span>
