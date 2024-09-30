@@ -24,8 +24,19 @@ function Profile() {
             console.log(error);
         });
 }, []);
-console.log(referPermission);
-
+const handleLogout = () => {
+  axiosSetup.post('/api/onePageLogout')
+    .then(response => {
+      // Handle logout success, navigate to login or home page
+      console.log('Logout successful');
+      setDeleteModal(false); // Close modal after success
+      localStorage.removeItem('access_token');
+      window.location.reload();
+    })
+    .catch(error => {
+      console.log('Logout failed:', error);
+    });
+};
   return (
     <div className='body-container position-relative'>
       <div className="position-absolute h-100 w-100 top-0 bg-layer-main z-1">
@@ -43,7 +54,7 @@ console.log(referPermission);
         </div>
       </div>
       <div className="my-5 text-center z-2">
-        <Avatar className='z-2 bg-light' size={80} icon={<i class="bi bi-person-fill text-dark" />} />
+        <Avatar className='z-2 bg-light' size={80} icon={<i className="bi bi-person-fill text-dark" />} />
       </div>
       <div className="mx-4 p-4 profile-navigation-container z-3 position-relative rounded-4">
         <Link to={"/Myaccount"} className='cust_text_primary text-decoration-none'>
@@ -168,6 +179,7 @@ console.log(referPermission);
       {/* Modal */}
       <Modal
         open={deleteModal}
+        onOk={handleLogout}
         onCancel={() => setDeleteModal(false)}
         closable={false}
         centered

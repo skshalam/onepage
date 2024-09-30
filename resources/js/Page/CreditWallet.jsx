@@ -15,7 +15,13 @@ function CreditWallet() {
     const [scrollLoad, setScrollLoad] = useState(false);
     const [selectedTypes, setSelectedTypes] = useState("");
     const [pendingSelectedTypes, setPendingSelectedTypes] = useState("");
+    const [selectedSources, setSelectedSources] = useState("");
+    const [pendingSelectedSources, setPendingSelectedSources] = useState("");
     const [currentPoints, setCurrentPoints] = useState(0);
+    const [startDate, setStartDate] = useState(""); // To store start date
+    const [endDate, setEndDate] = useState(""); // To store end date
+    const [pendingStartDate, setPendingStartDate] = useState(""); // Temporary state for start date
+    const [pendingEndDate, setPendingEndDate] = useState(""); // Temporary state for end date
     const [form] = Form.useForm();
     const { useThemeStyles } = useContext(ThemeContext)
 
@@ -38,12 +44,19 @@ function CreditWallet() {
 
         return `${day}${daySuffix(day)} ${month}, ${year}`;
     };
+    const handleStartDateChange = (date, dateString) => {
+        setPendingStartDate(dateString); // Store the pending start date
+    };
+
+    const handleEndDateChange = (date, dateString) => {
+        setPendingEndDate(dateString); // Store the pending end date
+    };
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token) {
-            loadCreditWalletData(currentPage, selectedTypes); // Load data on page or filter change
+            loadCreditWalletData(currentPage, selectedTypes, selectedSources, startDate, endDate); // Load data on page or filter change
         }
-    }, [currentPage, selectedTypes]);
+    }, [currentPage, selectedTypes, selectedSources, startDate, endDate]);
 
     const loadCreditWalletData = async (page, types = "") => {
         if (page === 1) {
@@ -55,7 +68,10 @@ function CreditWallet() {
         try {
             const response = await axiosSetup.post('/api/creditbalance', {
                 page_number: page,
-                credit_type: types
+                credit_type: types,
+                credit_name: sources,
+                start_date: start_date,
+                end_date: end_date
             });
             const { creditbalance, total_pages } = response.data;
             setOpenFilter2(false);
@@ -74,11 +90,13 @@ function CreditWallet() {
     };
 
     const clearFilters = () => {
-        form.resetFields(); // Reset all checkbox fields in the form
-        setPendingSelectedTypes(""); // Clear the pending selected types
-        setSelectedTypes(""); // Clear the actual selected types
-        setOpenFilter2(false); // Close the drawer popup
-        setCurrentPage(1); // Reset pagination to the first page
+        form.resetFields();
+        setPendingSelectedTypes("");
+        setPendingSelectedSources("");
+        setSelectedTypes("");
+        setSelectedSources("");
+        setOpenFilter2(false);
+        setCurrentPage(1);
     };
 
     const handleTypeChange = (checkedValues) => {
@@ -93,10 +111,20 @@ function CreditWallet() {
         setPendingSelectedTypes(typeString); // Temporarily store the selected types
     };
 
+    const handleSourceChange = (checkedValues) => {
+        const sourceString = checkedValues.join(",");
+        setPendingSelectedSources(sourceString);
+    };
+
     const applyFilters = () => {
         // setSelectedTypes(pendingSelectedTypes); // Set the actual selected types when 'Apply' is clicked
         setCurrentPage(1); // Reset to first page
-        loadCreditWalletData(1, pendingSelectedTypes); // Load data based on selected filters
+        loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, startDate, endDate); // Load data based on selected filters
+    };
+    const applyDateFilters = () => {
+        setCurrentPage(1); 
+        loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, pendingStartDate, pendingEndDate); 
+        setOpenFilter1(false); 
     };
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight && !isLoading) {
@@ -109,7 +137,7 @@ function CreditWallet() {
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [currentPage, selectedTypes, isLoading]);
+    }, [currentPage, selectedTypes, selectedSources, startDate, endDate, isLoading]);
     return (
         <div className='onepage-main-body'>
             <div className='onepage-set-body creditpage-body'>
@@ -246,44 +274,30 @@ function CreditWallet() {
                     onClose={() => setOpenFilter1(false)}
                     getContainer={false}
                     closable={false}
-                    styles={{
-                        body: {
-                            padding: 0,
-                        }
-                    }}
                 >
                     <div className="border-bottom py-2 px-4">
                         <span className='fw-semibold'>Filter By Date</span>
                     </div>
                     <div className="p-3 d-flex flex-column gap-3">
-                        <Row className=''>
-                            <Col span={7}>
-                                <div className="">
-                                    To:
-                                </div>
-                            </Col>
+                        <Row>
+                            <Col span={7}>From:</Col>
                             <Col span={17}>
-                                <div className="">
-                                    <DatePicker className='filter-date-input' />
-                                </div>
+                                <DatePicker className='filter-date-input' onChange={handleStartDateChange} />
                             </Col>
                         </Row>
-                        <Row className=''>
-                            <Col span={7}>
-                                <div className="">
-                                    From:
-                                </div>
-                            </Col>
+                        <Row>
+                            <Col span={7}>To:</Col>
                             <Col span={17}>
-                                <div className="">
-                                    <DatePicker className='filter-date-input' />
-                                </div>
+                                <DatePicker className='filter-date-input' onChange={handleEndDateChange} />
                             </Col>
                         </Row>
                     </div>
                     <div className="filter-actions">
-                        <button className='border-0 p-2'>Clear</button>
-                        <button className='border-0 p-2'>Apply</button>
+                        <button className='border-0 p-2' onClick={() => {
+                        setPendingStartDate(null);
+                        setPendingEndDate(null);
+                    }}>Clear</button>
+                        <button className='border-0 p-2' onClick={applyDateFilters}>Apply</button>
                     </div>
                 </Drawer>
                 {/* <Drawer
@@ -320,7 +334,7 @@ function CreditWallet() {
                         {
                             key: '2',
                             label: 'Source',
-                            children: <FilterBySource />,
+                            children: <FilterBySource  handleSourceChange={handleSourceChange} />,
                         }
                     ]} />
                     <div className="filter-actions">
@@ -358,37 +372,18 @@ const FilterByType = ({ form, handleTypeChange }) => {
         </Form>
     );
 };
-const FilterBySource = () => {
-    const [form] = Form.useForm();
+const FilterBySource = ({ handleSourceChange }) => {
     const options = [
-        {
-            label: 'Loyalty',
-            value: 'loyalty',
-        },
-        {
-            label: 'Bonus',
-            value: 'bonus',
-        },
-        {
-            label: 'e-wallet',
-            value: 'eWallet',
-        },
+        { label: 'Loyalty', value: '"Loyalty Credits"' },
+        { label: 'Bonus', value: '"Bonus Credits"' },
+        { label: 'e-wallet', value: '"eWallet Credits"' },
+        { label: 'Feedback Credits', value: '"Feedback Credits"' },
     ];
     return (
-        <Form
-            form={form}
-            layout='vertical'
-            className=''
-        >
-            <Form.Item name={'earned'} className='my-3'>
-                <Row gutter={[0, 10]} justify={'center'}>
-                    <Col span={15} className=''>
-                        <div className="">
-                            <Checkbox.Group options={options} rootClassName='filter-by-type-checkbox' />
-                        </div>
-                    </Col>
-                </Row>
+        <Form layout='vertical'>
+            <Form.Item name='checkbox-group'>
+                <Checkbox.Group options={options} onChange={handleSourceChange} />
             </Form.Item>
         </Form>
-    )
-}
+    );
+};
