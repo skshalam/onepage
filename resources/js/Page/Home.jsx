@@ -7,17 +7,17 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css'
-import { Input } from 'antd';
+import { Input, Modal } from 'antd';
 import { ThemeProvider } from '../Providers/ContextProviders/ThemeProvider';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import { maskPhoneNumber } from '../utility/formating';
 import { p } from 'framer-motion/client';
 const Home = () => {
     const { merchant_base } = useParams();
-    const [timer,setTimer] = useState(15);
+    const [timer, setTimer] = useState(15);
     const [data, setData] = useState([]);
     const [cCode, setcCode] = useState('in');
-    const [dialCode,setDialCode] = useState('')
+    const [dialCode, setDialCode] = useState('')
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [apiResponse, setApiResponse] = useState(null);
@@ -28,7 +28,10 @@ const Home = () => {
     const [bannerImages, setBannerImages] = useState([]);
     const [merchantDetails, setMerchantDetails] = useState({});
     const navigate = useNavigate();
-    const {useThemeStyles,setUseThemeStyles} = useContext(ThemeContext)
+    const { useThemeStyles, setUseThemeStyles } = useContext(ThemeContext);
+    const [proceed, setProceed] = useState(false);
+    const [open, setOpen] = useState(false);
+    const bodyRef = useRef();
 
     useEffect(() => {
         console.log('Merchant Base:', merchant_base);
@@ -48,7 +51,7 @@ const Home = () => {
             });
     }, [merchant_base]);
 
-    const otpRefresh = ()=>{
+    const otpRefresh = () => {
         let tValue = 15;
         let countdown = setInterval(function () {
             tValue--;
@@ -80,10 +83,18 @@ const Home = () => {
                 merchantid,
             });
             setApiResponse(response.data);
-            console.log('API Response:', response.data);
-            if (response) {
+            if (response.data?.error) {
+                setProceed(false)
+                setOpen(true)
+            }
+            if (!response.data?.error) {
+                setProceed(true)
                 otpRefresh()
             }
+            console.log('API Response:', response.data);
+            // if (response) {
+            //     otpRefresh()
+            // }
         } catch (error) {
             console.error('Error making API call:', error);
         }
@@ -141,7 +152,7 @@ const Home = () => {
     };
     return (
         <ThemeProvider >
-            <div className='onepage-main-body'>
+            <div ref={bodyRef} className='onepage-main-body'>
                 <div className='onepage-set-body'>
                     <div className='onepage-set-body'>
                         <div className='banner-part-main'>
@@ -169,58 +180,60 @@ const Home = () => {
                                         <h4>Log In</h4>
                                     </div>
                                 </div>
-                                {
-                                    apiResponse === null ?
-                                        <div className='login-part-otp'>
-                                            <p>Please enter your mobile number</p>
-                                            <div className='login-part-input'>
-                                                <PhoneInput
-                                                    country={cCode}
-                                                    onChange={handlePhoneChange}
-                                                    value={mobile}
-                                                />
-                                                <button
-                                                    onClick={handleButtonClick}
-                                                >
-                                                    Get OTP
-                                                </button>
-                                            </div>
-                                            <h5>[You will receive an OTP]</h5>
+                                {!proceed &&
+                                    <div className='login-part-otp'>
+                                        <p>Please enter your mobile number</p>
+                                        <div className='login-part-input'>
+                                            <PhoneInput
+                                                country={cCode}
+                                                onChange={handlePhoneChange}
+                                                value={mobile}
+                                            />
+                                            <button
+                                                onClick={handleButtonClick}
+                                            >
+                                                Get OTP
+                                            </button>
                                         </div>
-                                        : <div className='login-part-otp'>
-                                            <p>You will receive an OTP on
-                                                <span className='me-1'>+{dialCode}</span>
-                                                <span>
-                                                    {maskPhoneNumber(mobile.slice(-10))}
-                                                </span>
-                                                <svg
-                                                    onClick={() => setApiResponse(null)}
-                                                    className='ms-1'
-                                                    style={{ cursor: "pointer" }}
-                                                    width="15" height="15" viewBox="0 0 20 20" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M3.60629 15.5597H7.50655C7.62761 15.5604 7.74762 15.5372 7.85969 15.4914C7.97177 15.4457 8.07371 15.3782 8.15966 15.2929L14.5252 8.91823L17.1376 6.36099C17.2238 6.27548 17.2923 6.17374 17.339 6.06164C17.3857 5.94955 17.4097 5.82932 17.4097 5.70788C17.4097 5.58645 17.3857 5.46622 17.339 5.35412C17.2923 5.24203 17.2238 5.14029 17.1376 5.05477L13.2374 1.10852C13.1518 1.0223 13.0501 0.953871 12.938 0.90717C12.8259 0.86047 12.7057 0.836426 12.5842 0.836426C12.4628 0.836426 12.3426 0.86047 12.2305 0.90717C12.1184 0.953871 12.0166 1.0223 11.9311 1.10852L9.3371 3.71176L2.95319 10.0865C2.86793 10.1724 2.80048 10.2744 2.7547 10.3864C2.70893 10.4985 2.68572 10.6185 2.68642 10.7396V14.6398C2.68642 14.8838 2.78334 15.1178 2.95585 15.2903C3.12836 15.4628 3.36233 15.5597 3.60629 15.5597ZM12.5842 3.05865L15.1875 5.66189L13.8813 6.96811L11.278 4.36487L12.5842 3.05865ZM4.52617 11.1167L9.98101 5.66189L12.5842 8.26513L7.1294 13.72H4.52617V11.1167ZM18.3242 17.3995H1.76655C1.52259 17.3995 1.28861 17.4964 1.1161 17.6689C0.943594 17.8414 0.84668 18.0754 0.84668 18.3193C0.84668 18.5633 0.943594 18.7973 1.1161 18.9698C1.28861 19.1423 1.52259 19.2392 1.76655 19.2392H18.3242C18.5682 19.2392 18.8022 19.1423 18.9747 18.9698C19.1472 18.7973 19.2441 18.5633 19.2441 18.3193C19.2441 18.0754 19.1472 17.8414 18.9747 17.6689C18.8022 17.4964 18.5682 17.3995 18.3242 17.3995Z" fill={useThemeStyles.primary_color} />
-                                                </svg>
-                                            </p>
-                                            <div className='login-part-input'>
-                                                <div className="otp-fields">
-                                                    <Input.OTP onChange={handlePhoneChange_otp} />
-                                                </div>
-                                                <button onClick={handleButtonClick_verify}>Verify OTP</button>
+                                        <h5>[You will receive an OTP]</h5>
+                                    </div>
+                                }
+                                {proceed &&
+                                    <div className='login-part-otp'>
+                                        <p>You will receive an OTP on
+                                            <span className='me-1'>+{dialCode}</span>
+                                            <span>
+                                                {maskPhoneNumber(mobile.slice(-10))}
+                                            </span>
+                                            <svg
+                                                onClick={() => setProceed(false)}
+                                                className='ms-1'
+                                                style={{ cursor: "pointer" }}
+                                                width="15" height="15" viewBox="0 0 20 20" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3.60629 15.5597H7.50655C7.62761 15.5604 7.74762 15.5372 7.85969 15.4914C7.97177 15.4457 8.07371 15.3782 8.15966 15.2929L14.5252 8.91823L17.1376 6.36099C17.2238 6.27548 17.2923 6.17374 17.339 6.06164C17.3857 5.94955 17.4097 5.82932 17.4097 5.70788C17.4097 5.58645 17.3857 5.46622 17.339 5.35412C17.2923 5.24203 17.2238 5.14029 17.1376 5.05477L13.2374 1.10852C13.1518 1.0223 13.0501 0.953871 12.938 0.90717C12.8259 0.86047 12.7057 0.836426 12.5842 0.836426C12.4628 0.836426 12.3426 0.86047 12.2305 0.90717C12.1184 0.953871 12.0166 1.0223 11.9311 1.10852L9.3371 3.71176L2.95319 10.0865C2.86793 10.1724 2.80048 10.2744 2.7547 10.3864C2.70893 10.4985 2.68572 10.6185 2.68642 10.7396V14.6398C2.68642 14.8838 2.78334 15.1178 2.95585 15.2903C3.12836 15.4628 3.36233 15.5597 3.60629 15.5597ZM12.5842 3.05865L15.1875 5.66189L13.8813 6.96811L11.278 4.36487L12.5842 3.05865ZM4.52617 11.1167L9.98101 5.66189L12.5842 8.26513L7.1294 13.72H4.52617V11.1167ZM18.3242 17.3995H1.76655C1.52259 17.3995 1.28861 17.4964 1.1161 17.6689C0.943594 17.8414 0.84668 18.0754 0.84668 18.3193C0.84668 18.5633 0.943594 18.7973 1.1161 18.9698C1.28861 19.1423 1.52259 19.2392 1.76655 19.2392H18.3242C18.5682 19.2392 18.8022 19.1423 18.9747 18.9698C19.1472 18.7973 19.2441 18.5633 19.2441 18.3193C19.2441 18.0754 19.1472 17.8414 18.9747 17.6689C18.8022 17.4964 18.5682 17.3995 18.3242 17.3995Z" fill={useThemeStyles.primary_color} />
+                                            </svg>
+                                        </p>
+                                        <div className='login-part-input'>
+                                            <div className="otp-fields">
+                                                <Input.OTP onChange={handlePhoneChange_otp} />
                                             </div>
+                                            <button onClick={handleButtonClick_verify}>Verify OTP</button>
+                                        </div>
 
-                                            {
-                                                timer === 0
-                                                    ? <h5
-                                                        className='text-decoration-underline fw-semibold'
-                                                        style={{ color: useThemeStyles.primary_color,cursor:"pointer" }}
-                                                        onClick={()=>resendOtpHandler()}
-                                                    >
-                                                        Resend OTP
-                                                    </h5>
-                                                    : <h5 className='fw-semibold'>OTP expires in {timer}sec</h5>
-                                            }
-                                        </div>}
+                                        {
+                                            timer === 0
+                                                ? <h5
+                                                    className='text-decoration-underline fw-semibold'
+                                                    style={{ color: useThemeStyles.primary_color, cursor: "pointer" }}
+                                                    onClick={() => resendOtpHandler()}
+                                                >
+                                                    Resend OTP
+                                                </h5>
+                                                : <h5 className='fw-semibold'>OTP expires in {timer}sec</h5>
+                                        }
+                                    </div>
+                                }
                             </div>
                             <div className='socail-linkppart'>
                                 <div className="sl-details-body">
@@ -280,6 +293,34 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+            <Modal
+                className='position-absolute top-50 start-50 translate-middle text-center z-3 no-account-found-modal'
+                open={open}
+                onCancel={() => setOpen(false)}
+                closable={false}
+                width={300}
+                footer={null}
+                styles={{
+                    content: {
+                        padding: "20px",
+                        height: "200px",
+                        display: "flex",
+                        alignItems: "center"
+                    }
+                }}
+            >
+                <img
+                    className='position-absolute start-50 translate-middle z-3'
+                    width={150}
+                    src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1727762891/7070631_3432678_1_h3tlz6.svg" alt="" />
+                <div className="position-relative error-msg d-flex flex-column gap-2">
+                    <span className='fs-5 fw-semibold'>Number Unavailable</span>
+                    <p className='fw-normal'>
+                    {apiResponse?.message}
+                    </p>
+                </div>
+                <i onClick={()=>setOpen(false)} className='bi bi-x fw-bold fs-2 position-absolute top-0 end-0 me-2'/>
+            </Modal>
         </ThemeProvider>
     );
 }

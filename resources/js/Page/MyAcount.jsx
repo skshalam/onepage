@@ -508,7 +508,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance }) => {
             })
     }
     function getRegions(cityId) {
-        axiosSetup.post('/api/gettingregion')
+        axiosSetup.post('/api/gettingregion',{})
             .then(res => {
                 const mappedData = res?.data?.region.map(i => ({
                     value: i.region,

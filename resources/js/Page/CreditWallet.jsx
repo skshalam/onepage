@@ -272,9 +272,8 @@ function CreditWallet() {
                     rootClassName='filter-drawer'
                     open={openFilter1}
                     onClose={() => setOpenFilter1(false)}
-                    getContainer={false}
                     closable={false}
-                    styles={{body:{padding:"0"}}}
+                    styles={{ body: { padding: "0" } }}
                 >
                     <div className="border-bottom py-2 px-4">
                         <span className='fw-semibold'>Filter By Date</span>
@@ -294,38 +293,21 @@ function CreditWallet() {
                         </Row>
                     </div>
                     <div className="filter-actions">
-                        <button className='border-0 p-2' onClick={() => {
+                        <button className='border-0 p-2' 
+                        style={{color:useThemeStyles.primary_color}}
+                        onClick={() => {
                             setPendingStartDate(null);
                             setPendingEndDate(null);
                         }}>Clear</button>
-                        <button className='border-0 p-2' onClick={applyDateFilters}>Apply</button>
+                        <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyDateFilters}>Apply</button>
                     </div>
                 </Drawer>
-                {/* <Drawer
-                    rootClassName='filter-drawer'
-                    open={openFilter2}
-                    onClose={() => setOpenFilter2(false)}
-                    getContainer={false}
-                    closable={false}
-                    styles={{
-                        body: {
-                            padding: 0,
-                        }
-                    }}
-                >
-                    <Tabs defaultActiveKey="1" rootClassName='filter-by-type-nav' items={items} />
-                    <div className="filter-actions">
-                        <button className='border-0 p-2'>Clear</button>
-                        <button className='border-0 p-2'>Apply type</button>
-                    </div>
-                </Drawer> */}
                 <Drawer
                     rootClassName='filter-drawer'
                     open={openFilter2}
                     onClose={() => setOpenFilter2(false)}
-                    getContainer={false}
                     closable={false}
-                    styles={{body:{padding:"0"}}}
+                    styles={{ body: { padding: "0" } }}
                 >
                     <Tabs defaultActiveKey="1" rootClassName='filter-by-type-nav' items={[
                         {
@@ -340,9 +322,8 @@ function CreditWallet() {
                         }
                     ]} />
                     <div className="filter-actions">
-                        <button className='border-0 p-2' onClick={clearFilters}>Clear</button>
-                        {/* <button className='border-0 p-2' onClick={() => loadCreditWalletData(currentPage, selectedTypes)}>Apply type</button> */}
-                        <button className='border-0 p-2' onClick={applyFilters}>Apply type</button>
+                        <button className='border-0 p-2' style={{color:useThemeStyles.primary_color}} onClick={clearFilters}>Clear</button>
+                        <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyFilters}>Apply type</button>
                     </div>
                 </Drawer>
             </div>

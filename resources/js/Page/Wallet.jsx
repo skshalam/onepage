@@ -254,9 +254,8 @@ function Wallet() {
                     rootClassName='filter-drawer'
                     open={openFilter1}
                     onClose={() => setOpenFilter1(false)}
-                    getContainer={false}
                     closable={false}
-                    styles={{body:{padding:"0"}}}
+                    styles={{ body: { padding: "0" } }}
                 >
                     <div className="border-bottom py-2 px-4">
                         <span className='fw-semibold'>Filter By Date</span>
@@ -280,14 +279,13 @@ function Wallet() {
                             setStartDate(null);
                             setEndDate(null);
                         }}>Clear</button>
-                        <button className='border-0 p-2' onClick={applyDateFilters}>Apply</button>
+                        <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyDateFilters}>Apply</button>
                     </div>
                 </Drawer>
                 <Drawer
                     rootClassName='filter-drawer'
                     open={openFilter2}
                     onClose={() => setOpenFilter2(false)}
-                    getContainer={false}
                     closable={false}
                     styles={{
                         body: {
@@ -301,8 +299,7 @@ function Wallet() {
                     <FilterByType form={form} handleTypeChange={handleTypeChange} />
                     <div className="filter-actions">
                         <button className='border-0 p-2' onClick={clearFilters}>Clear</button>
-                        {/* <button className='border-0 p-2' onClick={() => loadCreditWalletData(currentPage, selectedTypes)}>Apply type</button> */}
-                        <button className='border-0 p-2' onClick={applyFilters}>Apply type</button>
+                        <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyFilters}>Apply type</button>
                     </div>
                 </Drawer>
             </div>
