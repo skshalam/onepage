@@ -16,13 +16,13 @@ function Wallet() {
     const [scrollLoad, setScrollLoad] = useState(false);
     const [selectedTypes, setSelectedTypes] = useState("");
     const [pendingSelectedTypes, setPendingSelectedTypes] = useState("");
-    const [currentPoints, setCurrentPoints] = useState(0);
     const [startDate, setStartDate] = useState(null); // To store start date
     const [endDate, setEndDate] = useState(null);
     const [pendingStartDate, setPendingStartDate] = useState(""); // Temporary state for start date
     const [pendingEndDate, setPendingEndDate] = useState(""); // Temporary state for end date
     const [form] = Form.useForm();
     const { useThemeStyles } = useContext(ThemeContext)
+    const [currentWalletpoints, setcurrentWalletpoints] = useState(0);
     const formatDate = (dateStr) => {
         if (!dateStr) return 'No Date Available';
 
@@ -73,7 +73,7 @@ function Wallet() {
             });
             const { walletbalance, total_pages } = response.data;
             setOpenFilter2(false);
-            setCurrentPoints(response.data.current_points);
+            setcurrentWalletpoints(response.data.current_wallet_balance);
             if (page === 1) {
                 setCreditWalletData(walletbalance); // On first page, replace data
             } else {
@@ -143,7 +143,7 @@ function Wallet() {
                 </div>
                 <div className="px-3 text-center my-4 wallet-credit-info">
                     <h6>TOTAL WALLET BALANCE</h6>
-                    <span>5,124</span><span> points</span>
+                    <span>{currentWalletpoints}</span><span> points</span>
                 </div>
                 <div className="mx-4 rounded-4 wallet-balance-table ">
                     <div className="wallet-filter-header d-flex justify-content-between align-items-center py-2 px-3">
