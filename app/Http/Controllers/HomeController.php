@@ -1477,8 +1477,10 @@ class HomeController extends Controller
     public function gettingregion(Request $request)
     {
       $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+      $city=$request->city;
         $rules = [
-            'merchant_id' => 'required',
+            // 'merchant_id' => 'required',
+            'city' => 'required',
         ];
         $validator = Validator::make($request->all(), $rules);
 
@@ -1490,12 +1492,20 @@ class HomeController extends Controller
             ]);
         } 
 
-      $region = MerchantRegion::select('city', 'region')->where('merchant_id',$merchant_id)->orderBy('region')->get();
-      return response()->json([
-          'error' => false,
-          'message' => 'all regions',
-          'region' => $region,
-      ]);
+      $region = MerchantRegion::select('city', 'region')->where('city',$city)->get();
+      if(count($region)>0){
+        return response()->json([
+            'error' => false,
+            'message' => 'all regions',
+            'region' => $region,
+        ]);
+        }else{
+        $region = 'No city Found';
+        return response()->json([
+                'error' =>true,
+                'region' => $region
+              ]);
+      } 
     }
     public function themecolor()
     {
