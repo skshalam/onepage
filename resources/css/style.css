@@ -1220,6 +1220,10 @@ body {
         font-size: 18px;
     }
 
+    .wallet-transaction-value i{
+        cursor: pointer;
+    }
+
     .wallet-detail-container-middle .invoice-number {
         font-size: 13px;
         color: #7A7680;
@@ -1854,4 +1858,30 @@ body {
 }
 .red-point{
     color: #f00 !important;
+}
+
+.wallet-details-collaspable {
+    height: 0px;
+    transition: all 0.2s ease-in;
+    background: rgb(0, 0, 0,0.10);
+    border-radius: 0px 0px 10px 10px;
+    .wallet-details{
+        display: flex;
+        gap: 5px;
+        color: var(--primary-font-color);
+        p{
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--secondary-font-color);
+        }
+        span{
+            font-size: 12px;
+            font-weight: 500;
+        }
+    }
+}
+
+.wallet-details-collaspable.active {
+    height: 90px;
+>>>>>>> ae1ff8bdc4c1b137406644211f8d5afd1bce9bbe
 }
