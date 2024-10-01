@@ -69,11 +69,13 @@ function AboutUs() {
         arrows: false
     };
     const newSettings = {
-        className: "center",
+        // className: "center",
         arrows: false,
-        infinite: false,
+        infinite: true,
         slidesToShow: 1,
-        speed: 500,
+        autoplay: true,
+        autoplaySpeed: 3000,
+        speed: 800,
         variableWidth: true,
     }
 

@@ -1552,6 +1552,10 @@ body {
     padding: 12px;
     background-color: #fff;
     border-radius: 10px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     :is(button) {
         background: #0B0B59;
