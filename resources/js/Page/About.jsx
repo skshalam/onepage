@@ -32,7 +32,7 @@ function About() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { merchant_base } = useParams();
-    const storedMerchantBase = localStorage.getItem('merchant_base');
+    const storedMerchantBase = sessionStorage.getItem('merchant_base');
     console.log('merchant_base:', storedMerchantBase);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
@@ -64,11 +64,11 @@ function About() {
     const settings = {
         dots: true,
         infinite: true,
-        speed: 3000,
+        speed: 2000,
         slidesToShow: 1,
         slidesToScroll: 1,
         autoplay: true,
-        autoplaySpeed: 3000,
+        autoplaySpeed: 2000,
         arrows: false
     };
     return (
@@ -215,20 +215,28 @@ function About() {
                                 </Link>
                             </>}
                     </div>
+                    {
+                        loading ? 
+                        <div className='gap-2 m-3'>
+                            <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                        </div>:
+                        <>
+                            <Link className='text-decoration-none' to={`${data_home.ewards_url}giftcard_claim/${storedMerchantBase}`} target="_blank">
+                                <div className="gift-container overflow-hidden position-relative m-3 d-flex align-items-center justify-content-center text-light">
+                                    <div className="gift-content d-flex align-items-center gap-2">
+                                        <img src="https://i.imgur.com/ZoluTbe.png" alt="" />
+                                        <span className='text-uppercase mb-2'>Gift Card</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+                                            <path fillRule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
+                                            <path fillRule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
+                                        </svg>
+                                    </div>
+                                    <img className='position-absolute' src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726655119/wv60wfj43xim17pv52j_kzmkbo.svg" alt="" />
+                                </div>
+                            </Link>
+                        </>
+                    }
                 </SkeletonTheme>
-                <Link className='text-decoration-none' to={`${data_home.ewards_url}giftcard_claim/${storedMerchantBase}`} target="_blank">
-                    <div className="gift-container overflow-hidden position-relative m-3 d-flex align-items-center justify-content-center text-light">
-                        <div className="gift-content d-flex align-items-center gap-2">
-                            <img src="https://i.imgur.com/ZoluTbe.png" alt="" />
-                            <span className='text-uppercase mb-2'>Gift Card</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
-                                <path fillRule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5" />
-                                <path fillRule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z" />
-                            </svg>
-                        </div>
-                        <img className='position-absolute' src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726655119/wv60wfj43xim17pv52j_kzmkbo.svg" alt="" />
-                    </div>
-                </Link>
                 <div className="powered-ewards">
                     <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
                         <span>e<span className="ewards-color-set">W</span>ards</span></a></p>

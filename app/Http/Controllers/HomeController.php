@@ -72,8 +72,6 @@ class HomeController extends Controller
 
     public function homescreen()
     {
-        // $merchant_id= 15657;
-        // $user_id= 9;
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
@@ -125,23 +123,6 @@ class HomeController extends Controller
         $limit = 10; 
         $offset = ($page_number - 1) * $limit;
         // dd($offset);
-        // $total_entries_query = "
-        //     SELECT COUNT(*) as total_entries
-        //     FROM (
-        //         SELECT 1
-        //         FROM user_points up
-        //         WHERE up.user_id = ".$user_id."
-        //         AND up.merchant_id = ".$merchant_id."
-        //         UNION ALL
-        //         SELECT 1
-        //         FROM redeem_points rp
-        //         WHERE rp.user_id = ".$user_id."
-        //         AND rp.merchant_id = ".$merchant_id."
-        //     ) as total_count_query
-        // ";
-        // $total_entries = DB::select($total_entries_query)[0]->total_entries;
-        // $total_pages = ceil($total_entries / $limit); 
-        // Main query with pagination (LIMIT and OFFSET)
         $creditbalance_query = "
             SELECT
                 Type,
@@ -260,18 +241,23 @@ class HomeController extends Controller
         $creditbalance_obj = DB::select($creditbalance_query);    
 
         foreach ($creditbalance_obj as $item) {
-            $day = $item->Billing_Day;
-            $month = $item->Billing_Month;
-            $year = $item->Billing_Year;
-            $suffix = 'th';
-            if ($day == 1 || $day == 21 || $day == 31) {
-                $suffix = 'st';
-            } elseif ($day == 2 || $day == 22) {
-                $suffix = 'nd';
-            } elseif ($day == 3 || $day == 23) {
-                $suffix = 'rd';
+            if (is_null($item->Billing_Day) || is_null($item->Billing_Month) || is_null($item->Billing_Year)) {
+                $item->Formatted_Billing_Date = "N/A";
+            } else {
+                $day = $item->Billing_Day;
+                $month = $item->Billing_Month;
+                $year = $item->Billing_Year;
+                $suffix = 'th';
+                if ($day == 1 || $day == 21 || $day == 31) {
+                    $suffix = 'st';
+                } elseif ($day == 2 || $day == 22) {
+                    $suffix = 'nd';
+                } elseif ($day == 3 || $day == 23) {
+                    $suffix = 'rd';
+                }
+                $item->Formatted_Billing_Date = "{$day}{$suffix} {$month} {$year}";
             }
-            $item->Formatted_Billing_Date = "{$day}{$suffix} {$month} {$year}";
+        
             if (preg_match('/\d{2}:\d{2}:\d{2}/', $item->Invoice_Number, $matches)) {
                 $timePart = $matches[0]; 
                 $dateTime = DateTime::createFromFormat('H:i:s', $timePart);
@@ -296,88 +282,6 @@ class HomeController extends Controller
             'current_page' => $page_number, 
         ]);
     }
-
-
-    // public function creditbalance(Request $request)
-    // {
-    //     // $merchant_id= 15657;
-    //     // $user_id= 9;
-    //     $user = JWTAuth::parseToken()->authenticate();
-    //     $user_id = $user->id;
-    //     // Get the merchant_id from the JWT payload
-    //     $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
-    //     $balance =UserPoints::select('user_points.valid_till','user_points.original_points','user_points.original_bill_date','user_points.bill_amount','user_points.transaction_id','user_points.M_account','user_points.bill_no as invoice_no','user_points.custom_ewallet_marker','user_points.ebooklet_report_id','user_points.usefor','user_points.pos_billing_dump_new_id','user_points.feedback_id')
-    //     ->where('user_points.merchant_id', $merchant_id)
-    //     ->where('user_points.user_id', $user_id);
-    //     // ->leftJoin('redeem_points', function ($join) {
-    //     //     $join->on('user_points.user_id', '=', 'redeem_points.user_id')
-    //     //          ->on('user_points.merchant_id', '=', 'redeem_points.merchant_id');
-    //     // });
-    //     if(!empty($request->to_date) && !empty($request->from_date)){
-    //         $balance = $balance->whereBetween('user_points.original_bill_date', [$request->to_date, $request->from_date]);
-    //     }
-    //     $balance = $balance->limit(10)->get();
-    //     $redeem_data = RedeemPoints::select('bill_no')->where('user_id', $user_id)->where('merchant_id', $merchant_id)->get();
-    //     $currentDate = date('Y-m-d');
-    //     $balance = $balance->map(function ($item) use ($currentDate) {
-    //         $item['is_expired'] = $currentDate > $item->valid_till;
-    //         if (preg_match('/\d{2}:\d{2}:\d{2}/', $item->invoice_no, $matches)) {
-    //             $timePart = $matches[0]; 
-    //             $dateTime = DateTime::createFromFormat('H:i:s', $timePart);
-    //             if ($dateTime) {
-    //                 $formattedTime = $dateTime->format('g:i A'); // Format to 12-hour time with AM/PM
-    //                 $item['original_time'] = $timePart; // 24-hour format
-    //                 $item['formatted_time'] = $formattedTime; // 12-hour format
-    //             }
-    //         } else {
-    //             $item['original_time'] = '';
-    //             $item['formatted_time'] = '';
-    //         }
-
-    //         if ($item->custom_ewallet_marker == 1 && (empty($item->ebooklet_report_id) || $item->ebooklet_report_id == 0)) {
-    //             $item['name'] = 'eWallet Credits';
-    //         } elseif (!empty($item->usefor) && $item->usefor != 0 && $item->pos_billing_dump_new_id == 0) {
-    //             $item['name'] = 'Loyalty Credits';
-    //         } elseif (!empty($item->feedback_id) && $item->feedback_id != 0) {
-    //             $item['name'] = 'Feedback Credits';
-    //         } elseif (!empty($item->pos_billing_dump_new_id) && $item->pos_billing_dump_new_id != 0) {
-    //             $item['name'] = 'Bonus Credits';
-    //         }
-    //         return $item;
-    //     });
-    //     if (!empty($request->credit_type)) {
-    //         $creditType = intval($request->credit_type);
-    //         $balance = $balance->filter(function ($item) use ($creditType) {
-    //             switch ($creditType) {
-    //                 case 1:
-    //                     return $item['name'] == 'eWallet Credits';
-    //                 case 2:
-    //                     return $item['name'] == 'Loyalty Credits';
-    //                 case 3:
-    //                     return $item['name'] == 'Bonus Credits';
-    //                 case 4:
-    //                     return $item['name'] == 'Feedback Credits';
-    //                 default:
-    //                     return true;
-    //             }
-    //         });
-    //     }
-    //     if(!empty($request->is_expired)){
-    //         $isExpiredFilter = filter_var($request->input('is_expired'), FILTER_VALIDATE_BOOLEAN);
-    //         $balance = $balance->filter(function ($item) use ($isExpiredFilter) {
-    //             return $item['is_expired'] === $isExpiredFilter;
-    //         });
-    //     }
-    //     // echo"<pre>";
-    //     // print_r($balance); exit;
-    //     return response()->json([
-    //         'error' => false,
-    //         'message' => 'Balance',
-    //         'creditbalance' => $balance,
-    //     ]); 
-
-    // }
-
 
     public function walletbalance(Request $request)
     {
@@ -495,20 +399,23 @@ class HomeController extends Controller
         // Execute the query
         $walletbalance_obj = DB::select($walletbalance_query);
 
-        
         foreach ($walletbalance_obj as $item) {
-            $day = $item->valid_Day;
-            $month = $item->valid_Month;
-            $year = $item->valid_Year;
-            $suffix = 'th';
-            if ($day == 1 || $day == 21 || $day == 31) {
-                $suffix = 'st';
-            } elseif ($day == 2 || $day == 22) {
-                $suffix = 'nd';
-            } elseif ($day == 3 || $day == 23) {
-                $suffix = 'rd';
+            if (is_null($item->valid_Day) || is_null($item->valid_Month) || is_null($item->valid_Year)) {
+                $item->Formatted_valid_Date = "N/A";
+            } else {
+                $day = $item->valid_Day;
+                $month = $item->valid_Month;
+                $year = $item->valid_Year;
+                $suffix = 'th';
+                if ($day == 1 || $day == 21 || $day == 31) {
+                    $suffix = 'st';
+                } elseif ($day == 2 || $day == 22) {
+                    $suffix = 'nd';
+                } elseif ($day == 3 || $day == 23) {
+                    $suffix = 'rd';
+                }
+                $item->Formatted_valid_Date = "{$day}{$suffix} {$month} {$year}";
             }
-            $item->Formatted_valid_Date = "{$day}{$suffix} {$month} {$year}";
         }
         return response()->json([
             'error' => false,
@@ -525,9 +432,6 @@ class HomeController extends Controller
 
     public function couponscart(Request $request)
     {
-        // $merchant_id= 15657;
-        // // $user_id= 9;//local
-        // $user_id =15867532;//test
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
@@ -628,9 +532,6 @@ class HomeController extends Controller
     }
     public function couponhold(Request $request)
     {
-        // $merchant_id= 15657;
-        // // $user_id= 9;
-        // $user_id= 15867532;
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
@@ -693,9 +594,6 @@ class HomeController extends Controller
     
     public function rewards(Request $request)
     {
-        // $merchant_id = 15657;
-        // // $user_id = 9;//local
-        // $user_id =15867532;//test
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
@@ -745,9 +643,6 @@ class HomeController extends Controller
     }
     public function memebershippackage(Request $request)
     {
-        // $merchant_id=15657;
-        // $user_id =15867532;//test
-
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
@@ -878,7 +773,6 @@ class HomeController extends Controller
     
     public function bookletcoupon(Request $request)
     {
-        // $user_id = 9;
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
@@ -1064,8 +958,6 @@ class HomeController extends Controller
 
     public function contactsubmit(Request $request)
     {
-        // $merchant_id=$merchant_id;
-        // $merchant_id= 15657;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $name=$request->name;
         $mobile=$request->mobile;
@@ -1186,10 +1078,6 @@ class HomeController extends Controller
     }
     public function infodata()
     {
-        // $merchant_id= 15657;
-        // $user_id= 15882661; //for test
-        // $user_id= 9; //for local
-
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
@@ -1482,8 +1370,6 @@ class HomeController extends Controller
 
     public function referral_programview(Request $request)
     {
-        // $merchant_id=1644378;
-        // $user_id=15870381;
         $user = JWTAuth::parseToken()->authenticate();
         $user_id = $user->id;
         // Get the merchant_id from the JWT payload
@@ -1509,7 +1395,6 @@ class HomeController extends Controller
     }
     public function referErn(Request $request)
     {
-        // $merchant_id=$merchant_id;
         // $user = JWTAuth::parseToken()->authenticate();
         // $user_id = $user->id;
         // Get the merchant_id from the JWT payload
@@ -1592,8 +1477,10 @@ class HomeController extends Controller
     public function gettingregion(Request $request)
     {
       $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
+      $city=$request->city;
         $rules = [
-            'merchant_id' => 'required',
+            // 'merchant_id' => 'required',
+            'city' => 'required',
         ];
         $validator = Validator::make($request->all(), $rules);
 
@@ -1605,12 +1492,20 @@ class HomeController extends Controller
             ]);
         } 
 
-      $region = MerchantRegion::select('city', 'region')->where('merchant_id',$merchant_id)->orderBy('region')->get();
-      return response()->json([
-          'error' => false,
-          'message' => 'all regions',
-          'region' => $region,
-      ]);
+      $region = MerchantRegion::select('city', 'region')->where('city',$city)->get();
+      if(count($region)>0){
+        return response()->json([
+            'error' => false,
+            'message' => 'all regions',
+            'region' => $region,
+        ]);
+        }else{
+        $region = 'No city Found';
+        return response()->json([
+                'error' =>true,
+                'region' => $region
+              ]);
+      } 
     }
     public function themecolor()
     {
