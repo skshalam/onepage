@@ -1514,7 +1514,6 @@ class HomeController extends Controller
         $socialLinks = Onepage_SocialLinks::select('heading','facebook_link','instagram_link','twitter_link','zomato_link','linkedin_link')->where('merchant_id', $merchant_id)->where('status',1)->where('hide_show',1)->first();
         if($socialLinks){
             $data['social_links'] = [
-                'heading' => $socialLinks->heading,
                 'facebook_link' => $socialLinks->facebook_link,
                 'instagram_link' => $socialLinks->instagram_link,
                 'twitter_link' => $socialLinks->twitter_link,
