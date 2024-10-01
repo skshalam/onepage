@@ -101,6 +101,8 @@ function CreditWallet() {
         setOpenFilter2(false);
         setCurrentPage(1);
         loadCreditWalletData(1, "", "", "", "");
+        setOpenFilter1(false);
+        setOpenFilter2(false)
     };
 
     const handleTypeChange = (checkedValues) => {
@@ -323,10 +325,7 @@ function CreditWallet() {
                     <div className="filter-actions">
                         <button className='border-0 p-2'
                             style={{ color: useThemeStyles.primary_color }}
-                            onClick={() => {
-                                setPendingStartDate(null);
-                                setPendingEndDate(null);
-                            }}>Clear</button>
+                            onClick={clearFilters}>Clear</button>
                         <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyDateFilters}>Apply</button>
                     </div>
                 </Drawer>
