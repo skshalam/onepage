@@ -23,7 +23,7 @@ function CreditWallet() {
     const [pendingStartDate, setPendingStartDate] = useState(""); // Temporary state for start date
     const [pendingEndDate, setPendingEndDate] = useState(""); // Temporary state for end date
     const [form] = Form.useForm();
-    const [active, setActive] = useState(null);
+    const [active, setActive] = useState(false);
     const [collaspable, setCollaspable] = useState(false);
     const [current,setCurrent] = useState(0)
     const { useThemeStyles } = useContext(ThemeContext)
@@ -141,6 +141,7 @@ function CreditWallet() {
         setCurrent(index);
         if (current===index) {
             setCollaspable(!collaspable)
+            setActive(!active)
         }
     }
 
@@ -229,7 +230,7 @@ function CreditWallet() {
                                                         Invoice Number: <span>{crwallet.Invoice_Number}</span>
                                                     </div>
                                                     <div className="wallet-transaction-value d-flex gap-1">
-                                                        <p className='mb-0'>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className='bi bi-chevron-down' onClick={() => {handleCollaspe(index)}} />
+                                                        <p className='mb-0'>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className={`bi bi-chevron-down collapse-icon ${current === index && collaspable ? "active" : ""}`} onClick={() => {handleCollaspe(index)}} />
                                                     </div>
                                                 </div>
                                                 <div className="wallet-detail-container-bottom d-flex justify-content-between align-items-center">

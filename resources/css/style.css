@@ -611,13 +611,14 @@ body {
     justify-content: space-between;
 }
 
-.coupon-code{
+.coupon-code {
     color: var(--secondary-font-color);
+
     span {
         font-weight: bold;
         color: var(--primary-color);
-    }  
-} 
+    }
+}
 
 .view-coupon button {
     background: none;
@@ -897,7 +898,8 @@ body {
 
 .reward-valid {
     font-size: 0.8rem;
-    span{
+
+    span {
         color: var(--primary-color);
     }
 }
@@ -1046,6 +1048,7 @@ body {
 .membership-info-details {
     padding: 2px 10px;
     color: var(--secondary-font-color);
+
     .membership-validity,
     .membership-price {
         font-size: 12px;
@@ -1121,7 +1124,7 @@ body {
     }
 }
 
-.membership-name{
+.membership-name {
     color: var(--primary-font-color);
 }
 
@@ -1200,7 +1203,7 @@ body {
         font-weight: 500;
     }
 
-    .wallet-name{
+    .wallet-name {
         color: var(--primary-color);
     }
 
@@ -1220,7 +1223,7 @@ body {
         font-size: 18px;
     }
 
-    .wallet-transaction-value i{
+    .wallet-transaction-value i {
         cursor: pointer;
     }
 
@@ -1684,9 +1687,10 @@ body {
     color: var(--primary-color);
 }
 
-.ant-picker-input{
+.ant-picker-input {
     color: var(--primary-font-color);
 }
+
 /* Antd datepicker css */
 
 /* Skeleton Loader */
@@ -1844,37 +1848,43 @@ body {
 
     .error-msg {
         margin-top: 115px;
-        span{
+
+        span {
             color: red;
         }
-        p{
+
+        p {
             color: var(--secondary-font-color);
         }
     }
 }
 
-.about_desc_content{
+.about_desc_content {
     color: var(--primary-font-color);
 }
-.red-point{
+
+.red-point {
     color: #f00 !important;
 }
 
 .wallet-details-collaspable {
     height: 0px;
     transition: all 0.2s ease-in;
-    background: rgb(0, 0, 0,0.10);
+    background: rgb(0, 0, 0, 0.10);
     border-radius: 0px 0px 10px 10px;
-    .wallet-details{
+
+    .wallet-details {
         display: flex;
         gap: 5px;
         color: var(--primary-font-color);
-        p{
+
+        p {
             font-size: 12px;
             font-weight: 500;
             color: var(--secondary-font-color);
         }
-        span{
+
+        span {
             font-size: 12px;
             font-weight: 500;
         }
@@ -1883,4 +1893,13 @@ body {
 
 .wallet-details-collaspable.active {
     height: 90px;
+}
+
+.collapse-icon {
+    transform: rotate(0deg);
+    transition: 0.3s all ease;
+}
+
+.collapse-icon.active {
+    transform: rotate(180deg);
 }
