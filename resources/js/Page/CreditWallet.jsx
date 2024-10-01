@@ -25,7 +25,7 @@ function CreditWallet() {
     const [form] = Form.useForm();
     const [active, setActive] = useState(false);
     const [collaspable, setCollaspable] = useState(false);
-    const [current,setCurrent] = useState(0)
+    const [current, setCurrent] = useState(0)
     const { useThemeStyles } = useContext(ThemeContext)
 
     const formatDate = (dateStr) => {
@@ -137,9 +137,9 @@ function CreditWallet() {
             }
         }
     };
-    const handleCollaspe=(index)=>{
+    const handleCollaspe = (index) => {
         setCurrent(index);
-        if (current===index) {
+        if (current === index) {
             setCollaspable(!collaspable)
             setActive(!active)
         }
@@ -230,7 +230,7 @@ function CreditWallet() {
                                                         Invoice Number: <span>{crwallet.Invoice_Number}</span>
                                                     </div>
                                                     <div className="wallet-transaction-value d-flex gap-1">
-                                                        <p className='mb-0'>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className={`bi bi-chevron-down collapse-icon ${current === index && collaspable ? "active" : ""}`} onClick={() => {handleCollaspe(index)}} />
+                                                        <p className='mb-0'>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className={`bi bi-chevron-down collapse-icon ${current === index && collaspable ? "active" : ""}`} onClick={() => { handleCollaspe(index) }} />
                                                     </div>
                                                 </div>
                                                 <div className="wallet-detail-container-bottom d-flex justify-content-between align-items-center">
@@ -299,9 +299,9 @@ function CreditWallet() {
                     rootClassName='filter-drawer'
                     open={openFilter1}
                     onClose={() => setOpenFilter1(false)}
-                    getContainer={false}
+                    // getContainer={false}
                     closable={false}
-                    styles={{body:{padding:"0"}}}
+                    styles={{ body: { padding: "0" } }}
                 >
                     <div className="border-bottom py-2 px-4">
                         <span className='fw-semibold'>Filter By Date</span>
@@ -321,10 +321,6 @@ function CreditWallet() {
                         </Row>
                     </div>
                     <div className="filter-actions">
-                        <button className='border-0 p-2' onClick={() => {
-                            setPendingStartDate(null);
-                            setPendingEndDate(null);
-                        }}>Clear</button>
                         <button className='border-0 p-2'
                             style={{ color: useThemeStyles.primary_color }}
                             onClick={() => {
@@ -356,9 +352,9 @@ function CreditWallet() {
                     rootClassName='filter-drawer'
                     open={openFilter2}
                     onClose={() => setOpenFilter2(false)}
-                    getContainer={false}
+                    // getContainer={false}
                     closable={false}
-                    styles={{body:{padding:"0"}}}
+                    styles={{ body: { padding: "0" } }}
                 >
                     <Tabs defaultActiveKey="1" rootClassName='filter-by-type-nav' items={[
                         {
