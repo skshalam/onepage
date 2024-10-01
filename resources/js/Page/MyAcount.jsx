@@ -689,6 +689,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance, merchantBase }
                                             options={countries}
                                             allowClear
                                             onSelect={handleCountryChange}
+                                            showSearch
                                         >
 
                                         </Select>
@@ -713,6 +714,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance, merchantBase }
                                             onChange={handleStateChange}
                                             onSelect={handleStateChange}
                                             allowClear
+                                            showSearch
                                         >
 
                                         </Select>
@@ -736,6 +738,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance, merchantBase }
                                             options={cities}
                                             onChange={handleCityChange}
                                             onSelect={handleCityChange}
+                                            showSearch
                                         >
 
                                         </Select>
@@ -758,6 +761,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance, merchantBase }
                                             disabled={!isCountryChange}
                                             className='cust-css-ant'
                                             options={regions}
+                                            showSearch
                                         >
 
                                         </Select>
