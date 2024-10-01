@@ -23,6 +23,9 @@ function CreditWallet() {
     const [pendingStartDate, setPendingStartDate] = useState(""); // Temporary state for start date
     const [pendingEndDate, setPendingEndDate] = useState(""); // Temporary state for end date
     const [form] = Form.useForm();
+    const [active, setActive] = useState(null);
+    const [collaspable, setCollaspable] = useState(false);
+    const [current,setCurrent] = useState(0)
     const { useThemeStyles } = useContext(ThemeContext)
 
     const formatDate = (dateStr) => {
@@ -133,6 +136,12 @@ function CreditWallet() {
             }
         }
     };
+    const handleCollaspe=(index)=>{
+        setCurrent(index);
+        if (current===index) {
+            setCollaspable(!collaspable)
+        }
+    }
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
@@ -219,12 +228,28 @@ function CreditWallet() {
                                                         Invoice Number: <span>{crwallet.Invoice_Number}</span>
                                                     </div>
                                                     <div className="wallet-transaction-value d-flex gap-1">
-                                                        <p className='mb-0'>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className='bi bi-chevron-down' />
+                                                        <p className='mb-0'>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className='bi bi-chevron-down' onClick={() => {handleCollaspe(index)}} />
                                                     </div>
                                                 </div>
                                                 <div className="wallet-detail-container-bottom d-flex justify-content-between align-items-center">
                                                     <div className="wallet-balance">
                                                         <p className='mb-2'>{crwallet.Formatted_Billing_Date} <span>{crwallet.formatted_time}</span></p>
+                                                    </div>
+                                                </div>
+                                                <div className={`wallet-details-collaspable overflow-hidden ${current === index && collaspable ? "active" : ""}`}>
+                                                    <div className="mx-3 mt-2">
+                                                        <div className="wallet-details">
+                                                            <p className='mb-1'>Bill Amount:</p>
+                                                            <span>{crwallet.Billing_Amount}</span>
+                                                        </div>
+                                                        <div className="wallet-details">
+                                                            <p className='mb-1'>Transaction ID:</p>
+                                                            <span>{crwallet.Transaction_id}</span>
+                                                        </div>
+                                                        <div className="wallet-details">
+                                                            <p className='mb-1'>Account:</p>
+                                                            <span>{crwallet.Account}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -293,12 +318,12 @@ function CreditWallet() {
                         </Row>
                     </div>
                     <div className="filter-actions">
-                        <button className='border-0 p-2' 
-                        style={{color:useThemeStyles.primary_color}}
-                        onClick={() => {
-                            setPendingStartDate(null);
-                            setPendingEndDate(null);
-                        }}>Clear</button>
+                        <button className='border-0 p-2'
+                            style={{ color: useThemeStyles.primary_color }}
+                            onClick={() => {
+                                setPendingStartDate(null);
+                                setPendingEndDate(null);
+                            }}>Clear</button>
                         <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyDateFilters}>Apply</button>
                     </div>
                 </Drawer>
@@ -322,7 +347,7 @@ function CreditWallet() {
                         }
                     ]} />
                     <div className="filter-actions">
-                        <button className='border-0 p-2' style={{color:useThemeStyles.primary_color}} onClick={clearFilters}>Clear</button>
+                        <button className='border-0 p-2' style={{ color: useThemeStyles.primary_color }} onClick={clearFilters}>Clear</button>
                         <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyFilters}>Apply type</button>
                     </div>
                 </Drawer>
