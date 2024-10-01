@@ -131,9 +131,10 @@ body {
                         line-height: normal;
                         position: relative;
                     }
-                    :is(h4)::before{
+
+                    :is(h4)::before {
                         content: "";
-                        bottom:-2px;
+                        bottom: -2px;
                         position: absolute;
                         width: 17px;
                         height: 2px;
@@ -148,7 +149,7 @@ body {
 
                 :is(p) {
                     margin: 0px;
-                    color: #7A7680;
+                    color: var(--secondary-font-color);
                     text-align: center;
                     font-size: 14px;
                     font-style: normal;
@@ -157,7 +158,7 @@ body {
                 }
 
                 :is(h5) {
-                    color: #7A7680;
+                    color: var(--secondary-font-color);
                     text-align: center;
                     font-size: 12px;
                     font-style: normal;
@@ -201,6 +202,7 @@ body {
     margin: 0;
     font-size: 11px;
     padding-right: 20px;
+    color: var(--primary-color);
 }
 
 .sl-details-body-part a {
@@ -216,16 +218,16 @@ body {
     text-align: center;
 
     .ewards-color-set {
-            background: linear-gradient(45deg, #ff6b6b, #f7d794);
-    
-            /* Set the background clip to text */
-            -webkit-background-clip: text;
-            background-clip: text;
-    
-            /* Make the text transparent */
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-        }
+        background: linear-gradient(45deg, #ff6b6b, #f7d794);
+
+        /* Set the background clip to text */
+        -webkit-background-clip: text;
+        background-clip: text;
+
+        /* Make the text transparent */
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
 }
 
 .powered-ewards p {
@@ -431,7 +433,7 @@ body {
     display: flex;
 }
 
-.data-amount{
+.data-amount {
     font-size: 20px;
 }
 
@@ -585,11 +587,13 @@ body {
     font-size: 10px;
     text-align: end;
     font-weight: 600;
+    color: var(--primary-color);
 }
 
 .coupon-name {
     font-size: 12px;
     font-weight: bold;
+    color: var(--primary-font-color);
 }
 
 .coupon-limit {
@@ -607,9 +611,13 @@ body {
     justify-content: space-between;
 }
 
-.coupon-code span {
-    font-weight: bold;
-}
+.coupon-code{
+    color: var(--secondary-font-color);
+    span {
+        font-weight: bold;
+        color: var(--primary-color);
+    }  
+} 
 
 .view-coupon button {
     background: none;
@@ -884,10 +892,14 @@ body {
 
 .reward-name span {
     font-weight: bold;
+    color: var(--primary-font-color);
 }
 
 .reward-valid {
     font-size: 0.8rem;
+    span{
+        color: var(--primary-color);
+    }
 }
 
 .rewards-info-details {
@@ -953,7 +965,7 @@ body {
     margin: 211px 65px;
 }
 
-.pop-confirm-container p{
+.pop-confirm-container p {
     font-size: 14px;
     margin-top: 10px;
     opacity: 50%;
@@ -1033,7 +1045,7 @@ body {
 
 .membership-info-details {
     padding: 2px 10px;
-
+    color: var(--secondary-font-color);
     .membership-validity,
     .membership-price {
         font-size: 12px;
@@ -1097,20 +1109,26 @@ body {
     transform: translateY(0);
 }
 
-.membership-drawer-container{
+.membership-drawer-container {
     padding: 13px;
-    span{
+
+    span {
         font-size: 14px;
     }
-    .membership-view-header{
-        margin: 0px 0px 10px 0px ;
+
+    .membership-view-header {
+        margin: 0px 0px 10px 0px;
     }
+}
+
+.membership-name{
+    color: var(--primary-font-color);
 }
 
 .membership-view-table {
     width: 100%;
     table-layout: auto;
-    
+
 }
 
 .membership-view-table thead th {
@@ -1133,7 +1151,7 @@ body {
 }
 
 .membership-view-table.multiple-cell tbody tr td:nth-child(1) {
-        border-right: 1px solid #7A7680;
+    border-right: 1px solid #7A7680;
 }
 
 .membership-view-table tbody tr td:nth-child(2) {
@@ -1142,13 +1160,13 @@ body {
 
 .wallet-credit-info {
     h6 {
-        color: #7A7680;
+        color: var(--secondary-font-color);
         font-size: smaller;
         font-size: 16px;
     }
 
     span {
-        color: #312E37;
+        color: var(--primary-color);
         font-size: 32px;
         font-weight: bold;
     }
@@ -1164,7 +1182,7 @@ body {
 
     .wallet-filter-header {
         border-bottom: 2px solid #d0d0d0;
-        color: #312E37;
+        color: var(--primary-color);
     }
 
     .filter-header-left {
@@ -1180,6 +1198,10 @@ body {
     .wallet-expire {
         font-size: 13px;
         font-weight: 500;
+    }
+
+    .wallet-name{
+        color: var(--primary-color);
     }
 
     .wallet-balance p {
@@ -1267,12 +1289,12 @@ body {
     label {
         width: 80px;
         font-size: 13px;
-        color: #7A7680;
+        color: var(--secondary-font-color);
     }
 
     div span {
         font-size: 14px;
-        color: #312E37;
+        color: var(--primary-font-color);
         font-weight: 400;
     }
 }
@@ -1287,11 +1309,12 @@ body {
     left: 20px;
     padding: 0px 5px;
     background-color: #ffffff;
+    color: var(--primary-color);
 }
 
 
 .edit-input-div.contact-us label {
-    color: #7A7680;
+    color: var(--primary-color);
 }
 
 /* Css For Ant_d component of Edit Profile section */
@@ -1305,6 +1328,7 @@ body {
     border: 1px solid var(--primary-color);
     /* line-height: 1.7rem; */
     padding: 6px 17px;
+    color: var(--primary-font-color);
 }
 
 .cust-css-ant {
@@ -1312,6 +1336,7 @@ body {
         border-radius: 20px;
         border: 1px solid var(--primary-color) !important;
         /* line-height: 40px; */
+        color: var(--primary-font-color);
     }
 }
 
@@ -1520,7 +1545,8 @@ body {
     padding: 12px;
     background-color: #fff;
     border-radius: 10px;
-    :is(button){
+
+    :is(button) {
         background: #0B0B59;
         color: #fff;
         font-size: 12px;
@@ -1530,11 +1556,13 @@ body {
         border-radius: 4px;
         padding: 8px 0px;
         font-weight: 500;
-        margin-top:12px;
-        :is(svg){
+        margin-top: 12px;
+
+        :is(svg) {
             margin-right: 4px;
         }
-        &&:hover{
+
+        &&:hover {
             background: #0B0B59;
             color: #fff;
         }
@@ -1575,7 +1603,7 @@ body {
             border-radius: 10px;
         }
     }
-    
+
 
     span {
         font-size: 12px;
@@ -1593,13 +1621,14 @@ body {
 }
 
 .filter-actions button:nth-child(1) {
-    color: var(--primary-color);
+    /* color: var(--primary-color); */
     text-transform: uppercase;
     font-weight: 400;
     font-size: 12px;
 }
+
 .filter-actions button:nth-child(2) {
-    background-color: var(--primary-color);
+    /* background-color: var(--primary-color); */
     color: #fff;
     text-transform: uppercase;
     font-size: 12px;
@@ -1618,13 +1647,15 @@ body {
     padding-inline: 20px;
     padding-top: 10px;
     gap: 7px;
-    .ant-checkbox-checked{
-        .ant-checkbox-inner{
+
+    .ant-checkbox-checked {
+        .ant-checkbox-inner {
             background-color: var(--primary-color);
             border-radius: 3px;
         }
     }
-    .ant-checkbox-inner{
+
+    .ant-checkbox-inner {
         width: 20px;
         height: 20px;
         border: 1px solid #d9d9d9;
@@ -1649,6 +1680,9 @@ body {
     color: var(--primary-color);
 }
 
+.ant-picker-input{
+    color: var(--primary-font-color);
+}
 /* Antd datepicker css */
 
 /* Skeleton Loader */
@@ -1703,11 +1737,12 @@ body {
     }
 }
 
-.profile-upload-in{
-    .ant-avatar{
+.profile-upload-in {
+    .ant-avatar {
         border: 1px solid var(--primary-color) !important;
     }
-    .pp-btn{
+
+    .pp-btn {
         background: var(--primary-color) !important;
     }
 }
@@ -1717,66 +1752,103 @@ body {
 
 .loader-spinpaginate {
     width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: block;
-  margin:15px auto;
-  position: relative;
-  color: var(--primary-color);
-  box-sizing: border-box;
-  animation: animloader 1s linear infinite alternate;
-    position: fixed; /* Fixed position to stay in the center */
-    top: 50%; /* Align center vertically */
-    left: 50%; /* Align center horizontally */
-    transform: translate(-50%, -50%); /* Offset the element to truly center */
+    height: 12px;
+    border-radius: 50%;
+    display: block;
+    margin: 15px auto;
+    position: relative;
+    color: var(--primary-color);
+    box-sizing: border-box;
+    animation: animloader 1s linear infinite alternate;
+    position: fixed;
+    /* Fixed position to stay in the center */
+    top: 50%;
+    /* Align center vertically */
+    left: 50%;
+    /* Align center horizontally */
+    transform: translate(-50%, -50%);
+    /* Offset the element to truly center */
     z-index: 999;
-  }
-  
-  @keyframes animloader {
+}
+
+@keyframes animloader {
     0% {
-      box-shadow: -38px -6px, -14px 6px,  14px -6px;
+        box-shadow: -38px -6px, -14px 6px, 14px -6px;
     }
+
     33% {
-      box-shadow: -38px 6px, -14px -6px,  14px 6px;
+        box-shadow: -38px 6px, -14px -6px, 14px 6px;
     }
+
     66% {
-      box-shadow: -38px -6px, -14px 6px, 14px -6px;
+        box-shadow: -38px -6px, -14px 6px, 14px -6px;
     }
+
     100% {
-      box-shadow: -38px 6px, -14px -6px, 14px 6px;
+        box-shadow: -38px 6px, -14px -6px, 14px 6px;
     }
-  }
-  .loader-head::after{
+}
+
+.loader-head::after {
     content: "";
     backdrop-filter: blur(8px);
     position: absolute;
     height: 100%;
     width: 100%;
-  }
-  .loader-head{
+}
+
+.loader-head {
     position: absolute;
     height: 100%;
     width: 100%;
-  }
-  .rounded-4 {
+}
+
+.rounded-4 {
     position: relative;
-  }
-  .creditpage-body{
+}
+
+.creditpage-body {
     position: relative;
-  }
-  .credit-expired{
+}
+
+.credit-expired {
     color: #f00;
-  }
-  .wallet-paginate .pagination {
+}
+
+.wallet-paginate .pagination {
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
-    .page-item{
-        :is(span){
+
+    .page-item {
+        :is(span) {
             font-size: 12px;
         }
-        .page-link{
+
+        .page-link {
             font-size: 12px;
         }
     }
-  }
+}
+
+.no-account-found-modal {
+    margin-top: 90px !important;
+
+    img {
+        top: 35px;
+    }
+
+    .error-msg {
+        margin-top: 115px;
+        span{
+            color: red;
+        }
+        p{
+            color: var(--secondary-font-color);
+        }
+    }
+}
+
+.about_desc_content{
+    color: var(--primary-font-color);
+}

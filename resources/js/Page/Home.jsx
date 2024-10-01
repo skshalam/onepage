@@ -294,15 +294,32 @@ const Home = () => {
                 </div>
             </div>
             <Modal
-                className='position-absolute top-50 start-50 translate-middle text-center z-3 mt-5'
+                className='position-absolute top-50 start-50 translate-middle text-center z-3 no-account-found-modal'
                 open={open}
                 onCancel={() => setOpen(false)}
+                closable={false}
                 width={300}
                 footer={null}
+                styles={{
+                    content: {
+                        padding: "20px",
+                        height: "200px",
+                        display: "flex",
+                        alignItems: "center"
+                    }
+                }}
             >
-                <div className="m-3">
+                <img
+                    className='position-absolute start-50 translate-middle z-3'
+                    width={150}
+                    src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1727762891/7070631_3432678_1_h3tlz6.svg" alt="" />
+                <div className="position-relative error-msg d-flex flex-column gap-2">
+                    <span className='fs-5 fw-semibold'>Number Unavailable</span>
+                    <p className='fw-normal'>
                     {apiResponse?.message}
+                    </p>
                 </div>
+                <i onClick={()=>setOpen(false)} className='bi bi-x fw-bold fs-2 position-absolute top-0 end-0 me-2'/>
             </Modal>
         </ThemeProvider>
     );
