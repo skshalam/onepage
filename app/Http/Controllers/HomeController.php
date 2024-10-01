@@ -987,6 +987,16 @@ class HomeController extends Controller
         // $merchant_id= 15657;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $termscondition =OnepageTermsCondition::select('heading', 'description')->where('merchant_id', $merchant_id)->where('status', 1)->first(); 
+        $socialLinks = Onepage_SocialLinks::select('heading','facebook_link','instagram_link','twitter_link','zomato_link','linkedin_link')->where('merchant_id', $merchant_id)->where('status',1)->where('hide_show',1)->first();
+        if($socialLinks){
+            $social_links = [
+                'facebook_link' => $socialLinks->facebook_link,
+                'instagram_link' => $socialLinks->instagram_link,
+                'twitter_link' => $socialLinks->twitter_link,
+                'zomato_link' => $socialLinks->zomato_link,
+                'linkedin_link' => $socialLinks->linkedin_link,
+            ];
+        }
         if($termscondition){
             $termscondition = [
                 'heading' => $termscondition->heading,
@@ -997,6 +1007,7 @@ class HomeController extends Controller
             'error' => false,
             'message' => 'Terms Condition',
             'termscondition' => $termscondition,
+            'social_links' => $social_links,
         ]);
 
     }
@@ -1511,16 +1522,6 @@ class HomeController extends Controller
     {
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $themeData = Onepage_WebsiteTheme::select('primary_color', 'secondary_color', 'font_primary_color','font_secondary_color')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show', 1)->first();
-        $socialLinks = Onepage_SocialLinks::select('heading','facebook_link','instagram_link','twitter_link','zomato_link','linkedin_link')->where('merchant_id', $merchant_id)->where('status',1)->where('hide_show',1)->first();
-        if($socialLinks){
-            $data['social_links'] = [
-                'facebook_link' => $socialLinks->facebook_link,
-                'instagram_link' => $socialLinks->instagram_link,
-                'twitter_link' => $socialLinks->twitter_link,
-                'zomato_link' => $socialLinks->zomato_link,
-                'linkedin_link' => $socialLinks->linkedin_link,
-            ];
-        }
         if($themeData){
             $data['theme'] = [
                 'primary_color' => $themeData->primary_color,
