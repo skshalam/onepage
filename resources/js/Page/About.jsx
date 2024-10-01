@@ -32,7 +32,7 @@ function About() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { merchant_base } = useParams();
-    const storedMerchantBase = localStorage.getItem('merchant_base');
+    const storedMerchantBase = sessionStorage.getItem('merchant_base');
     console.log('merchant_base:', storedMerchantBase);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
@@ -64,11 +64,11 @@ function About() {
     const settings = {
         dots: true,
         infinite: true,
-        speed: 3000,
+        speed: 2000,
         slidesToShow: 1,
         slidesToScroll: 1,
         autoplay: true,
-        autoplaySpeed: 3000,
+        autoplaySpeed: 2000,
         arrows: false
     };
     return (
