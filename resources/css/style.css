@@ -1852,3 +1852,6 @@ body {
 .about_desc_content{
     color: var(--primary-font-color);
 }
+.red-point{
+    color: #f00 !important;
+}
