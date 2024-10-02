@@ -1911,7 +1911,8 @@ class HomeController extends Controller
             'refer_email'=> $request->email,
             'login_id' => $merchant->email,
             'login_type' => 'merchant',
-            'merchant_id' => $merchant_id
+            'merchant_id' => $merchant_id,
+            'referby_id'=>$user_id
         ];
 
         $curl = curl_init();
