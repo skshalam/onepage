@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel 11 vite with react</title>
+        <title>Onepage</title>
 
         @viteReactRefresh
         @vite('resources/js/app.jsx')

@@ -1907,3 +1907,6 @@ body {
 .collapse-icon.active {
     transform: rotate(180deg);
 }
+.custom-datepicker-dropdown {
+    position: absolute !important;
+}

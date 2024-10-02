@@ -124,7 +124,11 @@ function Referal() {
                                         }
                                     ]}
                                 >
-                                    <DatePicker rootClassName='w-100 rounded-1 py-2' />
+                                    <DatePicker 
+                                        rootClassName='w-100 rounded-1 py-2' 
+                                        getPopupContainer={trigger => trigger.parentNode} 
+                                        dropdownClassName='custom-datepicker-dropdown'
+                                    />
                                 </Form.Item>
                                 <label className='position-absolute z-3 ps-0' htmlFor="userName">Date of Birth</label>
                             </div>
