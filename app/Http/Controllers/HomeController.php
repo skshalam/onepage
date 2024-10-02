@@ -943,6 +943,16 @@ class HomeController extends Controller
         // $merchant_id= 15657;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $contact =OnepageContactView::select('heading')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show', 1)->first();
+        $socialLinks = Onepage_SocialLinks::select('heading','facebook_link','instagram_link','twitter_link','zomato_link','linkedin_link')->where('merchant_id', $merchant_id)->where('status',1)->where('hide_show',1)->first();
+        if($socialLinks){
+            $social_links = [
+                'facebook_link' => $socialLinks->facebook_link,
+                'instagram_link' => $socialLinks->instagram_link,
+                'twitter_link' => $socialLinks->twitter_link,
+                'zomato_link' => $socialLinks->zomato_link,
+                'linkedin_link' => $socialLinks->linkedin_link,
+            ];
+        }
         if($contact){
             $contact = [
                 'heading' => $contact->heading,
@@ -952,6 +962,7 @@ class HomeController extends Controller
             'error' => false,
             'message' => 'Contact view',
             'contact' => $contact,
+            'social_links' => $social_links,
         ]);
 
     }
@@ -1900,7 +1911,8 @@ class HomeController extends Controller
             'refer_email'=> $request->email,
             'login_id' => $merchant->email,
             'login_type' => 'merchant',
-            'merchant_id' => $merchant_id
+            'merchant_id' => $merchant_id,
+            'referby_id'=>$user_id
         ];
 
         $curl = curl_init();
