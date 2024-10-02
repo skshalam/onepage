@@ -1417,21 +1417,24 @@ class HomeController extends Controller
     }
     public function referErn(Request $request)
     {
-        // $user = JWTAuth::parseToken()->authenticate();
-        // $user_id = $user->id;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $refer =OnepageProfileSetting::select('referral_permission', 'referral_dynamic_name')->where('merchant_id', $merchant_id)->where('referral_permission', 1)->where('status', 1)->first();
+        $user_image= User::select('image')->where('id', $user_id)->first();
         if($refer){
             $refer = [
                 'referral_permission' => $refer->referral_permission,
                 'referral_dynamic_name' => $refer->referral_dynamic_name,
             ];
         }
+
         return response()->json([
             'error' => false,
             'message' => 'Referral Permission',
             'refer' => $refer,
+            'user_image' => $user_image
         ]);
        
     }
