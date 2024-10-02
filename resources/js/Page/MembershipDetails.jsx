@@ -289,7 +289,7 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
         } else if (type === 'Coupons') {
           setCouponsCurrentPage(pageNumber);
         }
-      }, 300); // 300ms debounce time, adjust as needed
+      }, 1000); // 300ms debounce time, adjust as needed
     
       const handlePagination = (pageNumber, type) => {
         handlePaginationDebounced(pageNumber, type);
