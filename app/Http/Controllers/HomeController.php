@@ -1711,7 +1711,6 @@ class HomeController extends Controller
                                     $trakredeem->reversal_entry=0;
                                     $trakredeem->actual_creditgiven=0;
                                     $trakredeem->online_ordering_redemption=0;
-
                                     //old function not
                                     $trakredeem->save();
 
@@ -1747,7 +1746,6 @@ class HomeController extends Controller
                                     $coupon->pp_before_discount ='';
                                     $coupon->pp_discount_value ='';
                                     $coupon->pp_after_discount ='';
-
                                     //old function not
                                     $coupon->save();
                                     
@@ -1786,7 +1784,6 @@ class HomeController extends Controller
                                         $MULtable->average_visit_per_month ='';
                                         $MULtable->wallet_issued_counter =0;
                                         $MULtable->wallet_redeemed_counter =0;
-                                        // dd($added_point);
                                         //old function not
                                         // $MULtable->credits_redeemed = $MULtable->credits_redeemed + $added_point; 
                                         $MULtable->credits_redeemed=$added_point;
