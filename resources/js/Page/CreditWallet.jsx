@@ -102,7 +102,6 @@ function CreditWallet() {
         setCurrentPage(1);
         loadCreditWalletData(1, "", "", "", "");
         setOpenFilter1(false);
-        setOpenFilter2(false)
     };
 
     const handleTypeChange = (checkedValues) => {

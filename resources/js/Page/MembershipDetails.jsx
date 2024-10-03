@@ -4,10 +4,11 @@ import ThemeContext from '../Providers/Contexts/ThemeContext';
 import axiosSetup from '@/axiosSetup';
 import Pagination from 'react-bootstrap/Pagination';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { debounce } from 'lodash';
 function MembershipDetails() {
     const [showModal, setModal] = useState(false);
     const [title, setTitle] = useState(null);
-    const [dataLoading, setDataLoading] = useState(true)
+    const [dataLoading, setDataLoading] = useState(true);
 
     const { membership_id } = useParams();
     const { useThemeStyles } = useContext(ThemeContext);
@@ -30,7 +31,7 @@ function MembershipDetails() {
     const [couponsTotalPages, setCouponsTotalPages] = useState(1);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        console.log('Token:', token);
+        // console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/eWalletissue',
                 {
@@ -48,11 +49,10 @@ function MembershipDetails() {
         } else {
             console.log('No token available, API call skipped');
         }
-        getMemberShipDetails()
     }, [membership_id, eWalletCurrentPage]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        console.log('Token:', token);
+        // console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/bookletissue',
                 {
@@ -73,7 +73,7 @@ function MembershipDetails() {
     }, [membership_id, bookletCurrentPage]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        console.log('Token:', token);
+        // console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/couponsredeem',
                 {
@@ -92,16 +92,27 @@ function MembershipDetails() {
             console.log('No token available, API call skipped');
         }
     }, [membership_id, couponsCurrentPage]);
-    const getMemberShipDetails = () => {
-        axiosSetup.post('/api/memebership', { membership_id: membership_id })
-            .then(res => {
-                setMembershipDetails(res.data.data.membership[0]);
-                setDataLoading(false)
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    }
+    useEffect(() => {
+        const token = localStorage.getItem('access_token');
+        // console.log('Token:', token);
+        if (token) {
+            axiosSetup.post('/api/memebership',
+                {
+                    membership_id: membership_id,
+                })
+                .then(response => {
+                    setMembershipDetails(response.data.data.membership[0]);
+                    setDataLoading(false);
+                })
+                .catch(error => {
+                    console.error('API Error:', error);
+                });
+        } else {
+            console.log('No token available, API call skipped');
+        }
+    }, [membership_id]);
+
+
     return (
         <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
             <div className='body-container membership-package-body'>
@@ -121,7 +132,7 @@ function MembershipDetails() {
                             dataLoading
                                 ? <Skeleton className='' style={{ height: "25px", width: "110px" }} />
                                 : <span className='fs-5 fw-bold text-uppercase'>
-                                    {membershipDetails?.name}
+                                    {membershipDetails.name}
                                 </span>}
                         <div className="d-flex gap-2" style={{ fontSize: "15px" }}>
                             <p>
@@ -260,15 +271,29 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
     membership_id, eWalletCurrentPage, seteWalletCurrentPage, eWalletTotalPages,
     bookletCurrentPage, setBookletCurrentPage, bookletTotalPages,
     couponsCurrentPage, setCouponsCurrentPage, couponsTotalPages }) {
-    const handlePagination = (pageNumber, type) => {
+    // const handlePagination = (pageNumber, type) => {
+    //     if (type === 'eWallet') {
+    //         seteWalletCurrentPage(pageNumber);
+    //     } else if (type === 'Booklets') {
+    //         setBookletCurrentPage(pageNumber);
+    //     } else if (type === 'Coupons') {
+    //         setCouponsCurrentPage(pageNumber);
+    //         console.log(pageNumber);
+    //     }
+    // };
+    const handlePaginationDebounced = debounce((pageNumber, type) => {
         if (type === 'eWallet') {
-            seteWalletCurrentPage(pageNumber);
+          seteWalletCurrentPage(pageNumber);
         } else if (type === 'Booklets') {
-            setBookletCurrentPage(pageNumber);
+          setBookletCurrentPage(pageNumber);
         } else if (type === 'Coupons') {
-            setCouponsCurrentPage(pageNumber);
+          setCouponsCurrentPage(pageNumber);
         }
-    };
+      }, 1000); // 300ms debounce time, adjust as needed
+    
+      const handlePagination = (pageNumber, type) => {
+        handlePaginationDebounced(pageNumber, type);
+      };
     return (
         <div
             className={`position-absolute h-100 top-0 w-100 view-membership-details

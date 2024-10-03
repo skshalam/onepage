@@ -16,8 +16,8 @@ function Wallet() {
     const [scrollLoad, setScrollLoad] = useState(false);
     const [selectedTypes, setSelectedTypes] = useState("");
     const [pendingSelectedTypes, setPendingSelectedTypes] = useState("");
-    const [startDate, setStartDate] = useState(null); // To store start date
-    const [endDate, setEndDate] = useState(null);
+    const [startDate, setStartDate] = useState(""); // To store start date
+    const [endDate, setEndDate] = useState(""); // To store end date
     const [pendingStartDate, setPendingStartDate] = useState(""); // Temporary state for start date
     const [pendingEndDate, setPendingEndDate] = useState(""); // Temporary state for end date
     const [form] = Form.useForm();
@@ -43,11 +43,11 @@ function Wallet() {
         return `${day}${daySuffix(day)} ${month}, ${year}`;
     };
     const handleStartDateChange = (date, dateString) => {
-        setStartDate(dateString); // Store the selected start date
+        setPendingStartDate(dateString); // Store the pending start date
     };
 
     const handleEndDateChange = (date, dateString) => {
-        setEndDate(dateString); // Store the selected end date
+        setPendingEndDate(dateString); // Store the pending end date
     };
     useEffect(() => {
         const token = localStorage.getItem('access_token');
@@ -93,6 +93,8 @@ function Wallet() {
         setSelectedTypes(""); // Clear the actual selected types
         setOpenFilter2(false); // Close the drawer popup
         setCurrentPage(1); // Reset pagination to the first page
+        loadCreditWalletData(1, "", "", "");
+        setOpenFilter1(false);
     };
 
     const handleTypeChange = (checkedValues) => {
@@ -113,8 +115,9 @@ function Wallet() {
         loadCreditWalletData(1, pendingSelectedTypes, startDate, endDate); // Load data based on selected filters
     };
     const applyDateFilters = () => {
-        loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, pendingStartDate, pendingEndDate);
-        setOpenFilter1(false); // Close the drawer after applying
+        setCurrentPage(1);
+        loadCreditWalletData(1, pendingSelectedTypes, pendingStartDate, pendingEndDate);
+        setOpenFilter1(false);
     };
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight && !isLoading) {
@@ -254,6 +257,7 @@ function Wallet() {
                     rootClassName='filter-drawer'
                     open={openFilter1}
                     onClose={() => setOpenFilter1(false)}
+                    // getContainer={false}
                     closable={false}
                     styles={{ body: { padding: "0" } }}
                 >
@@ -275,10 +279,9 @@ function Wallet() {
                         </Row>
                     </div>
                     <div className="filter-actions">
-                        <button className='border-0 p-2' onClick={() => {
-                            setStartDate(null);
-                            setEndDate(null);
-                        }}>Clear</button>
+                        <button className='border-0 p-2'
+                            style={{ color: useThemeStyles.primary_color }}
+                            onClick={clearFilters}>Clear</button>
                         <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyDateFilters}>Apply</button>
                     </div>
                 </Drawer>

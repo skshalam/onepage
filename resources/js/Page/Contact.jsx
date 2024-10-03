@@ -49,7 +49,7 @@ function Contact() {
                         .then(response => {
                             console.log('API Response:', response);
                             Modal.success({
-                                content: 'Message sent successfully!',
+                                content: 'Thankyou for Contacting us!',
                             });
                             // setOpen(true)
                             form.resetFields(); // Clear form after successful submission

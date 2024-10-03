@@ -943,6 +943,16 @@ class HomeController extends Controller
         // $merchant_id= 15657;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $contact =OnepageContactView::select('heading')->where('merchant_id', $merchant_id)->where('status', 1)->where('hide_show', 1)->first();
+        $socialLinks = Onepage_SocialLinks::select('heading','facebook_link','instagram_link','twitter_link','zomato_link','linkedin_link')->where('merchant_id', $merchant_id)->where('status',1)->where('hide_show',1)->first();
+        if($socialLinks){
+            $social_links = [
+                'facebook_link' => $socialLinks->facebook_link,
+                'instagram_link' => $socialLinks->instagram_link,
+                'twitter_link' => $socialLinks->twitter_link,
+                'zomato_link' => $socialLinks->zomato_link,
+                'linkedin_link' => $socialLinks->linkedin_link,
+            ];
+        }
         if($contact){
             $contact = [
                 'heading' => $contact->heading,
@@ -952,6 +962,7 @@ class HomeController extends Controller
             'error' => false,
             'message' => 'Contact view',
             'contact' => $contact,
+            'social_links' => $social_links,
         ]);
 
     }
@@ -987,6 +998,16 @@ class HomeController extends Controller
         // $merchant_id= 15657;
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $termscondition =OnepageTermsCondition::select('heading', 'description')->where('merchant_id', $merchant_id)->where('status', 1)->first(); 
+        $socialLinks = Onepage_SocialLinks::select('heading','facebook_link','instagram_link','twitter_link','zomato_link','linkedin_link')->where('merchant_id', $merchant_id)->where('status',1)->where('hide_show',1)->first();
+        if($socialLinks){
+            $social_links = [
+                'facebook_link' => $socialLinks->facebook_link,
+                'instagram_link' => $socialLinks->instagram_link,
+                'twitter_link' => $socialLinks->twitter_link,
+                'zomato_link' => $socialLinks->zomato_link,
+                'linkedin_link' => $socialLinks->linkedin_link,
+            ];
+        }
         if($termscondition){
             $termscondition = [
                 'heading' => $termscondition->heading,
@@ -997,6 +1018,7 @@ class HomeController extends Controller
             'error' => false,
             'message' => 'Terms Condition',
             'termscondition' => $termscondition,
+            'social_links' => $social_links,
         ]);
 
     }
@@ -1395,21 +1417,24 @@ class HomeController extends Controller
     }
     public function referErn(Request $request)
     {
-        // $user = JWTAuth::parseToken()->authenticate();
-        // $user_id = $user->id;
+        $user = JWTAuth::parseToken()->authenticate();
+        $user_id = $user->id;
         // Get the merchant_id from the JWT payload
         $merchant_id = JWTAuth::parseToken()->getPayload()->get('merchant_id');
         $refer =OnepageProfileSetting::select('referral_permission', 'referral_dynamic_name')->where('merchant_id', $merchant_id)->where('referral_permission', 1)->where('status', 1)->first();
+        $user_image= User::select('image')->where('id', $user_id)->first();
         if($refer){
             $refer = [
                 'referral_permission' => $refer->referral_permission,
                 'referral_dynamic_name' => $refer->referral_dynamic_name,
             ];
         }
+
         return response()->json([
             'error' => false,
             'message' => 'Referral Permission',
             'refer' => $refer,
+            'user_image' => $user_image
         ]);
        
     }
@@ -1689,7 +1714,6 @@ class HomeController extends Controller
                                     $trakredeem->reversal_entry=0;
                                     $trakredeem->actual_creditgiven=0;
                                     $trakredeem->online_ordering_redemption=0;
-
                                     //old function not
                                     $trakredeem->save();
 
@@ -1725,7 +1749,6 @@ class HomeController extends Controller
                                     $coupon->pp_before_discount ='';
                                     $coupon->pp_discount_value ='';
                                     $coupon->pp_after_discount ='';
-
                                     //old function not
                                     $coupon->save();
                                     
@@ -1764,7 +1787,6 @@ class HomeController extends Controller
                                         $MULtable->average_visit_per_month ='';
                                         $MULtable->wallet_issued_counter =0;
                                         $MULtable->wallet_redeemed_counter =0;
-                                        // dd($added_point);
                                         //old function not
                                         // $MULtable->credits_redeemed = $MULtable->credits_redeemed + $added_point; 
                                         $MULtable->credits_redeemed=$added_point;
@@ -1889,7 +1911,8 @@ class HomeController extends Controller
             'refer_email'=> $request->email,
             'login_id' => $merchant->email,
             'login_type' => 'merchant',
-            'merchant_id' => $merchant_id
+            'merchant_id' => $merchant_id,
+            'referby_id'=>$user_id
         ];
 
         $curl = curl_init();
