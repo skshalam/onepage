@@ -4,6 +4,7 @@ import PhoneInput from 'react-phone-input-2';
 import { Link } from 'react-router-dom';
 import axiosSetup from '@/axiosSetup';
 import { convertDateToISO } from '../utility/formating';
+import swal from 'sweetalert';
 
 function Referal() {
     const [form] = Form.useForm();
@@ -42,10 +43,24 @@ function Referal() {
                 })
                     .then(res => {
                         if (res.data.error) {
-                            warning(res.data.msg)
+                            // warning(res.data.msg)
+                            swal({
+                                title: "Error",
+                                text: res.data.msg,
+                                icon: "error",
+                                timer:3000,
+                                buttons:false
+                              });
                         }
                         else if (!res.data.error) {
-                            success(res.data.msg)
+                            // success(res.data.msg)
+                            swal({
+                                title: "Success",
+                                text: res.data.msg,
+                                icon: "success",
+                                timer:3000,
+                                buttons:false
+                              });
                             form.resetFields()
                         }
                     })

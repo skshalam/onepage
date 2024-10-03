@@ -1912,3 +1912,16 @@ body {
 .custom-datepicker-dropdown {
     position: absolute !important;
 }
+
+.swal-overlay--show-modal .swal-modal {
+    width: 300px;
+}
+
+.swal-icon{
+    transform: scale(0.6);
+    margin: auto;
+}
+
+.swal-title {
+    padding: 0px 13px;
+}
