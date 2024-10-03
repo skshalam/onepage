@@ -258,21 +258,20 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
         axiosSetup.post('/api/redeem_rewards', { "reward_id": rewardId })
             .then(res => {
                 console.log(res.data);
-                if (res?.data) {
-                    setProceed(true)
-                    setRedeemData(true)
-                    setMsg(res.data.message)
-                }
-                else if (!res?.data) {
+                if (res.data?.error) {
                     setProceed(true)
                     setRedeemData(false)
+                    setMsg(res.data.message)
+                }
+                else{
+                    setProceed(true)
+                    setRedeemData(true)
                     setMsg(res.data.message)
                 }
                 setTimeout(() => {
                     setOpenConfirm(false)
                     setProceed(false)
                 }, 2000);
-                setRedeemData(false)
             })
             .catch(err => {
                 console.log(err);
