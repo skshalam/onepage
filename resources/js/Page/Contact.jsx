@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import axiosSetup from '@/axiosSetup';
+import swal from 'sweetalert';
 function Contact() {
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false)
@@ -55,17 +56,25 @@ function Contact() {
                     axiosSetup.post('/api/contactsubmit', payload)
                         .then(response => {
                             console.log('API Response:', response);
-                            Modal.success({
-                                content: 'Thankyou for Contacting us!',
-                            });
+                            swal({
+                                title: "Success",
+                                text: response.data.message,
+                                icon: "success",
+                                timer:3000,
+                                buttons:false
+                              });
                             // setOpen(true)
                             form.resetFields(); // Clear form after successful submission
                         })
                         .catch(error => {
                             console.error('API Error:', error);
-                            Modal.error({
-                                content: 'Something went wrong. Please try again.',
-                            });
+                            swal({
+                                title: "Error",
+                                text: "Something went wrong",
+                                icon: "error",
+                                timer:3000,
+                                buttons:false
+                              });
                         });
                 } else {
                     console.log('No token available, API call skipped');
@@ -206,7 +215,7 @@ function Contact() {
                     </div>
                 </div>
             </div>
-            <Modal
+            {/* <Modal
                 open={open}
                 onCancel={() => setOpen(false)}
                 closable={false}
@@ -231,7 +240,7 @@ function Contact() {
                     <span className='fw-semibold'>Someone from the Team will
                         assist you shortly.</span>
                 </div>
-            </Modal>
+            </Modal> */}
         </div>
     )
 }
