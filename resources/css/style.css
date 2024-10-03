@@ -353,6 +353,7 @@ body {
 
 .bg-shape.one {
     bottom: -70px;
+    z-index: 99999999;
 }
 
 .bg-shape.two {
@@ -1110,6 +1111,7 @@ body {
 
 .view-membership-details.show {
     transform: translateY(0);
+    z-index: 9999999999;
 }
 
 .membership-drawer-container {

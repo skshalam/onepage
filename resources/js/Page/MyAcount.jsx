@@ -154,248 +154,250 @@ function MyAcount() {
     }
 
     return (
-        <div className='body-container position-relative'>
-            <div className="position-sticky top-0 z-1 shadow-sm">
-                <div className="navHeader d-flex justify-content-between">
-                    <div className="prev-btn">
-                        <Link to={"/userProfile"}>
-                            <i className="bi bi-chevron-left"></i>
-                        </Link>
-                        {
-                            !isEditable
-                                ? <span>MY ACCOUNT</span>
-                                : <span>EDIT PROFILE</span>
-                        }
-                    </div>
-                    <div className="profile-action">
-                        {
-                            !isEditable ?
-                                <div className="d-flex gap-2 align-items-center">
-                                    <Button onClick={() => setIsEditable(true)} className='rounded-5' icon={<i className='bi bi-pen' />}>Edit</Button>
-                                    <Popover
-                                        rootClassName='delete-pop-over'
-                                        content={<a onClick={() => { setDeleteModal(true), setOpenDelPop(false) }}>Delete Account</a>}
-                                        placement='bottomRight'
-                                        open={openDelPop}
-                                    >
-                                        <Button type='ghost' onClick={() => setOpenDelPop(true)} icon={<i className='bi bi-three-dots-vertical text-light fs-5' />} />
-                                    </Popover>
-
-                                </div>
-                                :
-                                <Button onClick={() => { formInstance?.submit() }} type='ghost' icon={<i className='bi bi-check-lg fs-3 text-light' />}></Button>
-                        }
-                    </div>
-                </div>
-            </div>
-            {
-                isEditable
-                    ?
-                    <motion.div
-                        initial={{ opacity: 0, }}
-                        animate={{ opacity: 1, }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <ProfileEditForm onSave={handleSave} data={userData} acData={data_account} setFormInstance={setFormInstance} merchantBase={merchantBase} />
-                    </motion.div>
-                    :
-                    <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
-                        <div className="profile-info m-3" ref={targetDiv}>
-
+        <div className='onepage-main-body position-relative'>
+            <div className='onepage-set-body'>
+                <div className="position-sticky top-0 z-1 shadow-sm">
+                    <div className="navHeader d-flex justify-content-between">
+                        <div className="prev-btn">
+                            <Link to={"/userProfile"}>
+                                <i className="bi bi-chevron-left"></i>
+                            </Link>
                             {
-                                loaded
-                                    ? <div className="d-flex gap-2 flex-column">
-                                        <div className="profile-pic text-center mb-3">
-                                            <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
-                                        </div>
-                                        {[...new Array(10)].map((i, iIndex) => (<div key={iIndex} className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                            {/* <label htmlFor="">Name</label> */}
-                                            <div className="">
-                                                <Skeleton className='mb-1' style={{ height: "15px", width: "150px" }} />
-                                            </div>
-                                        </div>))}
+                                !isEditable
+                                    ? <span>MY ACCOUNT</span>
+                                    : <span>EDIT PROFILE</span>
+                            }
+                        </div>
+                        <div className="profile-action">
+                            {
+                                !isEditable ?
+                                    <div className="d-flex gap-2 align-items-center">
+                                        <Button onClick={() => setIsEditable(true)} className='rounded-5' icon={<i className='bi bi-pen' />}>Edit</Button>
+                                        <Popover
+                                            rootClassName='delete-pop-over'
+                                            content={<a onClick={() => { setDeleteModal(true), setOpenDelPop(false) }}>Delete Account</a>}
+                                            placement='bottomRight'
+                                            open={openDelPop}
+                                        >
+                                            <Button type='ghost' onClick={() => setOpenDelPop(true)} icon={<i className='bi bi-three-dots-vertical text-light fs-5' />} />
+                                        </Popover>
+
                                     </div>
                                     :
-                                    <motion.div
-                                        initial={{ opacity: 0, }}
-                                        animate={{ opacity: 1, }}
-                                        transition={{ duration: 0.6 }}
-                                    >
-                                        <div className="d-flex gap-2 flex-column">
-                                            <div className="profile-pic text-center mb-3">
-                                                <Avatar size={70} className='bg-light' src={userData?.image} icon={<i className='bi bi-person-fill text-dark' />} />
-                                            </div>
-                                            {data_account.name.display_full_name_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">Name</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.name === "" ? data_account.name.full_name_dynamic_name : userData?.name}</span>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.gender.display_gender_permission == 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">Gender</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.gender === "" ? data_account.gender.gender_dynamic_name : userData?.gender}</span>}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.email.display_email_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">E-mail</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.email === "" ? data_account.email.email_dynamic_name : userData?.email}</span>}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.mobile.display_mobile_number_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">Phone</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.mobile === "" ? data_account.mobile.mobile_number_dynamic_name : userData?.mobile}</span>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.birthday.display_birthday_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">Birthday</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.dob === "" ? data_account.birthday.birthday_dynamic_name : userData?.dob}</span>}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.marital_status.display_marital_status_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">Relationship</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.marital === "" ? data_account.marital_status.marital_status_dynamic_name : userData?.marital}</span>}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.address.display_address_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">Address</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.address === "" ? data_account.address.address_dynamic_name : userData?.address}</span>}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.gst.display_gst_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">GSTIN</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.gstin === "" ? data_account.address.gst_dynamic_name : userData?.gstin}</span>}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.pan.display_pan_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">PAN</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.pan === "" ? data_account.pan.pan_dynamic_name : userData?.pan}</span>}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.bank.display_bank_name_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">Bank Name</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.bank_name === "" ? data_account.bank.bank_name : userData?.bank_name}</span>}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.bank.display_bank_account_number_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">Bank A/C No.</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.bank_account_number === "" ? data_account.bank.bank_account_number : userData?.bank_account_number}</span>}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {data_account.pincode.display_pincode_permission === 1 && (
-                                                <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
-                                                    <label htmlFor="">Pincode.</label>
-                                                    <div className="">
-                                                        {loading ?
-                                                            <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
-                                                            : <span>{userData?.pincode === "" ? data_account.pincode.pincode_dynamic_name : userData?.pincode}</span>}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </motion.div>
+                                    <Button onClick={() => { formInstance?.submit() }} type='ghost' icon={<i className='bi bi-check-lg fs-3 text-light' />}></Button>
                             }
-
-                            <div className="powered-ewards">
-                                <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
-                                    <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
-                            </div>
                         </div>
-                    </SkeletonTheme>
-            }
-            <Modal
-                open={deleteModal}
-                onCancel={() => setDeleteModal(false)}
-                closable={false}
-                centered
-                getContainer={targetDiv.current}
-                width={300}
-                rootClassName='cust-css-ant-modal'
-                onOk={()=>handleDelete()}
-                styles={{
-                    footer: {
-                        display: "grid",
-                        margin: "20px 10px",
-                        padding: "0px 20px",
-                        gridTemplateColumns: "1fr 1fr"
-                    },
-                    content: {
-                        padding: "0px",
-                        overflow: "hidden",
-                    }
-                }}
-            >
-                <div className="del-ac-modal-content position-relative">
-                    <div className="modal-bg position absolute">
-                        <svg width="345" height="166" viewBox="0 0 345 166" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M345 91.3234L1.65989 165.285C1.10338 165.405 0.548585 165.475 0 165.497V-1H345V91.3234Z" fill={useThemeStyles?.primary_color} />
-                        </svg>
-
-                    </div>
-                    <div className="position-absolute modal-icon d-flex flex-column gap-0">
-                        <i className='bi bi-exclamation-circle text-light' />
-                        <span>Delete ?</span>
-                    </div>
-                    <div className="text-center fw-semibold modal-txt">
-                        <p className='mb-0'>Your account will be permanently deleted. Proceed?</p>
                     </div>
                 </div>
-            </Modal>
+                {
+                    isEditable
+                        ?
+                        <motion.div
+                            initial={{ opacity: 0, }}
+                            animate={{ opacity: 1, }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <ProfileEditForm onSave={handleSave} data={userData} acData={data_account} setFormInstance={setFormInstance} merchantBase={merchantBase} />
+                        </motion.div>
+                        :
+                        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+                            <div className="profile-info m-3" ref={targetDiv}>
+
+                                {
+                                    loaded
+                                        ? <div className="d-flex gap-2 flex-column">
+                                            <div className="profile-pic text-center mb-3">
+                                                <Avatar size={70} className='bg-light' icon={<i className='bi bi-person-fill text-dark' />} />
+                                            </div>
+                                            {[...new Array(10)].map((i, iIndex) => (<div key={iIndex} className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                {/* <label htmlFor="">Name</label> */}
+                                                <div className="">
+                                                    <Skeleton className='mb-1' style={{ height: "15px", width: "150px" }} />
+                                                </div>
+                                            </div>))}
+                                        </div>
+                                        :
+                                        <motion.div
+                                            initial={{ opacity: 0, }}
+                                            animate={{ opacity: 1, }}
+                                            transition={{ duration: 0.6 }}
+                                        >
+                                            <div className="d-flex gap-2 flex-column">
+                                                <div className="profile-pic text-center mb-3">
+                                                    <Avatar size={70} className='bg-light' src={userData?.image} icon={<i className='bi bi-person-fill text-dark' />} />
+                                                </div>
+                                                {data_account.name.display_full_name_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">Name</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.name === "" ? data_account.name.full_name_dynamic_name : userData?.name}</span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.gender.display_gender_permission == 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">Gender</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.gender === "" ? data_account.gender.gender_dynamic_name : userData?.gender}</span>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.email.display_email_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">E-mail</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.email === "" ? data_account.email.email_dynamic_name : userData?.email}</span>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.mobile.display_mobile_number_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">Phone</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.mobile === "" ? data_account.mobile.mobile_number_dynamic_name : userData?.mobile}</span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.birthday.display_birthday_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">Birthday</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.dob === "" ? data_account.birthday.birthday_dynamic_name : userData?.dob}</span>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.marital_status.display_marital_status_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">Relationship</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.marital === "" ? data_account.marital_status.marital_status_dynamic_name : userData?.marital}</span>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.address.display_address_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">Address</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.address === "" ? data_account.address.address_dynamic_name : userData?.address}</span>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.gst.display_gst_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">GSTIN</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.gstin === "" ? data_account.address.gst_dynamic_name : userData?.gstin}</span>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.pan.display_pan_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">PAN</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.pan === "" ? data_account.pan.pan_dynamic_name : userData?.pan}</span>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.bank.display_bank_name_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">Bank Name</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.bank_name === "" ? data_account.bank.bank_name : userData?.bank_name}</span>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.bank.display_bank_account_number_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">Bank A/C No.</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.bank_account_number === "" ? data_account.bank.bank_account_number : userData?.bank_account_number}</span>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {data_account.pincode.display_pincode_permission === 1 && (
+                                                    <div className="profile-info-content p-2 px-3 rounded-5 d-flex gap-4">
+                                                        <label htmlFor="">Pincode.</label>
+                                                        <div className="">
+                                                            {loading ?
+                                                                <Skeleton className='mb-1' style={{ height: "15px", width: "100px" }} />
+                                                                : <span>{userData?.pincode === "" ? data_account.pincode.pincode_dynamic_name : userData?.pincode}</span>}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                }
+
+                                <div className="powered-ewards">
+                                    <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
+                                        <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
+                                </div>
+                            </div>
+                        </SkeletonTheme>
+                }
+                <Modal
+                    open={deleteModal}
+                    onCancel={() => setDeleteModal(false)}
+                    closable={false}
+                    centered
+                    getContainer={targetDiv.current}
+                    width={300}
+                    rootClassName='cust-css-ant-modal'
+                    onOk={()=>handleDelete()}
+                    styles={{
+                        footer: {
+                            display: "grid",
+                            margin: "20px 10px",
+                            padding: "0px 20px",
+                            gridTemplateColumns: "1fr 1fr"
+                        },
+                        content: {
+                            padding: "0px",
+                            overflow: "hidden",
+                        }
+                    }}
+                >
+                    <div className="del-ac-modal-content position-relative">
+                        <div className="modal-bg position absolute">
+                            <svg width="345" height="166" viewBox="0 0 345 166" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M345 91.3234L1.65989 165.285C1.10338 165.405 0.548585 165.475 0 165.497V-1H345V91.3234Z" fill={useThemeStyles?.primary_color} />
+                            </svg>
+
+                        </div>
+                        <div className="position-absolute modal-icon d-flex flex-column gap-0">
+                            <i className='bi bi-exclamation-circle text-light' />
+                            <span>Delete ?</span>
+                        </div>
+                        <div className="text-center fw-semibold modal-txt">
+                            <p className='mb-0'>Your account will be permanently deleted. Proceed?</p>
+                        </div>
+                    </div>
+                </Modal>
+            </div>
         </div>
     )
 }
