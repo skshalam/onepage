@@ -1808,7 +1808,7 @@ class HomeController extends Controller
                                 else
                                 {
                                     return response()->json([
-                                        'error' => false,
+                                        'error' => true,
                                         'message' => "Reward claim failed."
                                     ]);
                                 }
@@ -1817,7 +1817,7 @@ class HomeController extends Controller
                             {
                                 \DB::rollback();
                                 return response()->json([
-                                    'error' => false,
+                                    'error' => true,
                                     'message' => "Transaction unsuccessful. Please try again."
                                 ]);
                             }
@@ -1825,7 +1825,7 @@ class HomeController extends Controller
                         else
                         {
                             return response()->json([
-                                'error' => false,
+                                'error' => true,
                                 'message' => "You don't have enough points to claim this reward"
                             ]);
                         }
@@ -1833,7 +1833,7 @@ class HomeController extends Controller
                     else
                     {
                         return response()->json([
-                            'error' => false,
+                            'error' => true,
                             'message' => "This number is not registered in the membership program. Please contact reception"
                         ]);
                     }
@@ -1841,7 +1841,7 @@ class HomeController extends Controller
                 else
                 {
                     return response()->json([
-                        'error' => false,
+                        'error' => true,
                         'message' => "Incorrect reward id"
                     ]);
                 }
@@ -1850,7 +1850,7 @@ class HomeController extends Controller
             else
             {
                 return response()->json([
-                    'error' => false,
+                    'error' => true,
                     'message' => "Incorrect Merchant Id",
                 ]);
             }
