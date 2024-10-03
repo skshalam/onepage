@@ -61,92 +61,94 @@ function Reward() {
         }
     };
     return (
-        <div className='body-container'>
-            <div className="sticky-top">
-                <div className="navHeader">
-                    <div className="prev-btn">
-                        <Link to={"/About"}>
-                            <i className="bi bi-chevron-left"></i>
-                        </Link>
-                        <span>REWARDS</span>
+        <div className='onepage-main-body'>
+            <div className='onepage-set-body'>
+                <div className="sticky-top">
+                    <div className="navHeader">
+                        <div className="prev-btn">
+                            <Link to={"/About"}>
+                                <i className="bi bi-chevron-left"></i>
+                            </Link>
+                            <span>REWARDS</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className={`inner-container`}>
-                {loading
-                    ? ([...new Array(6)].map((i, iIndex) =>
-                        <SkeletonTheme key={iIndex} baseColor="#c7c7c7" highlightColor="#ffffff">
-                            <div className="rewards p-1">
-                                <div className="rewards-info h-100">
-                                    <div className="icon">
-                                        <Skeleton className='mb-1' style={{ height: "85px", width: "100px" }} />
-                                    </div>
-                                    <div className="rewards-info-details">
-                                        <div className="reward-name">
-                                            <Skeleton className='' style={{ height: "15px", width: "150px" }} />
-                                            <div className="reward-valid">
-                                                <Skeleton className='ms-2' style={{ height: "15px", width: "150px" }} />
-                                            </div>
-                                        </div>
-                                        <div className="reward-action">
-                                            <div className="reward-view-bnt">
-                                                <Skeleton className='' style={{ height: "20px", width: "60px" }} />
-                                            </div>
-                                            <div className="reward-redeem-bnt">
-                                                <Skeleton className='' style={{ height: "20px", width: "60px" }} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </SkeletonTheme>
-
-                    ))
-                    :
-                    (
-                        rewardsData?.length > 0 ? (
-                            rewardsData.map((reward, index) => (
-                                <div key={index} className="rewards p-1">
+                <div className={`inner-container`}>
+                    {loading
+                        ? ([...new Array(6)].map((i, iIndex) =>
+                            <SkeletonTheme key={iIndex} baseColor="#c7c7c7" highlightColor="#ffffff">
+                                <div className="rewards p-1">
                                     <div className="rewards-info h-100">
                                         <div className="icon">
-                                            <img src="https://i.imgur.com/wkYeeU3.png" alt="" />
+                                            <Skeleton className='mb-1' style={{ height: "85px", width: "100px" }} />
                                         </div>
                                         <div className="rewards-info-details">
                                             <div className="reward-name">
-                                                <span>{reward.name}</span>
+                                                <Skeleton className='' style={{ height: "15px", width: "150px" }} />
                                                 <div className="reward-valid">
-                                                    validity <span>{calculateValidity(reward.valid_till)}</span>
+                                                    <Skeleton className='ms-2' style={{ height: "15px", width: "150px" }} />
                                                 </div>
                                             </div>
                                             <div className="reward-action">
                                                 <div className="reward-view-bnt">
-                                                    <button onClick={() => { handleDrawer(reward), setOpen(!open) }}>view details</button>
+                                                    <Skeleton className='' style={{ height: "20px", width: "60px" }} />
                                                 </div>
-                                                {
-                                                    calculateValidity(reward.valid_till) === "Expired" ? null
-                                                        : <div className="reward-redeem-bnt">
-
-                                                            <button
-                                                                disabled={calculateValidity(reward.valid_till) === "Expired" ? true : null}
-                                                                onClick={() => { setOpenConfirm(!openConfirm), setRewardId(reward?.rewards_id) }}><span>{reward.coupon_code} |</span> claim</button>
-                                                        </div>}
+                                                <div className="reward-redeem-bnt">
+                                                    <Skeleton className='' style={{ height: "20px", width: "60px" }} />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            ))
-                        ) : (
-                            <p>No rewards available</p>
+                            </SkeletonTheme>
+
+                        ))
+                        :
+                        (
+                            rewardsData?.length > 0 ? (
+                                rewardsData.map((reward, index) => (
+                                    <div key={index} className="rewards p-1">
+                                        <div className="rewards-info h-100">
+                                            <div className="icon">
+                                                <img src="https://i.imgur.com/wkYeeU3.png" alt="" />
+                                            </div>
+                                            <div className="rewards-info-details">
+                                                <div className="reward-name">
+                                                    <span>{reward.name}</span>
+                                                    <div className="reward-valid">
+                                                        validity <span>{calculateValidity(reward.valid_till)}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="reward-action">
+                                                    <div className="reward-view-bnt">
+                                                        <button onClick={() => { handleDrawer(reward), setOpen(!open) }}>view details</button>
+                                                    </div>
+                                                    {
+                                                        calculateValidity(reward.valid_till) === "Expired" ? null
+                                                            : <div className="reward-redeem-bnt">
+
+                                                                <button
+                                                                    disabled={calculateValidity(reward.valid_till) === "Expired" ? true : null}
+                                                                    onClick={() => { setOpenConfirm(!openConfirm), setRewardId(reward?.rewards_id) }}><span>{reward.coupon_code} |</span> claim</button>
+                                                            </div>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No rewards available</p>
+                            )
                         )
-                    )
-                }
+                    }
+                </div>
+                <div className="powered-ewards">
+                    <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
+                        <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
+                </div>
+                <RewardDescDrawer open={open} rewardsCartData={rewardsDesc} setOpen={setOpen} dataLoading={dataLoading} setDataLoading={setDataLoading} />
+                <RewardPopConfirm openConfirm={openConfirm} setOpenConfirm={setOpenConfirm} rewardId={rewardId} />
             </div>
-            <div className="powered-ewards">
-                <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
-                    <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
-            </div>
-            <RewardDescDrawer open={open} rewardsCartData={rewardsDesc} setOpen={setOpen} dataLoading={dataLoading} setDataLoading={setDataLoading} />
-            <RewardPopConfirm openConfirm={openConfirm} setOpenConfirm={setOpenConfirm} rewardId={rewardId} />
         </div>
     )
 }

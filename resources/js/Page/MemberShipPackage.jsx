@@ -44,93 +44,95 @@ function MemberShipPackage() {
         return `${day}${daySuffix(day)} ${month}, ${year}`;
     };
     return (
-        <div className='body-container'>
-            <div className="position-sticky top-0 z-1 shadow-sm">
-                <div className="navHeader">
-                    <div className="prev-btn">
-                        <Link to={"/About"}>
-                            <i className="bi bi-chevron-left"></i>
-                        </Link>
-                        <span>MEMBERSHIP PACKAGE</span>
+        <div className='onepage-main-body'>
+            <div className='onepage-set-body'>
+                <div className="position-sticky top-0 z-1 shadow-sm">
+                    <div className="navHeader">
+                        <div className="prev-btn">
+                            <Link to={"/About"}>
+                                <i className="bi bi-chevron-left"></i>
+                            </Link>
+                            <span>MEMBERSHIP PACKAGE</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className={`inner-container`}>
-                {
-                    loading
-                        ?
-                        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
-                            {[...new Array(10)].map((i, iIndex) => (<div key={iIndex} className="membership position-relative p-1">
-                                <div className="membership-inner">
-                                    <div className="membership-info h-100">
-                                        <div className="icon">
-                                            <Skeleton className='' style={{ height: "85px", width: "110px" }} />
-                                        </div>
-                                        <div className="membership-info-details d-flex flex-column justify-content-around">
-                                            <div className="membership-name">
-                                                <Skeleton className='' style={{ height: "15px", width: "150px" }} />
+                <div className={`inner-container`}>
+                    {
+                        loading
+                            ?
+                            <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+                                {[...new Array(10)].map((i, iIndex) => (<div key={iIndex} className="membership position-relative p-1">
+                                    <div className="membership-inner">
+                                        <div className="membership-info h-100">
+                                            <div className="icon">
+                                                <Skeleton className='' style={{ height: "85px", width: "110px" }} />
                                             </div>
-                                            <div className="membership-validity">
-                                                <Skeleton className='ms-2' style={{ height: "15px", width: "90px" }} />
-                                            </div>
-                                            <div className="membership-price">
-                                                <Skeleton className='' style={{ height: "15px", width: "60px" }} />
-                                            </div>
-                                            <div className="membership-action">
-                                                <Skeleton className='' style={{ height: "25px", width: "60px" }} />
+                                            <div className="membership-info-details d-flex flex-column justify-content-around">
+                                                <div className="membership-name">
+                                                    <Skeleton className='' style={{ height: "15px", width: "150px" }} />
+                                                </div>
+                                                <div className="membership-validity">
+                                                    <Skeleton className='ms-2' style={{ height: "15px", width: "90px" }} />
+                                                </div>
+                                                <div className="membership-price">
+                                                    <Skeleton className='' style={{ height: "15px", width: "60px" }} />
+                                                </div>
+                                                <div className="membership-action">
+                                                    <Skeleton className='' style={{ height: "25px", width: "60px" }} />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>))}
-                        </SkeletonTheme>
-                        :
-                        (
-                            membershipsDesc?.length > 0 ? (
-                                membershipsDesc.map((member, index) => (
-                                    <div key={index} className="membership position-relative p-1">
-                                        <div className="membership-inner">
-                                            <div className="membership-info h-100">
-                                                <div className="icon">
-                                                    <img src="https://i.imgur.com/wiem34R.png" alt="" />
+                                </div>))}
+                            </SkeletonTheme>
+                            :
+                            (
+                                membershipsDesc?.length > 0 ? (
+                                    membershipsDesc.map((member, index) => (
+                                        <div key={index} className="membership position-relative p-1">
+                                            <div className="membership-inner">
+                                                <div className="membership-info h-100">
+                                                    <div className="icon">
+                                                        <img src="https://i.imgur.com/wiem34R.png" alt="" />
+                                                    </div>
+                                                    <div className="membership-info-details d-flex flex-column justify-content-around">
+                                                        <div className="membership-name">
+                                                            <h6>{member.name}</h6>
+                                                        </div>
+                                                        <div className="membership-validity">
+                                                            valid till <span>{formatDate(member.end_date)}</span>
+                                                        </div>
+                                                        <div className="membership-price">
+                                                            <span>{member.selling_price}</span>
+                                                        </div>
+                                                        <div className="membership-action">
+                                                            <Link to={`/Membership/${member.membership_id}`}>
+                                                                <button>View Details</button>
+                                                            </Link>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="membership-info-details d-flex flex-column justify-content-around">
-                                                    <div className="membership-name">
-                                                        <h6>{member.name}</h6>
-                                                    </div>
-                                                    <div className="membership-validity">
-                                                        valid till <span>{formatDate(member.end_date)}</span>
-                                                    </div>
-                                                    <div className="membership-price">
-                                                        <span>{member.selling_price}</span>
-                                                    </div>
-                                                    <div className="membership-action">
-                                                        <Link to={`/Membership/${member.membership_id}`}>
-                                                            <button>View Details</button>
-                                                        </Link>
-                                                    </div>
+                                                <div className="membership-status">
+                                                    <svg
+                                                        width="73" height="20" viewBox="0 0 73 20" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M0 0H73L63 10L73 20H0V0Z" fill={`${member.expired?"#FF3B3B":"#4DB12A"}`} />
+                                                    </svg>
+                                                    <span>{`${member.expired?"expired":"Active"}`}</span>
                                                 </div>
-                                            </div>
-                                            <div className="membership-status">
-                                                <svg
-                                                    width="73" height="20" viewBox="0 0 73 20" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M0 0H73L63 10L73 20H0V0Z" fill={`${member.expired?"#FF3B3B":"#4DB12A"}`} />
-                                                </svg>
-                                                <span>{`${member.expired?"expired":"Active"}`}</span>
                                             </div>
                                         </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>No rewards available</p>
+                                    ))
+                                ) : (
+                                    <p>No rewards available</p>
+                                )
                             )
-                        )
-                }
-            </div>
-            <div className="powered-ewards">
-                <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
-                    <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
+                    }
+                </div>
+                <div className="powered-ewards">
+                    <p> Powered by <a data-v-317407fb="" href="https://myewards.com/" target="_blank" className="">
+                        <span>e<span className="ewards-color-set">W</span>ards</span></a></p>
+                </div>
             </div>
         </div>
     )
