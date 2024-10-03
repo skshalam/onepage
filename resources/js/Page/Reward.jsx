@@ -289,7 +289,7 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
                             transition={{ duration: 0.3 }}
                         >
                             {
-                                redeemData
+                                !redeemData
                                     ? <div className="">
 
                                         <div className="pop-confirm-img">
