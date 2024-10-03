@@ -400,8 +400,11 @@ body {
 }
 
 .rewards-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    /* grid-template-columns: repeat(3, 1fr); */
+    :is(a){
+        flex: 1;
+    }
 }
 
 .rewards-content {
@@ -965,7 +968,9 @@ body {
     border-radius: 20px;
     background: #fff;
     z-index: 10000;
-    margin: 211px 65px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .pop-confirm-container p {
@@ -1447,7 +1452,7 @@ body {
 }
 
 .contact_form_container {
-    margin: 100px 20px 20px 20px;
+    margin: 18px 20px 20px 20px;
     background-color: #fff;
 }
 
@@ -1911,4 +1916,85 @@ body {
 }
 .custom-datepicker-dropdown {
     position: absolute !important;
+}
+.ewallet-details-body{
+    margin-top: 162px;
+    padding: 0px 15px;
+    width: 100%;
+}
+.ewallet-details-sub{
+    background:#fff;
+    cursor: pointer;
+}
+.contact_form_head{
+    .fw-bold{}
+    .px-5{}
+}
+@media (max-width: 520px) {
+    .onepage-main-body{
+        width: 100%;
+    }
+    .react-tel-input .form-control{
+        width: 100% !important;
+    }
+    .login-part {
+        & .login-part-set {
+            .login-part-set-main {
+                padding: 40px 15px 22px 15px;
+            }
+        }
+    }
+    .otp-fields {
+        .ant-otp input {
+            width: 32px;
+            height: 32px;
+        }
+    }
+    .rewards-content {
+        padding: 16px 8px 18px 8px;
+    }
+    .banner-part-main {
+        .banner-part {
+            padding: 20px 15px;
+        }
+    }
+    .mx-4 {
+        margin-right: 1rem !important;
+        margin-left: 1rem !important;
+    }
+    .icon img {
+        height: 75px;
+    }
+    .details {
+        padding: 10px 10px 10px 10px;
+    }
+    .inner-container .coupons, .inner-container .rewards, .inner-container .membership {
+        margin: 5px 0px;
+    }
+    .cust-drawer {
+        width: 100%;
+    }
+    .inner-container {
+        height: auto;
+        overflow-y: scroll;
+        padding: 0px 15px;
+    }
+    .pop-confirm-container {
+        left: 44%;
+    }
+    .body-container {
+        width: 100%;
+    }
+    .bg-shape.one {
+        bottom: 0px;
+    }
+    .about_desc_content{
+        .mx-5{
+            margin-right: 1rem !important;
+            margin-left: 1rem !important;
+            :is(p){
+                margin-bottom: 0px;
+            }
+        }
+    }
 }

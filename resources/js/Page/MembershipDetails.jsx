@@ -162,8 +162,8 @@ function MembershipDetails() {
                 {/* background */}
                 <div className="bg-shape d-flex justify-content-center position-absolute w-100 one">
                     <img src="https://i.imgur.com/UTAJ31K.png" alt="" />
-                    <div className="position-absolute top-0 d-flex flex-column gap-3" style={{ marginTop: "180px" }}>
-                        <div onClick={() => { setModal(true), setTitle("e-Wallets Issued") }} style={{ background: "#fff", width: "370px", cursor: "pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                    <div className="position-absolute top-0 d-flex flex-column gap-3 ewallet-details-body">
+                        <div onClick={() => { setModal(true), setTitle("e-Wallets Issued") }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4 ewallet-details-sub">
                             <div className="d-flex align-item-center justify-content-center position-relative">
                                 <div className="">
                                     <svg width="40" height="46" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -189,7 +189,7 @@ function MembershipDetails() {
                                 <i className='bi bi-chevron-right fw-bold' />
                             </div>
                         </div>
-                        <div onClick={() => { setModal(true), setTitle("Booklets Issued") }} style={{ background: "#fff", width: "370px", cursor: "pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                        <div onClick={() => { setModal(true), setTitle("Booklets Issued") }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4 ewallet-details-sub">
                             <div className="d-flex align-item-center justify-content-center position-relative">
                                 <div className="">
                                     <svg width="40" height="46" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -211,7 +211,7 @@ function MembershipDetails() {
                                 <i className='bi bi-chevron-right fw-bold' />
                             </div>
                         </div>
-                        <div onClick={() => { setModal(true), setTitle("Coupons Redeemed") }} style={{ background: "#fff", width: "370px", cursor: "pointer" }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4">
+                        <div onClick={() => { setModal(true), setTitle("Coupons Redeemed") }} className="shadow rounded-3 p-2 px-3 d-flex align-items-center gap-4 ewallet-details-sub">
                             <div className="d-flex align-item-center justify-content-center position-relative">
                                 <div className="">
                                     <svg width="40" height="46" viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">

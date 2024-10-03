@@ -93,7 +93,7 @@ function Contact() {
                 </svg>
 
             </div>
-            <div className="contact_form_head position-absolute">
+            <div className="contact_form_head">
                 <p className='fs-1 fw-bold ps-5'>{data_contact.contact.heading}</p>
                 <p className='mb-0 px-5'>Fill out our contact form and we will get back to you within 1-2 business days.</p>
             </div>
