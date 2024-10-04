@@ -23,6 +23,7 @@ import Referal from './Page/Referal';
 import ReferalList from './Page/ReferalList';
 import AboutUs from './Page/AboutUs';
 import Bookletissue_details from './Page/Bookletissue_details';
+import NotFound from './Page/NotFound';
 import 'react-loading-skeleton/dist/skeleton.css'
 import axios from 'axios';
 import { ThemeProvider } from './Providers/ContextProviders/ThemeProvider';
@@ -50,19 +51,15 @@ const App = () => {
         const url = `/onePageWebsite/${storedMerchantBase}`;
         console.log('set-path:', location.pathname);
         if (!token && location.pathname === url) {
-            // console.log('Token exists, user is authenticated.');
             navigate(url);
         }
         else if (!token && location.pathname !== url) {
             navigate(url);
-            // console.log("demo");
         }
         else {
             if (location.pathname !== url) {
-                // console.log("hhhhh22");
                 navigate(location.pathname);
             } else {
-                // console.log("hhhhh");
                 navigate(-1);
             }
         }
@@ -101,6 +98,7 @@ const App = () => {
             <Route path="/Referallist" element={<ReferalList />} />
             <Route path="/Aboutus" element={<AboutUs />} />
             <Route path="/Bookletissue_details/:membership_id/:bookletissue_id" element={<Bookletissue_details />} />
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 };
