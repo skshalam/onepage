@@ -33,7 +33,6 @@ const Home = () => {
     const [proceed, setProceed] = useState(false);
     const [open, setOpen] = useState(false);
     const bodyRef = useRef();
-
     useEffect(() => {
         console.log('Merchant Base:', merchant_base);
         axios.get('/api/onepage/' + merchant_base)
@@ -163,7 +162,9 @@ const Home = () => {
                                 <Slider {...settings}>
                                     {bannerImages.map((image, index) => (
                                         <div key={index}>
-                                            <img src={image} alt={`Banner ${index + 1}`} />
+                                            <Link to={data?.banners?.links[index]}>
+                                                <img src={image} alt={`Banner ${index + 1}`} />
+                                            </Link>
                                         </div>
                                     ))}
                                 </Slider>
