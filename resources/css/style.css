@@ -1930,6 +1930,10 @@ body {
     .fw-bold{}
     .px-5{}
 }
+.rewards-containerskel{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
 @media (max-width: 520px) {
     .onepage-main-body{
         width: 100%;

@@ -10,15 +10,12 @@ function Profile() {
   const [referPermission,setReferPermission] = useState({})
   const targetDiv = useRef(null)
   const merchant_id = sessionStorage.getItem('merchant_base');
+  const [Profileimg, setProfileimg] = useState({})
   useEffect(() => {
     axiosSetup.post('/api/referErn',{merchant_id})
         .then(response => {
-          if(response.data.refer){
-            setReferPermission(response.data.refer);
-          }
-          else{
-            setReferPermission({});
-          }
+          setProfileimg(response.data.user_image);
+          setReferPermission(response.data.refer);
         })
         .catch(error => {
             console.log(error);
@@ -54,7 +51,7 @@ const handleLogout = () => {
         </div>
       </div>
       <div className="my-5 text-center z-2">
-        <Avatar className='z-2 bg-light' size={80} icon={<i className="bi bi-person-fill text-dark" />} />
+        <Avatar className='z-2 bg-light' size={80} src={Profileimg.image} />
       </div>
       <div className="mx-4 p-4 profile-navigation-container z-3 position-relative rounded-4">
         <Link to={"/Myaccount"} className='cust_text_primary text-decoration-none'>

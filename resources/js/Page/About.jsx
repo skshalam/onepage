@@ -160,61 +160,64 @@ function About() {
                             </>
                         }
                     </div>
-                    <div className="rewards-container gap-2 m-3">
                         {loading
                             ? <>
-                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
-                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
-                                <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                                <div className="rewards-containerskel gap-2 m-3">
+                                    <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                                    <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                                    <Skeleton className='mb-1' style={{ height: "100px", width: "100%" }} />
+                                </div>
                             </>
                             : <>
-                                <Link className='text-decoration-none' to={"/Coupon"}>
-                                    <div className="rewards-content">
-                                        <div className="content">
-                                            <p className='text-uppercase mb-2'>Coupon <br /> Cart</p>
-                                            <div className="balance">
-                                                <img src="" alt="" />
-                                                <span className='data-amount'>{data_getcoupons.active_coupon_count}</span>
+                                <div className="rewards-container gap-2 m-3">
+                                    <Link className='text-decoration-none' to={"/Coupon"}>
+                                        <div className="rewards-content">
+                                            <div className="content">
+                                                <p className='text-uppercase mb-2'>Coupon <br /> Cart</p>
+                                                <div className="balance">
+                                                    <img src="" alt="" />
+                                                    <span className='data-amount'>{data_getcoupons.active_coupon_count}</span>
+                                                </div>
+
                                             </div>
-
-                                        </div>
-                                        <div className="content">
-                                            <i className="bi bi-chevron-right"></i>
-                                        </div>
-                                    </div>
-                                </Link>
-                                <Link className='text-decoration-none' to={"/Reward"}>
-                                    <div className="rewards-content">
-                                        <div className="content">
-                                            <p className='text-uppercase mb-2'>Reward <br /> Menu</p>
-
-                                            <div className="balance">
-                                                <img src="" alt="" />
-                                                <span className='data-amount'>{data_getcoupons.active_rewards_count}</span>
+                                            <div className="content">
+                                                <i className="bi bi-chevron-right"></i>
                                             </div>
                                         </div>
-                                        <div className="content">
-                                            <i className="bi bi-chevron-right"></i>
-                                        </div>
-                                    </div>
-                                </Link>
-                                <Link className='text-decoration-none' to={"/Membership"}>
-                                    <div className="rewards-content">
-                                        <div className="content">
-                                            <p className='text-uppercase mb-2'>Membership Package</p>
+                                    </Link>
+                                    <Link className='text-decoration-none' to={"/Reward"}>
+                                        <div className="rewards-content">
+                                            <div className="content">
+                                                <p className='text-uppercase mb-2'>Reward <br /> Menu</p>
 
-                                            <div className="balance">
-                                                <img src="" alt="" />
-                                                <span className='data-amount'>{data_getcoupons.active_membership_count}</span>
+                                                <div className="balance">
+                                                    <img src="" alt="" />
+                                                    <span className='data-amount'>{data_getcoupons.active_rewards_count}</span>
+                                                </div>
+                                            </div>
+                                            <div className="content">
+                                                <i className="bi bi-chevron-right"></i>
                                             </div>
                                         </div>
-                                        <div className="content">
-                                            <i className="bi bi-chevron-right"></i>
+                                    </Link>
+                                    <Link className='text-decoration-none' to={"/Membership"}>
+                                        <div className="rewards-content">
+                                            <div className="content">
+                                                <p className='text-uppercase mb-2'>Membership Package</p>
+
+                                                <div className="balance">
+                                                    <img src="" alt="" />
+                                                    <span className='data-amount'>{data_getcoupons.active_membership_count}</span>
+                                                </div>
+                                            </div>
+                                            <div className="content">
+                                                <i className="bi bi-chevron-right"></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                </Link>
-                            </>}
-                    </div>
+                                    </Link>
+                                </div>
+                            </>
+                        }
                     {
                         loading ? 
                         <div className='gap-2 m-3'>
