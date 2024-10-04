@@ -1934,6 +1934,16 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
 }
+.swal-overlay--show-modal .swal-modal {
+    width: 300px;
+}
+.swal-icon{
+    transform: scale(0.6);
+    margin: auto;
+}
+.swal-title {
+    padding: 0px 13px;
+}
 @media (max-width: 520px) {
     .onepage-main-body{
         width: 100%;

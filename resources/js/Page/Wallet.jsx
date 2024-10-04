@@ -49,20 +49,26 @@ function Wallet() {
     const handleEndDateChange = (date, dateString) => {
         setPendingEndDate(dateString); // Store the pending end date
     };
+
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        if (token) {
-            loadCreditWalletData(currentPage, selectedTypes, startDate, endDate); // Load data on page or filter change
+        if (token && currentPage === 1) {  // Only call the API on mount or when currentPage is 1
+            loadCreditWalletData(currentPage, selectedTypes, startDate, endDate);
         }
-    }, [currentPage, selectedTypes, startDate, endDate]);
+    }, []);
+
+    useEffect(() => {
+        if (currentPage > 1) {
+            loadCreditWalletData(currentPage, selectedTypes, startDate, endDate);
+        }
+    }, [currentPage]);
 
 
     const loadCreditWalletData = async (page, types = "", start_date = "", end_date = "") => {
         if (page === 1) {
             setIsLoading(true);
-        }
-        if (page > 1) {
-            setScrollLoad(true)
+        } else {
+            setScrollLoad(true);
         }
         try {
             const response = await axiosSetup.post('/api/walletbalance', {
@@ -113,16 +119,22 @@ function Wallet() {
         setSelectedTypes(pendingSelectedTypes); // Set the actual selected types when 'Apply' is clicked
         setCurrentPage(1); // Reset to first page
         loadCreditWalletData(1, pendingSelectedTypes, startDate, endDate); // Load data based on selected filters
+        setOpenFilter2(false)
     };
     const applyDateFilters = () => {
         setCurrentPage(1);
+        setEndDate(pendingEndDate);
+        setStartDate(pendingStartDate)
         loadCreditWalletData(1, pendingSelectedTypes, pendingStartDate, pendingEndDate);
         setOpenFilter1(false);
     };
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight && !isLoading) {
             if (currentPage < totalPages) {
-                setCurrentPage(prevPage => prevPage + 1);
+                setCurrentPage(prevPage => {
+                    const nextPage = prevPage + 1;
+                    return nextPage;
+                });
             }
         }
     };

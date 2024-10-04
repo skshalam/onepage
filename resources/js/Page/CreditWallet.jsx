@@ -5,6 +5,7 @@ import { Link, Router, useParams } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import axiosSetup from '@/axiosSetup';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
+import { debounce } from 'lodash';
 function CreditWallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
     const [openFilter2, setOpenFilter2] = useState(false);
@@ -56,29 +57,36 @@ function CreditWallet() {
     };
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        if (token) {
-            loadCreditWalletData(currentPage, selectedTypes, selectedSources, startDate, endDate); // Load data on page or filter change
+        if (token && currentPage === 1) {  // Only call the API on mount or when currentPage is 1
+            loadCreditWalletData(currentPage, selectedTypes, selectedSources, startDate, endDate);
         }
-    }, [currentPage, selectedTypes, selectedSources, startDate, endDate]);
+    }, []);
+    useEffect(() => {
+        if (currentPage > 1) {
+            loadCreditWalletData(currentPage, selectedTypes, selectedSources, startDate, endDate);
+        }
+    }, [currentPage]);
 
-    const loadCreditWalletData = async (page, types = "", sources = "", start_date = "", end_date = "") => {
+    const loadCreditWalletData =  debounce(async(page, types = "", sources = "", start_date = "", end_date = "") => {
         if (page === 1) {
             setIsLoading(true);
+        } else {
+            setScrollLoad(true);
         }
-        if (page > 1) {
-            setScrollLoad(true)
-        }
+
         try {
             const response = await axiosSetup.post('/api/creditbalance', {
                 page_number: page,
-                credit_type: types,
-                credit_name: sources,
-                start_date: start_date,
-                end_date: end_date
+                credit_type: types,      // Ensure the current filter values are passed here
+                credit_name: sources,    // Pass sources as filter
+                start_date: start_date,  // Pass start_date filter
+                end_date: end_date       // Pass end_date filter
             });
+
             const { creditbalance, total_pages } = response.data;
             setOpenFilter2(false);
             setCurrentPoints(response.data.current_points);
+
             if (page === 1) {
                 setCreditWalletData(creditbalance); // On first page, replace data
             } else {
@@ -88,9 +96,10 @@ function CreditWallet() {
         } catch (error) {
             console.error('API Error:', error);
         }
+
         setIsLoading(false);
         setScrollLoad(false);
-    };
+    },300)
 
     const clearFilters = () => {
         form.resetFields();
@@ -122,19 +131,22 @@ function CreditWallet() {
     };
 
     const applyFilters = () => {
-        // setSelectedTypes(pendingSelectedTypes); // Set the actual selected types when 'Apply' is clicked
+        setSelectedTypes(pendingSelectedTypes); // Store the selected types
+        setSelectedSources(pendingSelectedSources); // Store the selected sources
+        setStartDate(pendingStartDate); // Store the start date
+        setEndDate(pendingEndDate); // Store the end date
         setCurrentPage(1); // Reset to first page
-        loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, startDate, endDate); // Load data based on selected filters
-    };
-    const applyDateFilters = () => {
-        setCurrentPage(1);
-        loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, pendingStartDate, pendingEndDate);
+        loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, pendingStartDate, pendingEndDate); // Load data based on selected filters
         setOpenFilter1(false);
+        setOpenFilter2(false);
     };
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight && !isLoading) {
             if (currentPage < totalPages) {
-                setCurrentPage(prevPage => prevPage + 1);
+                setCurrentPage(prevPage => {
+                    const nextPage = prevPage + 1;
+                    return nextPage;
+                });
             }
         }
     };
@@ -325,27 +337,10 @@ function CreditWallet() {
                         <button className='border-0 p-2'
                             style={{ color: useThemeStyles.primary_color }}
                             onClick={clearFilters}>Clear</button>
-                        <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyDateFilters}>Apply</button>
+                        <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyFilters}>Apply</button>
                     </div>
                 </Drawer>
-                {/* <Drawer
-                    rootClassName='filter-drawer'
-                    open={openFilter2}
-                    onClose={() => setOpenFilter2(false)}
-                    getContainer={false}
-                    closable={false}
-                    styles={{
-                        body: {
-                            padding: 0,
-                        }
-                    }}
-                >
-                    <Tabs defaultActiveKey="1" rootClassName='filter-by-type-nav' items={items} />
-                    <div className="filter-actions">
-                        <button className='border-0 p-2'>Clear</button>
-                        <button className='border-0 p-2'>Apply type</button>
-                    </div>
-                </Drawer> */}
+
                 <Drawer
                     rootClassName='filter-drawer'
                     open={openFilter2}

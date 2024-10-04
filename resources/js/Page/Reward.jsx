@@ -252,28 +252,26 @@ function RewardDescDrawer({ open, rewardsCartData, setOpen, dataLoading, setData
 function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
     const [proceed, setProceed] = useState(false);
     const [msg, setMsg] = useState('');
-    const [redeemData, setRedeemData] = useState(null)
+    const [redeemData, setRedeemData] = useState(true)
     const handleClick = (id) => {
         setProceed(false)
         axiosSetup.post('/api/redeem_rewards', { "reward_id": rewardId })
             .then(res => {
                 console.log(res.data);
-
-                if (res.data.error) {
+                if (res.data?.error) {
+                    setProceed(true)
+                    setRedeemData(false)
                     setMsg(res.data.message)
                 }
-                else if (!res.data.error) {
-                    setMsg(res.data.message)
-                    if (res?.data) {
-                        setRedeemData(true)
-                    }
+                else{
                     setProceed(true)
+                    setRedeemData(true)
+                    setMsg(res.data.message)
                 }
                 setTimeout(() => {
                     setOpenConfirm(false)
                     setProceed(false)
                 }, 2000);
-                setRedeemData(false)
             })
             .catch(err => {
                 console.log(err);
