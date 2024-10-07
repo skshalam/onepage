@@ -115,7 +115,7 @@ function MembershipDetails() {
                 <div className="border-0 border-bottom">
                     <div className="navHeader">
                         <div className="prev-btn">
-                            <Link to={"/Home"}>
+                            <Link to={"/Membership"}>
                                 <i className="bi bi-chevron-left"></i>
                             </Link>
                             <span>MEMBERSHIP PACKAGE</span>

@@ -158,7 +158,7 @@ const Home = () => {
                                 <Slider {...settings}>
                                     {bannerImages.map((image, index) => (
                                         <div key={index}>
-                                            <Link to={data?.banners?.links[index]}>
+                                            <Link target='blank' to={data?.banners?.links[index]}>
                                                 <img src={image} alt={`Banner ${index + 1}`} />
                                             </Link>
                                         </div>

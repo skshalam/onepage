@@ -114,7 +114,7 @@ function AboutUs() {
                                 <Slider {...settings}>
                                     {data_home.banners.banner_image.map((banner, index) => (
                                         <div key={index}>
-                                            <Link to={data_home.banners.links[index]}>
+                                            <Link target='blank' to={data_home.banners.links[index]}>
                                                 <img src={banner} alt={`Banner ${index + 1}`} />
                                             </Link>
                                         </div>
