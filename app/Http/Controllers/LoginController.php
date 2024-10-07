@@ -17,7 +17,7 @@ class LoginController extends Controller
     public function loginview($m_id)
     {
         $m_id = base64_decode($m_id);
-        $brandlogo = MerchantDetails::select('business_image','user_id','api_header')->where('user_id', $m_id)->first();
+        $brandlogo = MerchantDetails::select('business_image','user_id','api_header','business_name')->where('user_id', $m_id)->first();
         if (!$brandlogo) {
             return response()->json([
                 'error' => true,

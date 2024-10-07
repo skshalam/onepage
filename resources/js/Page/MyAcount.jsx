@@ -420,7 +420,7 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance, merchantBase }
     const [ctId, setCtId] = useState(parseInt(data?.city))
     const [doa, setDoa] = useState(data?.doa);
     const [dob, setDob] = useState(data?.dob);
-    const [merchant_id,setMerchantId] = useState(null)
+    const [merchant_id, setMerchantId] = useState(null)
     const [isCountryChange, setIscountryChange] = useState(false);
     const validateMessages = {
         types: {
