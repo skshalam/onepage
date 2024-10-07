@@ -65,6 +65,7 @@ const App = () => {
     }, [navigate]);
 
     useEffect(() => {
+        const m_base = sessionStorage.getItem('merchant_base')
         const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.get(`/api/themecolor`)
@@ -75,7 +76,27 @@ const App = () => {
                     console.log(err);
                 })
         }
+        axios.get('/api/onepage/' + m_base)
+        .then(res=>{
+            document.title = res.data.data?.merchant_details?.business_name;
+            changeFavicon(res.data.data?.merchant_details?.business_image)
+        })
+        .catch(err=>{
+            console.log(err);
+        })
     }, [merchant_base])
+
+    function changeFavicon(iconUrl) {
+        let link = document.querySelector("link[rel~='icon']");
+
+        if (!link) {
+            link = document.createElement("link");
+            link.rel = "icon";
+            document.getElementsByTagName("head")[0].appendChild(link);
+        }
+
+        link.href = iconUrl;
+    }
 
     return (
         <Routes>

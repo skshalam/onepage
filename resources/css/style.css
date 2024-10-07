@@ -2019,8 +2019,8 @@ body {
 .slick-prev,.slick-next{
     background-color: #fff !important;
     border-radius: 5px;
-    width: 40px !important;
-    height: 40px !important;
+    width: 35px !important;
+    height: 35px !important;
     z-index: 100;
     box-shadow: 0px 0px 15px -1px rgba(0,0,0,0.1);
 }
@@ -2030,4 +2030,8 @@ body {
 }
 .slick-next{
     right: -10px !important;
+}
+
+.slick-prev::before{
+    content: "" !important;
 }
