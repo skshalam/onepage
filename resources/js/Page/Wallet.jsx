@@ -221,7 +221,7 @@ function Wallet() {
                                                 </div>
                                                 <div className="wallet-detail-container-middle d-flex justify-content-end align-items-center">
                                                     <div className="wallet-transaction-value d-flex gap-1">
-                                                        <p className='mb-0'>{crwallet.Wallet_Type === "Earned" ? "+" : "-"}{crwallet.Wallet_Balance}</p><i className='bi bi-chevron-down' />
+                                                        <p className='mb-0'>{crwallet.Wallet_Type === "Earned" ? "+" : "-"}{crwallet.Wallet_Balance}</p>
                                                     </div>
                                                 </div>
                                             </div>
