@@ -83,7 +83,6 @@ function MyAcount() {
         if (token) {
             axiosSetup.get('/api/accountInfo')
                 .then(response => {
-                    // console.log('API Response:', response);
                     setData_getaccount(response.data.accountheading);
                     setLoaded(false)
                 })
@@ -124,7 +123,6 @@ function MyAcount() {
             };
             axiosSetup.post('/api/editinfo', payload)
                 .then(response => {
-                    console.log('API Response:', response);
                     // Handle successful response
                     setIsEditable(false);
                     getUserData()
@@ -139,7 +137,6 @@ function MyAcount() {
     };
 
     const handleDelete =()=>{
-        // return console.log('thus');
         axiosSetup.get('/api/deletaccount')
         .then(res=>{
             setDeleteModal(false); // Close modal after success
@@ -426,7 +423,6 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance, merchantBase }
 
     // Select On Change Handlers
     const handleCountryChange = (value, option) => {
-        // return console.log(option);
         
         setCntryId(option.key)
         if (value) {
@@ -556,14 +552,12 @@ const ProfileEditForm = ({ onSave, data, acData, setFormInstance, merchantBase }
     // Local Handle State
     const handleSave = () => {
         form.validateFields().then(values => {
-            // return console.log(values);
             const formData = {
                 ...values,
                 image: userPp,
                 dob: dob,
                 doa: doa,
             }
-            // return console.log(formData);
             onSave(formData);
         }).catch(errorInfo => {
             console.log('Form validation failed:', errorInfo);

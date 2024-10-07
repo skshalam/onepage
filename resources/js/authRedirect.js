@@ -10,8 +10,6 @@ const useAuthRedirect = () => {
     const checkAuthAndRedirect = () => {
     
         if (!token) {
-            // Token exists, do nothing or handle accordingly
-            console.log('Token exists, user is authenticated.');
             navigate(url);
         } else {
             if(location.pathname !== url){

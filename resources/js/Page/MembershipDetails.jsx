@@ -31,7 +31,6 @@ function MembershipDetails() {
     const [couponsTotalPages, setCouponsTotalPages] = useState(1);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        // console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/eWalletissue',
                 {
@@ -52,7 +51,6 @@ function MembershipDetails() {
     }, [membership_id, eWalletCurrentPage]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        // console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/bookletissue',
                 {
@@ -73,7 +71,6 @@ function MembershipDetails() {
     }, [membership_id, bookletCurrentPage]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        // console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/couponsredeem',
                 {
@@ -94,7 +91,6 @@ function MembershipDetails() {
     }, [membership_id, couponsCurrentPage]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        // console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/memebership',
                 {
@@ -119,7 +115,7 @@ function MembershipDetails() {
                 <div className="border-0 border-bottom">
                     <div className="navHeader">
                         <div className="prev-btn">
-                            <Link to={"/About"}>
+                            <Link to={"/Home"}>
                                 <i className="bi bi-chevron-left"></i>
                             </Link>
                             <span>MEMBERSHIP PACKAGE</span>
@@ -247,7 +243,7 @@ function MembershipDetails() {
                 <div className="bg-shape position-absolute w-100 two">
                     <img src="https://i.imgur.com/6bAQtCI.png" alt="" />
                 </div>
-                <ViewMemberShip showModal={showModal} setModal={setModal} title={title} membership_id={membership_id} eWalletissueDesc={eWalletissueDesc} bookletissueDesc={bookletissueDesc} couponsredeemDesc={couponsredeemDesc} membership_id={membership_id}
+                <ViewMemberShip showModal={showModal} setModal={setModal} title={title} membership_id={membership_id} eWalletissueDesc={eWalletissueDesc} bookletissueDesc={bookletissueDesc} couponsredeemDesc={couponsredeemDesc}
 
                     eWalletCurrentPage={eWalletCurrentPage}
                     seteWalletCurrentPage={seteWalletCurrentPage}
@@ -283,17 +279,17 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
     // };
     const handlePaginationDebounced = debounce((pageNumber, type) => {
         if (type === 'eWallet') {
-          seteWalletCurrentPage(pageNumber);
+            seteWalletCurrentPage(pageNumber);
         } else if (type === 'Booklets') {
-          setBookletCurrentPage(pageNumber);
+            setBookletCurrentPage(pageNumber);
         } else if (type === 'Coupons') {
-          setCouponsCurrentPage(pageNumber);
+            setCouponsCurrentPage(pageNumber);
         }
-      }, 1000); // 300ms debounce time, adjust as needed
-    
-      const handlePagination = (pageNumber, type) => {
+    }, 1000); // 300ms debounce time, adjust as needed
+
+    const handlePagination = (pageNumber, type) => {
         handlePaginationDebounced(pageNumber, type);
-      };
+    };
     return (
         <div
             className={`position-absolute h-100 top-0 w-100 view-membership-details

@@ -67,7 +67,7 @@ function CreditWallet() {
         }
     }, [currentPage]);
 
-    const loadCreditWalletData =  debounce(async(page, types = "", sources = "", start_date = "", end_date = "") => {
+    const loadCreditWalletData = debounce(async (page, types = "", sources = "", start_date = "", end_date = "") => {
         if (page === 1) {
             setIsLoading(true);
         } else {
@@ -99,7 +99,7 @@ function CreditWallet() {
 
         setIsLoading(false);
         setScrollLoad(false);
-    },300)
+    }, 300)
 
     const clearFilters = () => {
         form.resetFields();
@@ -168,7 +168,7 @@ function CreditWallet() {
                 <div className="position-sticky top-0 z-1 shadow-sm">
                     <div className="navHeader">
                         <div className="prev-btn">
-                            <Link to={"/About"}>
+                            <Link to={"/Home"}>
                                 <i className="bi bi-chevron-left"></i>
                             </Link>
                             <span>CREDIT BALANCE</span>

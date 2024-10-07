@@ -24,7 +24,6 @@ function Reward() {
     };
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/rewards', [])
                 .then(response => {
@@ -66,7 +65,7 @@ function Reward() {
                 <div className="sticky-top">
                     <div className="navHeader">
                         <div className="prev-btn">
-                            <Link to={"/About"}>
+                            <Link to={"/Home"}>
                                 <i className="bi bi-chevron-left"></i>
                             </Link>
                             <span>REWARDS</span>
@@ -257,13 +256,12 @@ function RewardPopConfirm({ openConfirm, setOpenConfirm, rewardId }) {
         setProceed(false)
         axiosSetup.post('/api/redeem_rewards', { "reward_id": rewardId })
             .then(res => {
-                console.log(res.data);
                 if (res.data?.error) {
                     setProceed(true)
                     setRedeemData(false)
                     setMsg(res.data.message)
                 }
-                else{
+                else {
                     setProceed(true)
                     setRedeemData(true)
                     setMsg(res.data.message)

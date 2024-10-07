@@ -32,7 +32,6 @@ function coupon_booklet() {
     const { bookletissue_id } = useParams();
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/bookletcoupon',
                 {
@@ -79,7 +78,7 @@ function coupon_booklet() {
             <div className="sticky-top">
                 <div className="navHeader">
                     <div className="prev-btn">
-                        <Link to={"/About"}>
+                        <Link to={"/Home"}>
                             <i className="bi bi-chevron-left"></i>
                         </Link>
                         <span>REWARDS</span>
@@ -171,7 +170,6 @@ export default coupon_booklet
 
 function RewardDescDrawer({ open, rewardsCartData, setOpen, dataLoading, setDataLoading }) {
     const bookletsCoupon = rewardsCartData?.booklet_coupon?.[0] || {};
-    console.log(bookletsCoupon);
     const formatDate = (dateStr) => {
         if (!dateStr) return 'No Date Available';
 

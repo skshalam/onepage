@@ -31,7 +31,6 @@ function ReferalList() {
     };    
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/referral_programview', [])
             .then(response => {

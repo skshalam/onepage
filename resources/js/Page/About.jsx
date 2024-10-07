@@ -33,13 +33,11 @@ function About() {
     const [error, setError] = useState(null);
     const { merchant_base } = useParams();
     const storedMerchantBase = sessionStorage.getItem('merchant_base');
-    console.log('merchant_base:', storedMerchantBase);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.get('/api/getDataCounts')
                 .then(response => {
-                    console.log('API Response:', response);
                     setData_getcoupons(response.data.data);
                 })
                 .catch(error => {

@@ -10,7 +10,6 @@ function Coupon() {
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/couponscart', [])
                 .then(response => {
@@ -28,7 +27,6 @@ function Coupon() {
     }, []);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/couponhold', [])
                 .then(response => {
@@ -48,7 +46,7 @@ function Coupon() {
                 <div className="sticky-top">
                     <div className="navHeader">
                         <div className="prev-btn">
-                            <Link to={"/About"}>
+                            <Link to={"/Home"}>
                                 <i className="bi bi-chevron-left"></i>
                             </Link>
                             <span>MY COUPONS</span>

@@ -7,7 +7,7 @@ function GiftCard() {
             <div className="sticky-top">
                 <div className="navHeader">
                     <div className="prev-btn">
-                        <Link to={"/About"}>
+                        <Link to={"/Home"}>
                             <i className="bi bi-chevron-left"></i>
                         </Link>
                         <span>GIFT CARD</span>

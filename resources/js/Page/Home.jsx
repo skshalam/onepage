@@ -34,7 +34,6 @@ const Home = () => {
     const [open, setOpen] = useState(false);
     const bodyRef = useRef();
     useEffect(() => {
-        console.log('Merchant Base:', merchant_base);
         axios.get('/api/onepage/' + merchant_base)
             .then(response => {
                 setData(response.data.data);
@@ -45,7 +44,6 @@ const Home = () => {
                 setLoading(false);
                 setUseThemeStyles(response.data.data.theme)
                 setSociallink(response.data.data.social_links)
-                console.log("social link", Sociallink.facebook_link);
             })
             .catch(error => {
                 setError(error);
@@ -93,7 +91,6 @@ const Home = () => {
                 setProceed(true)
                 otpRefresh()
             }
-            console.log('API Response:', response.data);
             // if (response) {
             //     otpRefresh()
             // }
@@ -114,7 +111,7 @@ const Home = () => {
                 localStorage.setItem('access_token', response.data.message.original.access_token);
                 localStorage.setItem('expires_in', response.data.message.original.expires_in);
                 // Optionally, you might want to navigate or update UI state here
-                navigate('/About');
+                navigate('/Home');
             } else {
                 console.error('Unexpected response structure:', response);
                 // Handle unexpected response structure
@@ -131,7 +128,6 @@ const Home = () => {
                 merchant_id,
                 otp_msg: apiResponse?.data?.otp_msg
             });
-            console.log('API Response:', res.data);
             if (res) {
                 otpRefresh()
             }

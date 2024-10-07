@@ -36,7 +36,7 @@ const App = () => {
     const merchant_base = match?.params?.merchant_base;
     const [merchantBase, setMerchantBase] = useState(null);
     const navigate = useNavigate();
-    const {useThemeStyles,setUseThemeStyles} = useContext(ThemeContext);
+    const { useThemeStyles, setUseThemeStyles } = useContext(ThemeContext);
     useEffect(() => {
         if (match) {
             const { merchant_base } = match.params;
@@ -44,12 +44,11 @@ const App = () => {
             sessionStorage.setItem('merchant_base', merchant_base); // Store in session storage
         }
     }, [match]);
-    
+
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         const storedMerchantBase = sessionStorage.getItem('merchant_base');
         const url = `/onePageWebsite/${storedMerchantBase}`;
-        console.log('set-path:', location.pathname);
         if (!token && location.pathname === url) {
             navigate(url);
         }
@@ -69,12 +68,12 @@ const App = () => {
         const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.get(`/api/themecolor`)
-            .then(res => {
-                setUseThemeStyles(res?.data?.data?.theme);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+                .then(res => {
+                    setUseThemeStyles(res?.data?.data?.theme);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
         }
     }, [merchant_base])
 
@@ -82,7 +81,7 @@ const App = () => {
         <Routes>
             {/* Route for the specific URL /onePageWebsite/15657 */}
             <Route path="/onePageWebsite/:merchant_base" element={<Home />} />
-            <Route path="/About" element={<About />} />
+            <Route path="/Home" element={<About />} />
             <Route path="/Coupon" element={<Coupon />} />
             <Route path="/Giftcard" element={<GiftCard />} />
             <Route path="/Reward" element={<Reward />} />

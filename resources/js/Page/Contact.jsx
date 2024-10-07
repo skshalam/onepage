@@ -55,7 +55,6 @@ function Contact() {
                     };
                     axiosSetup.post('/api/contactsubmit', payload)
                         .then(response => {
-                            console.log('API Response:', response);
                             swal({
                                 title: "Success",
                                 text: response.data.message,

@@ -6,10 +6,9 @@ import ThemeContext from '../Providers/Contexts/ThemeContext';
 function MemberShipPackage() {
     const [membershipsDesc, setmembershipDesc] = useState({});
     const [loading, setLoading] = useState(true);
-    const {useThemeStyles} = useContext(ThemeContext);
+    const { useThemeStyles } = useContext(ThemeContext);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        console.log('Token:', token);
         if (token) {
             axiosSetup.post('/api/memebership', [])
                 .then(response => {
@@ -49,7 +48,7 @@ function MemberShipPackage() {
                 <div className="position-sticky top-0 z-1 shadow-sm">
                     <div className="navHeader">
                         <div className="prev-btn">
-                            <Link to={"/About"}>
+                            <Link to={"/Home"}>
                                 <i className="bi bi-chevron-left"></i>
                             </Link>
                             <span>MEMBERSHIP PACKAGE</span>
@@ -116,9 +115,9 @@ function MemberShipPackage() {
                                                     <svg
                                                         width="73" height="20" viewBox="0 0 73 20" fill="none"
                                                         xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M0 0H73L63 10L73 20H0V0Z" fill={`${member.expired?"#FF3B3B":"#4DB12A"}`} />
+                                                        <path d="M0 0H73L63 10L73 20H0V0Z" fill={`${member.expired ? "#FF3B3B" : "#4DB12A"}`} />
                                                     </svg>
-                                                    <span>{`${member.expired?"expired":"Active"}`}</span>
+                                                    <span>{`${member.expired ? "expired" : "Active"}`}</span>
                                                 </div>
                                             </div>
                                         </div>

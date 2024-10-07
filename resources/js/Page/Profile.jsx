@@ -6,34 +6,33 @@ import axiosSetup from '@/axiosSetup';
 
 function Profile() {
   const [deleteModal, setDeleteModal] = useState(false);
-  const {useThemeStyles} = useContext(ThemeContext);
-  const [referPermission,setReferPermission] = useState({})
+  const { useThemeStyles } = useContext(ThemeContext);
+  const [referPermission, setReferPermission] = useState({})
   const targetDiv = useRef(null)
   const merchant_id = sessionStorage.getItem('merchant_base');
   const [Profileimg, setProfileimg] = useState({})
   useEffect(() => {
-    axiosSetup.post('/api/referErn',{merchant_id})
-        .then(response => {
-          setProfileimg(response.data.user_image);
-          setReferPermission(response.data.refer);
-        })
-        .catch(error => {
-            console.log(error);
-        });
-}, []);
-const handleLogout = () => {
-  axiosSetup.post('/api/onePageLogout')
-    .then(response => {
-      // Handle logout success, navigate to login or home page
-      console.log('Logout successful');
-      setDeleteModal(false); // Close modal after success
-      localStorage.removeItem('access_token');
-      window.location.reload();
-    })
-    .catch(error => {
-      console.log('Logout failed:', error);
-    });
-};
+    axiosSetup.post('/api/referErn', { merchant_id })
+      .then(response => {
+        setProfileimg(response.data.user_image);
+        setReferPermission(response.data.refer);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+  const handleLogout = () => {
+    axiosSetup.post('/api/onePageLogout')
+      .then(response => {
+        // Handle logout success, navigate to login or home page
+        setDeleteModal(false); // Close modal after success
+        localStorage.removeItem('access_token');
+        window.location.reload();
+      })
+      .catch(error => {
+        console.log('Logout failed:', error);
+      });
+  };
   return (
     <div className='body-container position-relative'>
       <div className="position-absolute h-100 w-100 top-0 bg-layer-main z-1">
@@ -43,7 +42,7 @@ const handleLogout = () => {
       <div className="position-sticky top-0 z-3 shadow-sm">
         <div className="navHeader">
           <div className="prev-btn">
-            <Link to={"/About"}>
+            <Link to={"/Home"}>
               <i className="bi bi-chevron-left"></i>
             </Link>
             <span>PROFILE</span>
@@ -90,25 +89,25 @@ const handleLogout = () => {
           </Row>
         </Link>
         {
-          referPermission.referral_permission===1&&
+          referPermission.referral_permission === 1 &&
           <Link to={"/Referal"} className='cust_text_primary text-decoration-none'>
-          <Divider className='m-0' />
-          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
-            <Col span={3}>
-              <div className="text-center">
-                <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/t0avoukmt5fscuolt8w9.svg" alt="" />
-              </div>
-            </Col>
-            <Col span={21}>
-              <div className="d-flex justify-content-between align-items-center">
-                <span className='cust_text_primary fw-semibold'>{referPermission.referral_dynamic_name}</span>
-                <span>
-                  <i className='bi bi-chevron-right fs-5' />
-                </span>
-              </div>
-            </Col>
-          </Row>
-        </Link>
+            <Divider className='m-0' />
+            <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+              <Col span={3}>
+                <div className="text-center">
+                  <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/t0avoukmt5fscuolt8w9.svg" alt="" />
+                </div>
+              </Col>
+              <Col span={21}>
+                <div className="d-flex justify-content-between align-items-center">
+                  <span className='cust_text_primary fw-semibold'>{referPermission.referral_dynamic_name}</span>
+                  <span>
+                    <i className='bi bi-chevron-right fs-5' />
+                  </span>
+                </div>
+              </Col>
+            </Row>
+          </Link>
         }
         <Link to={"/Contact"} className='cust_text_primary text-decoration-none'>
           <Divider className='m-0' />
