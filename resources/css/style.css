@@ -352,7 +352,7 @@ body {
 }
 
 .bg-shape.one {
-    bottom: -10%;
+    margin-top: 56px;
     z-index: 99999999;
 }
 

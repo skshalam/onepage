@@ -146,21 +146,23 @@ function Profile() {
           </Row>
         </Link>
         <Divider className='m-0' />
-        <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"} onClick={() => setDeleteModal(true)}>
-          <Col span={3}>
-            <div className="text-center">
-              <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/n4iyfs8cuetah8i9rryu.svg" alt="" />
-            </div>
-          </Col>
-          <Col span={21}>
-            <div className="d-flex justify-content-between align-items-center">
-              <span className='cust_text_primary fw-semibold'>Logout</span>
-              <span>
-                <i className='bi bi-chevron-right fs-5' />
-              </span>
-            </div>
-          </Col>
-        </Row>
+        <Link className='cust_text_primary text-decoration-none'>
+          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"} onClick={() => setDeleteModal(true)}>
+            <Col span={3}>
+              <div className="text-center">
+                <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/n4iyfs8cuetah8i9rryu.svg" alt="" />
+              </div>
+            </Col>
+            <Col span={21}>
+              <div className="d-flex justify-content-between align-items-center">
+                <span className='cust_text_primary fw-semibold'>Logout</span>
+                <span>
+                  <i className='bi bi-chevron-right fs-5' />
+                </span>
+              </div>
+            </Col>
+          </Row>
+        </Link>
       </div>
       <div className="bg-layer-1 position-absolute bottom-0 z-2">
 
