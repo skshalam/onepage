@@ -2031,7 +2031,3 @@ body {
 .slick-next{
     right: -10px !important;
 }
-
-.slick-prev::before{
-    content: "" !important;
-}
