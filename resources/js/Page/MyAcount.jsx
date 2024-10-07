@@ -149,7 +149,9 @@ function MyAcount() {
             console.log(err);
         })
     }
-
+    const handleOpenChange = (newOpen) => {
+        setOpenDelPop(newOpen);  // toggle popover based on the new state
+    };
     return (
         <div className='onepage-main-body position-relative'>
             <div className='onepage-set-body'>
@@ -175,8 +177,10 @@ function MyAcount() {
                                             content={<a onClick={() => { setDeleteModal(true), setOpenDelPop(false) }}>Delete Account</a>}
                                             placement='bottomRight'
                                             open={openDelPop}
+                                            onOpenChange={handleOpenChange}
+                                            trigger="click"
                                         >
-                                            <Button type='ghost' onClick={() => setOpenDelPop(true)} icon={<i className='bi bi-three-dots-vertical text-light fs-5' />} />
+                                            <Button type='ghost' onClick={() => setOpenDelPop(!openDelPop)} icon={<i className='bi bi-three-dots-vertical text-light fs-5' />} />
                                         </Popover>
 
                                     </div>
