@@ -114,7 +114,7 @@ function AboutUs() {
                                 <Slider {...settings}>
                                     {data_home.banners.banner_image.map((banner, index) => (
                                         <div key={index}>
-                                            <Link to={data_home.banners.links[index]}>
+                                            <Link target='blank' to={data_home.banners.links[index]}>
                                                 <img src={banner} alt={`Banner ${index + 1}`} />
                                             </Link>
                                         </div>
@@ -152,13 +152,13 @@ function AboutUs() {
                                         {locat.location_link != "" && (
                                             <button className='btn'>
                                                 <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <g clip-path="url(#clip0_624_1474)">
-                                                        <path d="M1.67822 9.65918H4.01275" stroke="white" stroke-width="1.55635" stroke-linecap="round" stroke-linejoin="round" />
-                                                        <path d="M14.907 9.65918H17.2415" stroke="white" stroke-width="1.55635" stroke-linecap="round" stroke-linejoin="round" />
-                                                        <path d="M9.45972 1.87695V4.21148" stroke="white" stroke-width="1.55635" stroke-linecap="round" stroke-linejoin="round" />
-                                                        <path d="M9.45972 15.1069V17.4415" stroke="white" stroke-width="1.55635" stroke-linecap="round" stroke-linejoin="round" />
-                                                        <path d="M9.45968 15.1064C12.4681 15.1064 14.9069 12.6676 14.9069 9.65914C14.9069 6.65072 12.4681 4.21191 9.45968 4.21191C6.45126 4.21191 4.01245 6.65072 4.01245 9.65914C4.01245 12.6676 6.45126 15.1064 9.45968 15.1064Z" stroke="white" stroke-width="1.55635" stroke-linecap="round" stroke-linejoin="round" />
-                                                        <path d="M9.45953 11.9938C10.7489 11.9938 11.7941 10.9486 11.7941 9.65923C11.7941 8.36991 10.7489 7.32471 9.45953 7.32471C8.1702 7.32471 7.125 8.36991 7.125 9.65923C7.125 10.9486 8.1702 11.9938 9.45953 11.9938Z" stroke="white" stroke-width="1.55635" stroke-linecap="round" stroke-linejoin="round" />
+                                                    <g clipPath="url(#clip0_624_1474)">
+                                                        <path d="M1.67822 9.65918H4.01275" stroke="white" strokeWidth="1.55635" strokeLinecap="round" strokeLinejoin="round" />
+                                                        <path d="M14.907 9.65918H17.2415" stroke="white" strokeWidth="1.55635" strokeLinecap="round" strokeLinejoin="round" />
+                                                        <path d="M9.45972 1.87695V4.21148" stroke="white" strokeWidth="1.55635" strokeLinecap="round" strokeLinejoin="round" />
+                                                        <path d="M9.45972 15.1069V17.4415" stroke="white" strokeWidth="1.55635" strokeLinecap="round" strokeLinejoin="round" />
+                                                        <path d="M9.45968 15.1064C12.4681 15.1064 14.9069 12.6676 14.9069 9.65914C14.9069 6.65072 12.4681 4.21191 9.45968 4.21191C6.45126 4.21191 4.01245 6.65072 4.01245 9.65914C4.01245 12.6676 6.45126 15.1064 9.45968 15.1064Z" stroke="white" strokeWidth="1.55635" strokeLinecap="round" strokeLinejoin="round" />
+                                                        <path d="M9.45953 11.9938C10.7489 11.9938 11.7941 10.9486 11.7941 9.65923C11.7941 8.36991 10.7489 7.32471 9.45953 7.32471C8.1702 7.32471 7.125 8.36991 7.125 9.65923C7.125 10.9486 8.1702 11.9938 9.45953 11.9938Z" stroke="white" strokeWidth="1.55635" strokeLinecap="round" strokeLinejoin="round" />
                                                     </g>
                                                     <defs>
                                                         <clipPath id="clip0_624_1474">

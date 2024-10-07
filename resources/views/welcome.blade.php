@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Onepage</title>
+        <title>Onepage - Website</title>
 
         @viteReactRefresh
         @vite('resources/js/app.jsx')
