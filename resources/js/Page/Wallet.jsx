@@ -1,10 +1,11 @@
-import { Checkbox, Col, DatePicker, Drawer, Form, Row, } from 'antd';
+import { Checkbox, Col, DatePicker, Drawer, Form, message, Row, } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import axiosSetup from '@/axiosSetup';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import { formatNumberWithCommas } from '../utility/formating';
+import dayjs from 'dayjs';
 
 function Wallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
@@ -18,6 +19,8 @@ function Wallet() {
     const [pendingSelectedTypes, setPendingSelectedTypes] = useState("");
     const [startDate, setStartDate] = useState(""); // To store start date
     const [endDate, setEndDate] = useState(""); // To store end date
+    const [stDate,setStDate] = useState(null);
+    const [enDate,setEnDate] = useState(null);
     const [pendingStartDate, setPendingStartDate] = useState(""); // Temporary state for start date
     const [pendingEndDate, setPendingEndDate] = useState(""); // Temporary state for end date
     const [form] = Form.useForm();
@@ -45,12 +48,24 @@ function Wallet() {
 
         return `${day}${daySuffix(day)} ${month}, ${year}`;
     };
+
+    const disabledDate = (current) => {
+        // Disable dates after today
+        return current && current > dayjs().endOf('day');
+    };
     const handleStartDateChange = (date, dateString) => {
         setPendingStartDate(dateString); // Store the pending start date
+        setStDate(date)
     };
 
     const handleEndDateChange = (date, dateString) => {
-        setPendingEndDate(dateString); // Store the pending end date
+        if (stDate && date && date.isBefore(stDate, 'day')) {
+            message.error("End date cannot be earlier than start date.");
+            setEnDate(null);
+        } else {
+            setPendingEndDate(dateString)
+            setEnDate(date);
+        }
     };
 
     useEffect(() => {
@@ -300,13 +315,21 @@ function Wallet() {
                         <Row>
                             <Col span={7}>From:</Col>
                             <Col span={17}>
-                                <DatePicker className='filter-date-input' onChange={handleStartDateChange} />
+                                <DatePicker 
+                                disabledDate={disabledDate}
+                                value={stDate}
+                                className='filter-date-input'
+                                onChange={handleStartDateChange} />
                             </Col>
                         </Row>
                         <Row>
                             <Col span={7}>To:</Col>
                             <Col span={17}>
-                                <DatePicker className='filter-date-input' onChange={handleEndDateChange} />
+                                <DatePicker 
+                                disabledDate={disabledDate}
+                                value={enDate}
+                                className='filter-date-input'
+                                onChange={handleEndDateChange} />
                             </Col>
                         </Row>
                     </div>

@@ -23,7 +23,6 @@ function CreditWallet() {
     const [currentPoints, setCurrentPoints] = useState(0);
     const [stDate,setStDate] = useState(null);
     const [enDate,setEnDate] = useState(null);
-    const [endDateError, setEndDateError] = useState(false);
     const [startDate, setStartDate] = useState(""); // To store start date
     const [endDate, setEndDate] = useState(""); // To store end date
     const [pendingStartDate, setPendingStartDate] = useState(""); // Temporary state for start date
@@ -67,14 +66,12 @@ function CreditWallet() {
     const handleStartDateChange = (date, dateString) => {
         setStDate(date)
         setPendingStartDate(dateString); // Store the pending start date
-        setEndDateError(false); 
     };
 
     const handleEndDateChange = (date, dateString) => {
         if (stDate && date && date.isBefore(stDate, 'day')) {
             message.error("End date cannot be earlier than start date.");
             setEnDate(null);
-            setEndDateError(true); 
         } else {
             setPendingEndDate(dateString)
             setEnDate(date);
