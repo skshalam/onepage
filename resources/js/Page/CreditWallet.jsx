@@ -40,7 +40,7 @@ function CreditWallet() {
 
         const date = new Date(dateStr);
         const day = date.getDate();
-        const month = date.toLocaleString('default', { month: 'long' });
+        const month = date.toLocaleString('default', { month: 'short' });
         const year = date.getFullYear();
         const daySuffix = (d) => {
             if (d > 3 && d < 21) return 'th';
@@ -252,7 +252,7 @@ function CreditWallet() {
                                 <div className="wallet-table-body">
                                     {creditwalletData?.length > 0 ? (
                                         creditwalletData.map((crwallet, index) => (
-                                            <div key={crwallet + index} className="wallet-detail-container p-2 px-3">
+                                            <div key={crwallet + index} className={`wallet-detail-container p-2 px-3 ${(crwallet.Type === "Expired") ? "credit-expired-main" : ""}`}>
                                                 <div className="wallet-detail-container-top d-flex justify-content-between align-items-center">
                                                     {/* <span>{index}</span> */}
                                                     <div className="wallet-name">
@@ -272,7 +272,7 @@ function CreditWallet() {
                                                         Invoice Number: <span>{crwallet.Invoice_Number}</span>
                                                     </div>
                                                     <div className="wallet-transaction-value d-flex gap-1">
-                                                        <p className={`mb-0 ${crwallet.Type === "Expired" ? "credit-expired" : ""}`}>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className={`bi bi-chevron-down collapse-icon ${current === index && collaspable ? "active" : ""}`} onClick={() => { handleCollaspe(index) }} />
+                                                        <p className={`mb-0 ${crwallet.Type === "Expired" || crwallet.Type === "Redeemed" ? "credit-expired" : ""}`}>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className={`bi bi-chevron-down collapse-icon ${current === index && collaspable ? "active" : ""}`} onClick={() => { handleCollaspe(index) }} />
                                                     </div>
                                                 </div>
                                                 <div className="wallet-detail-container-bottom d-flex justify-content-between align-items-center">

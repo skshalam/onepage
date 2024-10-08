@@ -2067,3 +2067,8 @@ body {
 .slick-next{
     right: -10px !important;
 }
+.credit-expired-main{
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: no-drop;
+}

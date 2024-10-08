@@ -31,7 +31,7 @@ function Wallet() {
 
         const date = new Date(dateStr);
         const day = date.getDate();
-        const month = date.toLocaleString('default', { month: 'long' });
+        const month = date.toLocaleString('default', { month: 'short' });
         const year = date.getFullYear();
         const daySuffix = (d) => {
             if (d > 3 && d < 21) return 'th';
@@ -218,7 +218,7 @@ function Wallet() {
                                 <div className="wallet-table-body">
                                     {creditwalletData?.length > 0 ? (
                                         creditwalletData.map((crwallet, index) => (
-                                            <div key={crwallet + index} className="wallet-detail-container p-2 px-3">
+                                            <div key={crwallet + index} className={`wallet-detail-container p-2 px-3 ${(crwallet.Wallet_Type === "Expired") ? "credit-expired-main" : ""}`}>
                                                 <div className="wallet-detail-container-top d-flex justify-content-between align-items-center">
                                                     {/* <span>{index}</span> */}
                                                     <div className="wallet-name">
@@ -229,13 +229,13 @@ function Wallet() {
                                                     <div className="wallet-expire">
                                                         <p className='mb-0'>
                                                             Valid till <span>{crwallet.Valid_Till !== "0000-00-00" ? formatDate(crwallet.Valid_Till) : '-'}
-                                                                <b className='credit-expired'>{crwallet.Type === "Expired" ? " | Expired" : ""}</b></span>
+                                                                <b className='credit-expired'>{crwallet.Wallet_Type === "Expired" ? " | Expired" : ""}</b></span>
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div className="wallet-detail-container-middle d-flex justify-content-end align-items-center">
                                                     <div className="wallet-transaction-value d-flex gap-1">
-                                                        <p className='mb-0'>{crwallet.Wallet_Type === "Earned" ? "+" : "-"}{crwallet.Wallet_Balance}</p>
+                                                        <p className={`mb-0 ${(crwallet.Wallet_Type === "Expired" || crwallet.Wallet_Type === "Redeemed") ? "credit-expired" : ""}`}>{crwallet.Wallet_Type === "Earned" ? "+" : "-"}{crwallet.Wallet_Balance}</p>
                                                     </div>
                                                 </div>
                                             </div>
