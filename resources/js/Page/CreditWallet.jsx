@@ -28,7 +28,8 @@ function CreditWallet() {
     const [active, setActive] = useState(false);
     const [collaspable, setCollaspable] = useState(false);
     const [current, setCurrent] = useState(0)
-    const { useThemeStyles } = useContext(ThemeContext)
+    const { useThemeStyles } = useContext(ThemeContext);
+    const [filterCount,setFilterCount] = useState(0);
 
     const formatDate = (dateStr) => {
         if (!dateStr) return 'No Date Available';
