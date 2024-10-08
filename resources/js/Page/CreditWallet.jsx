@@ -242,7 +242,7 @@ function CreditWallet() {
                                                         Invoice Number: <span>{crwallet.Invoice_Number}</span>
                                                     </div>
                                                     <div className="wallet-transaction-value d-flex gap-1">
-                                                        <p className='mb-0'>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className={`bi bi-chevron-down collapse-icon ${current === index && collaspable ? "active" : ""}`} onClick={() => { handleCollaspe(index) }} />
+                                                        <p className={`mb-0 ${crwallet.Type === "Expired" ? "credit-expired" : ""}`}>{crwallet.Type === "Earned" ? "+" : "-"}{crwallet.Points}</p><i className={`bi bi-chevron-down collapse-icon ${current === index && collaspable ? "active" : ""}`} onClick={() => { handleCollaspe(index) }} />
                                                     </div>
                                                 </div>
                                                 <div className="wallet-detail-container-bottom d-flex justify-content-between align-items-center">
