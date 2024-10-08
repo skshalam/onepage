@@ -6,8 +6,6 @@ import '../css/fonts.css';
 import React, { useContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route, useLocation, matchPath, useNavigate } from 'react-router-dom';
-import Home from './Page/Home';
-import About from './Page/About';
 import Coupon from './Page/Coupon';
 import GiftCard from './Page/GiftCard';
 import Reward from './Page/Reward';
@@ -29,6 +27,8 @@ import axios from 'axios';
 import { ThemeProvider } from './Providers/ContextProviders/ThemeProvider';
 import ThemeContext from './Providers/Contexts/ThemeContext';
 import axiosSetup from '@/axiosSetup';
+import Login from './Page/Login';
+import Home from './Page/Home';
 
 const App = () => {
     const location = useLocation();
@@ -101,8 +101,8 @@ const App = () => {
     return (
         <Routes>
             {/* Route for the specific URL /onePageWebsite/15657 */}
-            <Route path="/onePageWebsite/:merchant_base" element={<Home />} />
-            <Route path="/Home" element={<About />} />
+            <Route path="/onePageWebsite/:merchant_base" element={<Login />} />
+            <Route path="/Home" element={<Home />} />
             <Route path="/Coupon" element={<Coupon />} />
             <Route path="/Giftcard" element={<GiftCard />} />
             <Route path="/Reward" element={<Reward />} />
