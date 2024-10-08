@@ -1,4 +1,4 @@
-import { Checkbox, Col, DatePicker, Drawer, Form, Row, Tabs, Spin } from 'antd';
+import { Checkbox, Col, DatePicker, Drawer, Form, Row, Tabs, Spin, message } from 'antd';
 import { form } from 'framer-motion/client';
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
@@ -7,6 +7,7 @@ import axiosSetup from '@/axiosSetup';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import { debounce } from 'lodash';
 import { formatNumberWithCommas } from '../utility/formating';
+import dayjs from 'dayjs';
 function CreditWallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
     const [openFilter2, setOpenFilter2] = useState(false);
@@ -20,6 +21,8 @@ function CreditWallet() {
     const [selectedSources, setSelectedSources] = useState("");
     const [pendingSelectedSources, setPendingSelectedSources] = useState("");
     const [currentPoints, setCurrentPoints] = useState(0);
+    const [stDate,setStDate] = useState(null);
+    const [enDate,setEnDate] = useState(null);
     const [startDate, setStartDate] = useState(""); // To store start date
     const [endDate, setEndDate] = useState(""); // To store end date
     const [pendingStartDate, setPendingStartDate] = useState(""); // Temporary state for start date
@@ -54,12 +57,25 @@ function CreditWallet() {
 
         return `${day}${daySuffix(day)} ${month}, ${year}`;
     };
+
+    const disabledDate = (current) => {
+        // Disable dates after today
+        return current && current > dayjs().endOf('day');
+    };
+
     const handleStartDateChange = (date, dateString) => {
+        setStDate(date)
         setPendingStartDate(dateString); // Store the pending start date
     };
 
     const handleEndDateChange = (date, dateString) => {
-        setPendingEndDate(dateString); // Store the pending end date
+        if (stDate && date && date.isBefore(stDate, 'day')) {
+            message.error("End date cannot be earlier than start date.");
+            setEnDate(null);
+        } else {
+            setPendingEndDate(dateString)
+            setEnDate(date);
+        }
     };
     useEffect(() => {
         const token = localStorage.getItem('access_token');
@@ -114,6 +130,8 @@ function CreditWallet() {
         form.resetFields();
         setPendingSelectedTypes("");
         setPendingSelectedSources("");
+        setStDate(null);
+        setEnDate(null)
         setSelectedTypes("");
         setSelectedSources("");
         setOpenFilter2(false);
@@ -358,13 +376,21 @@ function CreditWallet() {
                         <Row>
                             <Col span={7}>From:</Col>
                             <Col span={17}>
-                                <DatePicker className='filter-date-input' onChange={handleStartDateChange} />
+                                <DatePicker 
+                                value={stDate}
+                                className='filter-date-input'
+                                disabledDate={disabledDate}
+                                onChange={handleStartDateChange} />
                             </Col>
                         </Row>
                         <Row>
                             <Col span={7}>To:</Col>
                             <Col span={17}>
-                                <DatePicker className='filter-date-input' onChange={handleEndDateChange} />
+                                <DatePicker
+                                value={enDate} 
+                                className='filter-date-input'
+                                disabledDate={disabledDate}
+                                onChange={handleEndDateChange} />
                             </Col>
                         </Row>
                     </div>
