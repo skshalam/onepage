@@ -72,7 +72,7 @@ function Wallet() {
         try {
             const response = await axiosSetup.post('/api/walletbalance', {
                 page_number: page,
-                credit_type: types,
+                type: types,
                 start_date: start_date,
                 end_date: end_date
             });
