@@ -11,6 +11,7 @@ function MembershipDetails() {
     const [dataLoading, setDataLoading] = useState(true);
 
     const { membership_id } = useParams();
+    const decodedMembershipId = atob(membership_id);
     const { useThemeStyles } = useContext(ThemeContext);
 
     const [membershipDetails, setMembershipDetails] = useState({})
@@ -34,7 +35,7 @@ function MembershipDetails() {
         if (token) {
             axiosSetup.post('/api/eWalletissue',
                 {
-                    membership_id: membership_id,
+                    membership_id: decodedMembershipId,
                     page_number: eWalletCurrentPage
                 })
                 .then(response => {
@@ -48,13 +49,13 @@ function MembershipDetails() {
         } else {
             console.log('No token available, API call skipped');
         }
-    }, [membership_id, eWalletCurrentPage]);
+    }, [decodedMembershipId, eWalletCurrentPage]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.post('/api/bookletissue',
                 {
-                    membership_id: membership_id,
+                    membership_id: decodedMembershipId,
                     page_number: bookletCurrentPage
                 })
                 .then(response => {
@@ -68,13 +69,13 @@ function MembershipDetails() {
         } else {
             console.log('No token available, API call skipped');
         }
-    }, [membership_id, bookletCurrentPage]);
+    }, [decodedMembershipId, bookletCurrentPage]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.post('/api/couponsredeem',
                 {
-                    membership_id: membership_id,
+                    membership_id: decodedMembershipId,
                     page_number: couponsCurrentPage
                 })
                 .then(response => {
@@ -88,13 +89,13 @@ function MembershipDetails() {
         } else {
             console.log('No token available, API call skipped');
         }
-    }, [membership_id, couponsCurrentPage]);
+    }, [decodedMembershipId, couponsCurrentPage]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token) {
             axiosSetup.post('/api/memebership',
                 {
-                    membership_id: membership_id,
+                    membership_id: decodedMembershipId,
                 })
                 .then(response => {
                     setMembershipDetails(response.data.data.membership[0]);
@@ -106,7 +107,7 @@ function MembershipDetails() {
         } else {
             console.log('No token available, API call skipped');
         }
-    }, [membership_id]);
+    }, [decodedMembershipId]);
 
 
     return (
