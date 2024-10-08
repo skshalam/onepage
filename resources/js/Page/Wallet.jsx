@@ -1,10 +1,10 @@
-import { Checkbox, Col, DatePicker, Drawer, Form, Row, Tabs, Spin } from 'antd';
-import { form } from 'framer-motion/client';
+import { Checkbox, Col, DatePicker, Drawer, Form, Row, } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, Router, useParams } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import axiosSetup from '@/axiosSetup';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
+import { formatNumberWithCommas } from '../utility/formating';
 
 function Wallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
@@ -53,23 +53,22 @@ function Wallet() {
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token && currentPage === 1) {  // Only call the API on mount or when currentPage is 1
+            setIsLoading(true);
             loadCreditWalletData(currentPage, selectedTypes, startDate, endDate);
         }
     }, []);
 
     useEffect(() => {
         if (currentPage > 1) {
-            loadCreditWalletData(currentPage, selectedTypes, startDate, endDate);
+            setScrollLoad(true);
+            setTimeout(() => {
+                loadCreditWalletData(currentPage, selectedTypes, startDate, endDate);
+            }, 1500);            
         }
     }, [currentPage]);
 
 
-    const loadCreditWalletData = async (page, types = "", start_date = "", end_date = "") => {
-        if (page === 1) {
-            setIsLoading(true);
-        } else {
-            setScrollLoad(true);
-        }
+    const loadCreditWalletData = async (page, types = "", start_date = "", end_date = "") => {        
         try {
             const response = await axiosSetup.post('/api/walletbalance', {
                 page_number: page,
@@ -158,7 +157,7 @@ function Wallet() {
                 </div>
                 <div className="px-3 text-center my-4 wallet-credit-info">
                     <h6>TOTAL WALLET BALANCE</h6>
-                    <span>{currentWalletpoints}</span><span> points</span>
+                    <span>{formatNumberWithCommas(currentWalletpoints)}</span><span> points</span>
                 </div>
                 <div className="mx-4 rounded-4 wallet-balance-table ">
                     <div className="wallet-filter-header d-flex justify-content-between align-items-center py-2 px-3">
@@ -221,7 +220,7 @@ function Wallet() {
                                                 </div>
                                                 <div className="wallet-detail-container-middle d-flex justify-content-end align-items-center">
                                                     <div className="wallet-transaction-value d-flex gap-1">
-                                                        <p className='mb-0'>{crwallet.Wallet_Type === "Earned" ? "+" : "-"}{crwallet.Wallet_Balance}</p><i className='bi bi-chevron-down' />
+                                                        <p className='mb-0'>{crwallet.Wallet_Type === "Earned" ? "+" : "-"}{crwallet.Wallet_Balance}</p>
                                                     </div>
                                                 </div>
                                             </div>

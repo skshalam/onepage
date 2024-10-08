@@ -6,6 +6,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import axiosSetup from '@/axiosSetup';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import { debounce } from 'lodash';
+import { formatNumberWithCommas } from '../utility/formating';
 function CreditWallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
     const [openFilter2, setOpenFilter2] = useState(false);
@@ -58,22 +59,20 @@ function CreditWallet() {
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token && currentPage === 1) {  // Only call the API on mount or when currentPage is 1
+            setIsLoading(true);
             loadCreditWalletData(currentPage, selectedTypes, selectedSources, startDate, endDate);
         }
     }, []);
     useEffect(() => {
         if (currentPage > 1) {
-            loadCreditWalletData(currentPage, selectedTypes, selectedSources, startDate, endDate);
+            setScrollLoad(true);
+            setTimeout(() => {
+                loadCreditWalletData(currentPage, selectedTypes, selectedSources, startDate, endDate);
+            }, 1500);
         }
     }, [currentPage]);
 
     const loadCreditWalletData = debounce(async (page, types = "", sources = "", start_date = "", end_date = "") => {
-        if (page === 1) {
-            setIsLoading(true);
-        } else {
-            setScrollLoad(true);
-        }
-
         try {
             const response = await axiosSetup.post('/api/creditbalance', {
                 page_number: page,
@@ -177,7 +176,7 @@ function CreditWallet() {
                 </div>
                 <div className="px-3 text-center my-4 wallet-credit-info">
                     <h6>TOTAL CREDIT BALANCE</h6>
-                    <span>{currentPoints}</span><span>Points</span>
+                    <span>{formatNumberWithCommas(currentPoints)}</span><span>Points</span>
                 </div>
                 <div className="mx-4 rounded-4 wallet-balance-table ">
                     <div className="wallet-filter-header d-flex justify-content-between align-items-center py-2 px-3">
