@@ -31,6 +31,7 @@ function CreditWallet() {
     const { useThemeStyles } = useContext(ThemeContext);
     const [filterCount,setFilterCount] = useState(0);
     const [isCalenderActive,setIsCalenderActive] = useState(false);
+    const [isFilterActive,setIsFilterActive] = useState(false);
     const [c1,setC1] = useState(0);
     const [c2,setC2] = useState(0);
 
@@ -77,6 +78,11 @@ function CreditWallet() {
     }, [currentPage]);
 
     const loadCreditWalletData = debounce(async (page, types = "", sources = "", start_date = "", end_date = "") => {
+        if (page===1) {
+            setIsLoading(true)
+        } else {
+            setScrollLoad(true)
+        }
         try {
             const response = await axiosSetup.post('/api/creditbalance', {
                 page_number: page,
@@ -152,6 +158,7 @@ function CreditWallet() {
         loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, pendingStartDate, pendingEndDate); // Load data based on selected filters
         setOpenFilter1(false);
         setOpenFilter2(false);
+        setIsFilterActive(true)
     };
     const applyDateFilters =()=>{
         setStartDate(pendingStartDate); // Store the start date
@@ -208,8 +215,8 @@ function CreditWallet() {
 
                         <div className="filter-header-right d-flex gap-2">
                             <i className={`bi ${!isCalenderActive?'bi-calendar':'bi-calendar-fill'} p-1 px-2 rounded-2`} onClick={() => setOpenFilter1(true)} />
-                            <i className={`bi ${filterCount > 0 ? 'bi-funnel-fill' : 'bi-funnel'} p-1 px-2  rounded-2`} onClick={() => setOpenFilter2(true)} />
-                                {filterCount>0&&<div className={"filter-count"}>{filterCount}</div>}
+                            <i className={`bi ${filterCount > 0 && isFilterActive ? 'bi-funnel-fill' : 'bi-funnel'} p-1 px-2  rounded-2`} onClick={() => setOpenFilter2(true)} />
+                                {(filterCount>0&&isFilterActive)&&<div className={"filter-count"}>{filterCount}</div>}
                         </div>
                     </div>
                     {

@@ -24,6 +24,7 @@ function Wallet() {
     const { useThemeStyles } = useContext(ThemeContext)
     const [currentWalletpoints, setcurrentWalletpoints] = useState(0);
     const [c1,setC1] = useState(0);
+    const [isFilterActive,setIsFilterActive] = useState(false);
     const [isCalenderActive,setIsCalenderActive] = useState(false);
     const formatDate = (dateStr) => {
         if (!dateStr) return 'No Date Available';
@@ -70,7 +71,12 @@ function Wallet() {
     }, [currentPage]);
 
 
-    const loadCreditWalletData = async (page, types = "", start_date = "", end_date = "") => {        
+    const loadCreditWalletData = async (page, types = "", start_date = "", end_date = "") => {
+        if (page===1) {
+            setIsLoading(true)
+        } else {
+            setScrollLoad(true)
+        }        
         try {
             const response = await axiosSetup.post('/api/walletbalance', {
                 page_number: page,
@@ -125,6 +131,7 @@ function Wallet() {
         setCurrentPage(1); // Reset to first page
         loadCreditWalletData(1, pendingSelectedTypes, startDate, endDate); // Load data based on selected filters
         setOpenFilter2(false)
+        setIsFilterActive(true)
     };
     const applyDateFilters = () => {
         setCurrentPage(1);
@@ -174,8 +181,8 @@ function Wallet() {
 
                         <div className="filter-header-right d-flex gap-2">
                             <i className={`bi ${isCalenderActive?'bi-calendar-fill':'bi-calendar'} p-1 px-2 rounded-2`} onClick={() => setOpenFilter1(true)} />
-                            <i className={`bi ${c1 > 0 ? 'bi-funnel-fill' : 'bi-funnel'} p-1 px-2  rounded-2`} onClick={() => setOpenFilter2(true)} />
-                            {c1>0&&<div className={"filter-count"}>{c1}</div>}
+                            <i className={`bi ${c1 > 0&&isFilterActive ? 'bi-funnel-fill' : 'bi-funnel'} p-1 px-2  rounded-2`} onClick={() => setOpenFilter2(true)} />
+                            {(c1>0&&isFilterActive)&&<div className={"filter-count"}>{c1}</div>}
                         </div>
                     </div>
                     {
