@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import axiosSetup from '@/axiosSetup';
-
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 function Profile() {
   const [deleteModal, setDeleteModal] = useState(false);
   const { useThemeStyles } = useContext(ThemeContext);
@@ -11,14 +11,17 @@ function Profile() {
   const targetDiv = useRef(null)
   const merchant_id = sessionStorage.getItem('merchant_base');
   const [Profileimg, setProfileimg] = useState({})
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     axiosSetup.post('/api/referErn', { merchant_id })
       .then(response => {
         setProfileimg(response.data.user_image);
         setReferPermission(response.data.refer);
+        setIsLoading(false);
       })
       .catch(error => {
         console.log(error);
+        setIsLoading(false)
       });
   }, []);
   const handleLogout = () => {
@@ -53,116 +56,132 @@ function Profile() {
         <Avatar className='z-2 bg-light' size={80} src={Profileimg.image} />
       </div>
       <div className="mx-4 p-4 profile-navigation-container z-3 position-relative rounded-4">
-        <Link to={"/Myaccount"} className='cust_text_primary text-decoration-none'>
-          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
-            <Col span={3}>
-              <div className="text-center">
-                <img className='' src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/tpakyx8irfmmosxuxma9.svg" alt="" />
-              </div>
-            </Col>
-            <Col span={21}>
-              <div className="d-flex justify-content-between align-items-center">
-                <span className='cust_text_primary fw-semibold'>My Account</span>
-                <span>
-                  <i className='bi bi-chevron-right fs-5' />
-                </span>
-              </div>
-            </Col>
-          </Row>
-        </Link>
-        <Link to={"/Aboutus"} className='cust_text_primary text-decoration-none'>
-          <Divider className='m-0' />
-          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
-            <Col span={3}>
-              <div className="text-center">
-                <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/zvdgbkljkuhvcaqdmxo6.svg" alt="" />
-              </div>
-            </Col>
-            <Col span={21}>
-              <div className="d-flex justify-content-between align-items-center">
-                <span className='cust_text_primary fw-semibold'>About Us</span>
-                <span>
-                  <i className='bi bi-chevron-right fs-5' />
-                </span>
-              </div>
-            </Col>
-          </Row>
-        </Link>
-        {
-          referPermission.referral_permission === 1 &&
-          <Link to={"/Referal"} className='cust_text_primary text-decoration-none'>
-            <Divider className='m-0' />
-            <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
-              <Col span={3}>
-                <div className="text-center">
-                  <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/t0avoukmt5fscuolt8w9.svg" alt="" />
-                </div>
-              </Col>
-              <Col span={21}>
-                <div className="d-flex justify-content-between align-items-center">
-                  <span className='cust_text_primary fw-semibold'>{referPermission.referral_dynamic_name}</span>
-                  <span>
-                    <i className='bi bi-chevron-right fs-5' />
-                  </span>
-                </div>
-              </Col>
-            </Row>
-          </Link>
-        }
-        <Link to={"/Contact"} className='cust_text_primary text-decoration-none'>
-          <Divider className='m-0' />
-          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
-            <Col span={3}>
-              <div className="text-center">
-                <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
-              </div>
-            </Col>
-            <Col span={21}>
-              <div className="d-flex justify-content-between align-items-center">
-                <span className='cust_text_primary fw-semibold'>Contact Us</span>
-                <span>
-                  <i className='bi bi-chevron-right fs-5' />
-                </span>
-              </div>
-            </Col>
-          </Row>
-        </Link>
-        <Link to={"/T&c"} className='cust_text_primary text-decoration-none'>
-          <Divider className='m-0' />
-          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
-            <Col span={3}>
-              <div className="text-center">
-                <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726655651/Frame_277132298_m6wxf0.svg" alt="" />
-              </div>
-            </Col>
-            <Col span={21}>
-              <div className="d-flex justify-content-between align-items-center">
-                <span className='cust_text_primary fw-semibold'>Terms And Conditions</span>
-                <span>
-                  <i className='bi bi-chevron-right fs-5' />
-                </span>
-              </div>
-            </Col>
-          </Row>
-        </Link>
-        <Divider className='m-0' />
-        <Link className='cust_text_primary text-decoration-none'>
-          <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"} onClick={() => setDeleteModal(true)}>
-            <Col span={3}>
-              <div className="text-center">
-                <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/n4iyfs8cuetah8i9rryu.svg" alt="" />
-              </div>
-            </Col>
-            <Col span={21}>
-              <div className="d-flex justify-content-between align-items-center">
-                <span className='cust_text_primary fw-semibold'>Logout</span>
-                <span>
-                  <i className='bi bi-chevron-right fs-5' />
-                </span>
-              </div>
-            </Col>
-          </Row>
-        </Link>
+        <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+          {
+            isLoading ? 
+            <>
+              <Skeleton className='mb-1' style={{ height: "55px", width: "100%" }} />
+              <Skeleton className='mb-1' style={{ height: "55px", width: "100%" }} />
+              <Skeleton className='mb-1' style={{ height: "55px", width: "100%" }} />
+              <Skeleton className='mb-1' style={{ height: "55px", width: "100%" }} />
+              <Skeleton className='mb-1' style={{ height: "55px", width: "100%" }} />
+              <Skeleton className='mb-1' style={{ height: "55px", width: "100%" }} />
+            </>
+            :
+            <>
+              <Link to={"/Myaccount"} className='cust_text_primary text-decoration-none'>
+                <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+                  <Col span={3}>
+                    <div className="text-center">
+                      <img className='' src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/tpakyx8irfmmosxuxma9.svg" alt="" />
+                    </div>
+                  </Col>
+                  <Col span={21}>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span className='cust_text_primary fw-semibold'>My Account</span>
+                      <span>
+                        <i className='bi bi-chevron-right fs-5' />
+                      </span>
+                    </div>
+                  </Col>
+                </Row>
+              </Link>
+              <Link to={"/Aboutus"} className='cust_text_primary text-decoration-none'>
+                <Divider className='m-0' />
+                <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+                  <Col span={3}>
+                    <div className="text-center">
+                      <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/zvdgbkljkuhvcaqdmxo6.svg" alt="" />
+                    </div>
+                  </Col>
+                  <Col span={21}>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span className='cust_text_primary fw-semibold'>About Us</span>
+                      <span>
+                        <i className='bi bi-chevron-right fs-5' />
+                      </span>
+                    </div>
+                  </Col>
+                </Row>
+              </Link>
+              {
+                referPermission.referral_permission === 1 &&
+                <Link to={"/Referal"} className='cust_text_primary text-decoration-none'>
+                  <Divider className='m-0' />
+                  <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+                    <Col span={3}>
+                      <div className="text-center">
+                        <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/t0avoukmt5fscuolt8w9.svg" alt="" />
+                      </div>
+                    </Col>
+                    <Col span={21}>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <span className='cust_text_primary fw-semibold'>{referPermission.referral_dynamic_name}</span>
+                        <span>
+                          <i className='bi bi-chevron-right fs-5' />
+                        </span>
+                      </div>
+                    </Col>
+                  </Row>
+                </Link>
+              }
+              <Link to={"/Contact"} className='cust_text_primary text-decoration-none'>
+                <Divider className='m-0' />
+                <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+                  <Col span={3}>
+                    <div className="text-center">
+                      <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/wztf1f95mpxhhvutobqs.svg" alt="" />
+                    </div>
+                  </Col>
+                  <Col span={21}>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span className='cust_text_primary fw-semibold'>Contact Us</span>
+                      <span>
+                        <i className='bi bi-chevron-right fs-5' />
+                      </span>
+                    </div>
+                  </Col>
+                </Row>
+              </Link>
+              <Link to={"/T&c"} className='cust_text_primary text-decoration-none'>
+                <Divider className='m-0' />
+                <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"}>
+                  <Col span={3}>
+                    <div className="text-center">
+                      <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1726655651/Frame_277132298_m6wxf0.svg" alt="" />
+                    </div>
+                  </Col>
+                  <Col span={21}>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span className='cust_text_primary fw-semibold'>Terms And Conditions</span>
+                      <span>
+                        <i className='bi bi-chevron-right fs-5' />
+                      </span>
+                    </div>
+                  </Col>
+                </Row>
+              </Link>
+              <Divider className='m-0' />
+              <Link className='cust_text_primary text-decoration-none'>
+                <Row className='px-2 py-3' gutter={[15, 0]} align={"middle"} onClick={() => setDeleteModal(true)}>
+                  <Col span={3}>
+                    <div className="text-center">
+                      <img src="https://res.cloudinary.com/dy4g09dtw/image/upload/v1726290869/n4iyfs8cuetah8i9rryu.svg" alt="" />
+                    </div>
+                  </Col>
+                  <Col span={21}>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span className='cust_text_primary fw-semibold'>Logout</span>
+                      <span>
+                        <i className='bi bi-chevron-right fs-5' />
+                      </span>
+                    </div>
+                  </Col>
+                </Row>
+              </Link>
+            </>
+          }
+        </SkeletonTheme>
       </div>
       <div className="bg-layer-1 position-absolute bottom-0 z-2">
 

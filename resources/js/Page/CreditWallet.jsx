@@ -12,9 +12,9 @@ function CreditWallet() {
     const [openFilter1, setOpenFilter1] = useState(false);
     const [openFilter2, setOpenFilter2] = useState(false);
     const [creditwalletData, setCreditWalletData] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1); // Track the current page
-    const [totalPages, setTotalPages] = useState(0); // Track total pages
-    const [isLoading, setIsLoading] = useState(false); // To prevent multiple API calls at the same time
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
     const [scrollLoad, setScrollLoad] = useState(false);
     const [selectedTypes, setSelectedTypes] = useState("");
     const [pendingSelectedTypes, setPendingSelectedTypes] = useState("");
