@@ -299,7 +299,13 @@ function CreditWallet() {
                                             </div>
                                         ))
                                     ) : (
-                                        <p>No Credit Wallet Available</p>
+                                            <div className='no-credit-error'>
+                                                <img className='mb-3' src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1727696657/OBJECTS_1_sehxw8.svg" alt="" />
+                                                <p className=''>
+                                                    No Credit Wallet Available
+                                                </p>
+                                                <span>You have yet to transect any wallet balance.</span>
+                                            </div>
                                     )}
                                 </div>
                             )
