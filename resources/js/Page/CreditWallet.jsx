@@ -30,6 +30,7 @@ function CreditWallet() {
     const [current, setCurrent] = useState(0)
     const { useThemeStyles } = useContext(ThemeContext);
     const [filterCount,setFilterCount] = useState(0);
+    const [isCalenderActive,setIsCalenderActive] = useState(false);
     const [c1,setC1] = useState(0);
     const [c2,setC2] = useState(0);
 
@@ -114,6 +115,7 @@ function CreditWallet() {
         loadCreditWalletData(1, "", "", "", "");
         setOpenFilter1(false);
         setFilterCount(0);
+        setIsCalenderActive(false)
     };
 
     const handleTypeChange = (checkedValues) => {
@@ -151,6 +153,14 @@ function CreditWallet() {
         setOpenFilter1(false);
         setOpenFilter2(false);
     };
+    const applyDateFilters =()=>{
+        setStartDate(pendingStartDate); // Store the start date
+        setEndDate(pendingEndDate); // Store the end date
+        setCurrentPage(1); // Reset to first page
+        loadCreditWalletData(1, pendingSelectedTypes, pendingSelectedSources, pendingStartDate, pendingEndDate);
+        setOpenFilter1(false);
+        setIsCalenderActive(true)
+    }
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight && !isLoading) {
             if (currentPage < totalPages) {
@@ -197,7 +207,7 @@ function CreditWallet() {
                         </div>
 
                         <div className="filter-header-right d-flex gap-2">
-                            <i className='bi bi-calendar p-1 px-2 rounded-2' onClick={() => setOpenFilter1(true)} />
+                            <i className={`bi ${!isCalenderActive?'bi-calendar':'bi-calendar-fill'} p-1 px-2 rounded-2`} onClick={() => setOpenFilter1(true)} />
                             <i className={`bi ${filterCount > 0 ? 'bi-funnel-fill' : 'bi-funnel'} p-1 px-2  rounded-2`} onClick={() => setOpenFilter2(true)} />
                                 {filterCount>0&&<div className={"filter-count"}>{filterCount}</div>}
                         </div>
@@ -349,7 +359,7 @@ function CreditWallet() {
                         <button className='border-0 p-2'
                             style={{ color: useThemeStyles.primary_color }}
                             onClick={clearFilters}>Clear</button>
-                        <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyFilters}>Apply</button>
+                        <button className='border-0 p-2' style={{ background: useThemeStyles.primary_color }} onClick={applyDateFilters}>Apply</button>
                     </div>
                 </Drawer>
 
