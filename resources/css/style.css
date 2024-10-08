@@ -1834,6 +1834,23 @@ body {
     color: #f00 !important;
 }
 
+.filter-count{
+    position: absolute;
+    right: 10px;
+    top: 1px;
+    border: 1px solid;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color);
+    color: #fff;
+    font-weight: 400;
+}
+
 .wallet-paginate .pagination {
     display: flex;
     justify-content: flex-end;

@@ -30,6 +30,8 @@ function CreditWallet() {
     const [current, setCurrent] = useState(0)
     const { useThemeStyles } = useContext(ThemeContext);
     const [filterCount,setFilterCount] = useState(0);
+    const [c1,setC1] = useState(0);
+    const [c2,setC2] = useState(0);
 
     const formatDate = (dateStr) => {
         if (!dateStr) return 'No Date Available';
@@ -111,9 +113,12 @@ function CreditWallet() {
         setCurrentPage(1);
         loadCreditWalletData(1, "", "", "", "");
         setOpenFilter1(false);
+        setFilterCount(0);
     };
 
     const handleTypeChange = (checkedValues) => {
+        let count = checkedValues.length
+        setC1(count);
         const typeString = checkedValues.map(type => {
             switch (type) {
                 case 'earned': return 'Earned';
@@ -126,9 +131,15 @@ function CreditWallet() {
     };
 
     const handleSourceChange = (checkedValues) => {
+        let count = checkedValues.length
+        setC2(count);
         const sourceString = checkedValues.join(",");
         setPendingSelectedSources(sourceString);
     };
+
+    useEffect(() => {
+        setFilterCount(c1 + c2)
+    }, [c1, c2])
 
     const applyFilters = () => {
         setSelectedTypes(pendingSelectedTypes); // Store the selected types
@@ -187,7 +198,8 @@ function CreditWallet() {
 
                         <div className="filter-header-right d-flex gap-2">
                             <i className='bi bi-calendar p-1 px-2 rounded-2' onClick={() => setOpenFilter1(true)} />
-                            <i className='bi bi-funnel p-1 px-2  rounded-2' onClick={() => setOpenFilter2(true)} />
+                            <i className={`bi ${filterCount > 0 ? 'bi-funnel-fill' : 'bi-funnel'} p-1 px-2  rounded-2`} onClick={() => setOpenFilter2(true)} />
+                                {filterCount>0&&<div className={"filter-count"}>{filterCount}</div>}
                         </div>
                     </div>
                     {

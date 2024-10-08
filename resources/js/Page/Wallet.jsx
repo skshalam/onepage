@@ -23,6 +23,9 @@ function Wallet() {
     const [form] = Form.useForm();
     const { useThemeStyles } = useContext(ThemeContext)
     const [currentWalletpoints, setcurrentWalletpoints] = useState(0);
+    const [filterCount,setFilterCount] = useState(0);
+    const [c1,setC1] = useState(0);
+    const [c2,setC2] = useState(0);
     const formatDate = (dateStr) => {
         if (!dateStr) return 'No Date Available';
 
@@ -103,6 +106,8 @@ function Wallet() {
     };
 
     const handleTypeChange = (checkedValues) => {
+        let count = checkedValues.length
+        setC1(count);
         const typeString = checkedValues.map(type => {
             switch (type) {
                 case 'earned': return 'Earned';
@@ -167,7 +172,8 @@ function Wallet() {
 
                         <div className="filter-header-right d-flex gap-2">
                             <i className='bi bi-calendar p-1 px-2 rounded-2' onClick={() => setOpenFilter1(true)} />
-                            <i className='bi bi-funnel p-1 px-2  rounded-2' onClick={() => setOpenFilter2(true)} />
+                            <i className={`bi ${c1 > 0 ? 'bi-funnel-fill' : 'bi-funnel'} p-1 px-2  rounded-2`} onClick={() => setOpenFilter2(true)} />
+                            {c1>0&&<div className={"filter-count"}>{c1}</div>}
                         </div>
                     </div>
                     {
