@@ -1831,7 +1831,7 @@ body {
 }
 
 .credit-expired {
-    color: #f00;
+    color: #f00 !important;
 }
 
 .wallet-paginate .pagination {
