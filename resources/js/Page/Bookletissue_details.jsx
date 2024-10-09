@@ -5,6 +5,7 @@ import axiosSetup from '@/axiosSetup';
 import { decodeBase64 } from '../utility/base_64_decode';
 function coupon_booklet() {
     const [open, setOpen] = useState(false);
+    const [membershipName,setMembershipName] = useState(null)
     const [openConfirm, setOpenConfirm] = useState(false);
     const [rewardsData, setrewardsData] = useState([]);
     const [rewardsDesc, setRewardsDesc] = useState({});
@@ -34,6 +35,7 @@ function coupon_booklet() {
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token) {
+            getMembershipName()
             axiosSetup.post('/api/bookletcoupon',
                 {
                     membership_id: decodeBase64(membership_id),
@@ -51,7 +53,17 @@ function coupon_booklet() {
             console.log('No token available, API call skipped');
         }
     }, []);
-
+    const getMembershipName = () =>{
+        axiosSetup.post('/api/memebership',{
+            membership_id:decodeBase64(membership_id)
+        })
+        .then(res=>{
+            setMembershipName(res?.data?.data?.membership[0]?.name);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    }
     const handleDrawer = (coupon_booklet) => {
         const token = localStorage.getItem('access_token');
         if (token) {
@@ -76,16 +88,19 @@ function coupon_booklet() {
     };
     return (
         <div className='body-container'>
-            <div className="sticky-top">
-                <div className="navHeader">
-                    <div className="prev-btn">
-                        <Link to={"/Home"}>
-                            <i className="bi bi-chevron-left"></i>
-                        </Link>
-                        <span>REWARDS</span>
+            <SkeletonTheme baseColor="#c7c7c7" highlightColor="#ffffff">
+                <div className="sticky-top">
+                    <div className="navHeader">
+                        <div className="prev-btn">
+                            <Link to={"/Home"}>
+                                <i className="bi bi-chevron-left"></i>
+                            </Link>
+                            {membershipName ? <span>{membershipName}</span>
+                                : <Skeleton style={{ height: "15px", width: "55px", borderRadius:'2px' }} />}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </SkeletonTheme>
             <div className={`inner-container`}>
                 {
                     loading
