@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, Router, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import axiosSetup from '@/axiosSetup';
 import Pagination from 'react-bootstrap/Pagination';

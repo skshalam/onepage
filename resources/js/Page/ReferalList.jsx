@@ -1,6 +1,6 @@
 import { Col, Row } from 'antd'
 import React, { useEffect, useState } from 'react';
-import { Link, Router, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axiosSetup from '@/axiosSetup';
 function ReferalList() {
     const [referallistData, setreferallistData] = useState([]);

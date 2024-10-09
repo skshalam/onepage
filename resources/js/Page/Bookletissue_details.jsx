@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Router, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import axiosSetup from '@/axiosSetup';
 function coupon_booklet() {

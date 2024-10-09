@@ -1,14 +1,13 @@
 import { Avatar, Button, Col, DatePicker, Form, Input, Modal, Popover, Row, Select } from 'antd';
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import { motion } from 'framer-motion';
-import { Link, Router, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axiosSetup from '@/axiosSetup';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import UploadProfilePic from '../components/UploadProfilePic';
 import { convertDateToISO } from '../utility/formating';
 import dayjs from 'dayjs';
-import FileUploader from '../components/testUploader';
 function MyAcount() {
     const [isEditable, setIsEditable] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);

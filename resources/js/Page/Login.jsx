@@ -11,7 +11,6 @@ import { Input, Modal } from 'antd';
 import { ThemeProvider } from '../Providers/ContextProviders/ThemeProvider';
 import ThemeContext from '../Providers/Contexts/ThemeContext';
 import { maskPhoneNumber } from '../utility/formating';
-import { p } from 'framer-motion/client';
 const Login = () => {
     const { merchant_base } = useParams();
     const [timer, setTimer] = useState(15);

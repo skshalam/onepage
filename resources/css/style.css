@@ -2068,7 +2068,5 @@ body {
     right: -10px !important;
 }
 .credit-expired-main{
-    opacity: 0.3;
-    pointer-events: none;
-    cursor: no-drop;
+    opacity: 0.5;
 }

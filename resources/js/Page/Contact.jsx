@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Modal, Row } from 'antd'
+import { Button, Col, Form, Input, Row } from 'antd'
 import React, { useRef, useEffect, useState, useContext } from 'react'
 import { Link, useParams } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';

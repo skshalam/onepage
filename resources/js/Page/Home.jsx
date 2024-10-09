@@ -1,6 +1,6 @@
 // resources/js/Page/About.jsx
-import React, { useContext, useEffect, useState } from 'react';
-import { Link, Router, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
