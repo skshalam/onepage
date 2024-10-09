@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import axiosSetup from '@/axiosSetup';
+import { decodeBase64 } from '../utility/base_64_decode';
 function coupon_booklet() {
     const [open, setOpen] = useState(false);
     const [openConfirm, setOpenConfirm] = useState(false);
@@ -35,7 +36,7 @@ function coupon_booklet() {
         if (token) {
             axiosSetup.post('/api/bookletcoupon',
                 {
-                    membership_id: membership_id,
+                    membership_id: decodeBase64(membership_id),
                     booklets_id: bookletissue_id
                 })
                 .then(response => {
@@ -56,7 +57,7 @@ function coupon_booklet() {
         if (token) {
             axiosSetup.post('/api/bookletcoupon',
                 {
-                    membership_id: membership_id,
+                    membership_id: decodeBase64(membership_id),
                     booklets_id: bookletissue_id,
                     token_id: coupon_booklet.id
                 })
@@ -121,7 +122,7 @@ function coupon_booklet() {
                         </div>
                         :
                         (
-                            rewardsData.length > 0 ? (
+                            rewardsData?.length > 0 ? (
                                 rewardsData.map((reward, index) => (
                                     <div key={index} className="coupons p-1">
                                         <div className="coupon-info h-100">

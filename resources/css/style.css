@@ -2070,3 +2070,15 @@ body {
 .credit-expired-main{
     opacity: 0.5;
 }
+.no-coupons{
+    padding: 100px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    p{
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--secondary-font-color);
+    }
+}

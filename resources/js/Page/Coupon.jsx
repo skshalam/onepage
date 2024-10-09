@@ -190,6 +190,7 @@ function ActiveCoupons({ data, loading }) {
                                 </div>
                             </div>))
                         : <div className="no-coupons">
+                            <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1728450813/telescope_no_results_found_concept-ai_1_qkyrm5.svg" alt="" />
                             <p>No Coupons Available</p>
                         </div>
                     )
@@ -337,6 +338,7 @@ function HoldOnCoupons({ data, loading }) {
                             </div>
                         ))
                         : <div className="no-coupons">
+                            <img src="https://res.cloudinary.com/dh8etdmdv/image/upload/v1728450813/telescope_no_results_found_concept-ai_1_qkyrm5.svg" alt="" />
                             <p>No Coupons Available</p>
                         </div>
                     )

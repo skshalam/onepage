@@ -361,14 +361,14 @@ function ViewMemberShip({ showModal, setModal, title, eWalletissueDesc, bookleti
                                 <tbody>
                                     {bookletissueDesc.map((booklet, index) => (
                                         <tr key={index}>
-                                            <td className='d-flex justify-content-between'>
-                                                <Link className='fw-semibold' to={`/Bookletissue_details/${membership_id}/${booklet.id}/`}>
+                                            <Link className='fw-semibold text-decoration-none' to={`/Bookletissue_details/${membership_id}/${booklet.id}/`}>
+                                                <td className='d-flex justify-content-between'>
                                                     {booklet.name}
-                                                </Link>
-                                                <span>
-                                                    <i className='bi bi-chevron-right' />
-                                                </span>
-                                            </td>
+                                                    <span>
+                                                        <i className='bi bi-chevron-right' />
+                                                    </span>
+                                                </td>
+                                            </Link>
                                         </tr>
                                     ))}
                                 </tbody>
