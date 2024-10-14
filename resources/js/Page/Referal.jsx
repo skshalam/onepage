@@ -126,7 +126,7 @@ function Referal() {
                                         value={mobile}
                                     />
                                 </Form.Item>
-                                <label className='position-absolute z-3 ps-0' htmlFor="userName">Phone No.</label>
+                                <label className='position-absolute z-1 ps-0' htmlFor="userName">Phone No.</label>
                             </div>
                         </Col>
                         <Col xs={24}>
@@ -164,7 +164,7 @@ function Referal() {
                                 >
                                     <Input className='rounded-2  cust-css-ant-input contact-info' placeholder='Enter email' />
                                 </Form.Item>
-                                <label className='position-absolute z-3 ps-0' htmlFor="userName">Email</label>
+                                <label className='position-absolute z-1 ps-0' htmlFor="userName">Email</label>
                             </div>
                         </Col>
                     </Row>

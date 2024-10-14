@@ -2082,3 +2082,10 @@ body {
         color: var(--secondary-font-color);
     }
 }
+.page-not-found{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 700px;
+}
