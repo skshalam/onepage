@@ -12,13 +12,21 @@
     },
     "dependencies": {
         "@vitejs/plugin-react": "^4.3.1",
+        "antd": "^5.20.6",
         "bootstrap": "^5.3.3",
+        "dayjs": "^1.11.13",
+        "framer-motion": "^11.5.4",
         "jquery": "^3.7.1",
+        "jwt-decode": "^4.0.0",
+        "lodash": "^4.17.21",
         "react": "^18.3.1",
+        "react-bootstrap": "^2.10.5",
         "react-dom": "^18.3.1",
-        "react-intl-tel-input": "^8.2.0",
+        "react-loading-skeleton": "^3.4.0",
+        "react-phone-input-2": "^2.15.1",
         "react-router-dom": "^6.26.1",
         "react-slick": "^0.30.2",
-        "slick-carousel": "^1.8.1"
+        "slick-carousel": "^1.8.1",
+        "sweetalert": "^2.1.2"
     }
 }

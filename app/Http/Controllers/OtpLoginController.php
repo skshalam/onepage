@@ -16,6 +16,7 @@ use App\Models\Master;
 use App\Models\TransactionalSmsStructure;
 use Illuminate\Http\Request;
 use JWTAuth;
+use Auth;
 
 class OtpLoginController extends Controller
 {
@@ -101,7 +102,16 @@ class OtpLoginController extends Controller
                            $cards = Cards::where('user_id',$user->id)->where('merchant_id',$request->merchant_id)->first();
                            if($cards)
                            {
-                              $cardscheck = 1;
+                                if($cards->deactivate_account == 1)
+                                {
+                                    $data = ['error'=>true,
+                                        'message'=>'This number is deleted from the App . Please Contact Store Manager.',
+                                        'data' => new \Illuminate\Database\Eloquent\Collection,];
+                                    $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
+                                    gc_collect_cycles();
+                                    return response()->json($data);
+                                }
+                                $cardscheck = 1;
                            }
                            else
                            {
@@ -344,304 +354,19 @@ class OtpLoginController extends Controller
         return $sms;
     }
 
-    public function websiteOtpVerify(Request $request)
-   {
-        $rules=[
-            'otp'=>'Required',
-            'merchant_id'=>'Required',
-            'mobile'=>'required|numeric|between:1000,9999999999999999',
-            'merchantid'=>'Required'
-        ];
-        $validator=Validator::make($request->all(),$rules);
-        if($validator->fails())
-        {
-            $data = ['error'=>true,
-                'message'=>'All field are mandatory',
-                'data' => new \Illuminate\Database\Eloquent\Collection,];
-            $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-            return Response::json($data);
-
-        }
-        $user = User::where('id', 15867532)->first();
-        if (!$token = JWTAuth::fromUser($user)) {
-            return response()->json(['error' => 'Unable to generate token'], 500);
-        }
-        return response()->json(["error"=>false,"message"=>$this->respondWithToken($token,$user)]);
-        
-        // else
-        // {
-        //     DB::disableQueryLog();
-        //     Session::forget('first_login');
-        //     $merchant = \MerchantDetails::where('user_id', $this->requestData['merchant_id'])->where('api_header',$this->requestData['merchantid'])->first();
-        //     $merchant_email = User::where('id',$merchant->user_id)->first();
-        //     if($merchant)
-        //     {
-        //        $source = !empty($this->requestData['source'])?$this->requestData['source']:'website';
-        //         $actual_country_code = $merchant->country_code;
-        //         $timezonedata = $this->timeZoneData($merchant->timezone,'');
-        //         if(isset($this->requestData['merchant_email']))
-        //         {
-        //             if($merchant_email->email == $this->requestData['merchant_email'])
-        //             {
-        //                 $email = $this->requestData['merchant_email'];
-        //                 $added_by_id = $merchant->user_id;
-        //                 $merchant_type = 'merchant';
-        //                 $actual_country_code = $merchant->country_code;
-        //                 $timezonedata = $this->timeZoneData($merchant->timezone,'');
-        //             }
-        //             else
-        //             {
-        //                 $employee = Employee::where('email',$this->requestData['merchant_email'])->where('merchant_id',$this->requestData['merchant_id'])->where('is_active',1)->where('deleted',0)->first();
-        //                 if(count($employee)<1)
-        //                 {
-        //                     $data = ['error'=>true,
-        //                         'message'=>'Incorrect Merchant Email Id',
-        //                         'data' => new \Illuminate\Database\Eloquent\Collection,];
-        //                     $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-        //                     gc_collect_cycles();
-        //                     return Response::json($data);
-        //                 }
-        //                 $email = $this->requestData['merchant_email'];
-        //                 $added_by_id = $employee->id;
-        //                 $merchant_type = 'employee';
-        //                 $actual_country_code = $employee->country_code;
-        //                 $timezonedata = $this->timeZoneData($merchant->timezone,'');
-        //             }
-        //         }
-        //         else
-        //         {
-        //             $email = $merchant_email->email;
-        //             $added_by_id = $merchant->user_id;
-        //             $merchant_type = 'merchant';
-        //         }
-        //         if(isset($this->requestData['country_code']))
-        //         {
-        //             $country_code = str_replace("+","",$this->requestData['country_code']);
-        //             if($country_code == '')
-        //             {
-        //                 $country_code = $actual_country_code;
-        //             }
-        //         }
-        //         else
-        //         {
-        //             $country_code = $actual_country_code;
-        //         }
-        //         // new code start
-        //        $WlOtp = WlOtp::where('merchant_id',$this->requestData['merchant_id'])->where('country_code',$country_code)->where('mobile',$this->requestData['mobile'])->where('otp',$this->requestData['otp'])->first();
-        //        if($WlOtp)
-        //        {
-        //             $user = \User::where('mobile', $this->requestData['mobile'])->where('country_code',$country_code)->where('user_type','1')->where('user_type','1')->first();
-        //             if($user)
-        //             {
-        //                 $cards = Cards::where('merchant_id',$this->requestData['merchant_id'])->where('user_id',$user->id)->first();
-        //                 if($cards)
-        //                 {
-        //                     // old member
-        //                     // need to do work later
-        //                 }
-        //                 else
-        //                 {
-        //                     if($merchant->website_add_member==0)
-        //                     {
-        //                         $otp_login_track = new OtpLoginTrack();
-        //                         $otp_login_track->rejected_status = '1';
-        //                         $otp_login_track->merchant_id = $this->requestData['merchant_id'];
-        //                         $otp_login_track->mobile = $this->requestData['mobile'];
-        //                         $otp_login_track->otp = $this->requestData['otp'];
-        //                         $otp_login_track->otp_status = 'F';
-        //                         $otp_login_track->source = $source;
-        //                         $otp_login_track->url = 'websiteOtpVerify';
-        //                         $otp_login_track->type = '2';
-        //                         $otp_login_track->country_code = $country_code;
-        //                         $otp_login_track->save();
-        //                         $data = ['error'=>true,
-        //                             'message'=>'This number is not registered in the membership program. Please contact reception',
-        //                             'data' => new \Illuminate\Database\Eloquent\Collection,];
-        //                         $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-        //                         gc_collect_cycles();
-        //                         return Response::json($data);
-        //                     }
-                       
-        //                     $data1 = $this->userAddToCards($merchant,$user,$source,'websitePtpVerify','',$email,$added_by_id,'','0',$merchant_type,$timezonedata);
-        //                     if($data1['status'] == '1')
-        //                     {
-        //                         // here in card now
-        //                         // need to do work later
-        //                     }
-        //                     else
-        //                     {
-        //                         $otp_login_track = new OtpLoginTrack();
-        //                         $otp_login_track->rejected_status = '1';
-        //                         $otp_login_track->merchant_id = $this->requestData['merchant_id'];
-        //                         $otp_login_track->mobile = $this->requestData['mobile'];
-        //                         $otp_login_track->otp = $this->requestData['otp'];
-        //                         $otp_login_track->otp_status = 'F';
-        //                         $otp_login_track->source = $source;
-        //                         $otp_login_track->url = 'websiteOtpVerify';
-        //                         $otp_login_track->type = '2';
-        //                         $otp_login_track->country_code = $country_code;
-        //                         $otp_login_track->save();
-        //                         // return code
-        //                         $data = ['error'=>true,
-        //                             'message'=>'Transaction unsuccessful. Please try again.'.$data1['e'],
-        //                             'data' => new \Illuminate\Database\Eloquent\Collection,];
-        //                         $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-        //                         gc_collect_cycles();
-        //                         return Response::json($data);
-        //                     }
-        //                     // need to add on card
-        //                 }
-        //                 // user is already on ewards database
-        //             }
-        //             else
-        //             {
-        //                 if($merchant->website_add_member==0)
-        //                 {
-        //                     $otp_login_track = new OtpLoginTrack();
-        //                     $otp_login_track->rejected_status = '1';
-        //                     $otp_login_track->merchant_id = $this->requestData['merchant_id'];
-        //                     $otp_login_track->mobile = $this->requestData['mobile'];
-        //                     $otp_login_track->otp = $this->requestData['otp'];
-        //                     $otp_login_track->otp_status = 'F';
-        //                     $otp_login_track->source = $source;
-        //                     $otp_login_track->url = 'websiteOtpVerify';
-        //                     $otp_login_track->type = '2';
-        //                     $otp_login_track->country_code = $country_code;
-        //                     $otp_login_track->save();
-        //                     $data = ['error'=>true,
-        //                         'message'=>'This number is not registered in the membership program. Please contact reception',
-        //                         'data' => new \Illuminate\Database\Eloquent\Collection,];
-        //                     $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-        //                     gc_collect_cycles();
-        //                     return Response::json($data);
-        //                 }
-        //                 $data = $this->userTableAdd($this->requestData['mobile'],$source,'websitePtpVerify',$country_code);
-        //                 if($data['status'] == '1')
-        //                 {
-        //                     Session::set('first_login','yes');                            
-        //                     $user = \User::where('mobile', '=', $this->requestData['mobile'])->where('country_code',$country_code)->where('user_type', 1)->first();
-        //                     $data1 = $this->userAddToCards($merchant,$user,$source,'websitePtpVerify','',$email,$added_by_id,'','0',$merchant_type,$timezonedata);
-        //                     if($data1['status'] == '1')
-        //                     {
-        //                         // here in card now
-        //                         // need to do work later
-        //                     }
-        //                     else
-        //                     {
-        //                         $otp_login_track = new OtpLoginTrack();
-        //                         $otp_login_track->rejected_status = '1';
-        //                         $otp_login_track->merchant_id = $this->requestData['merchant_id'];
-        //                         $otp_login_track->mobile = $this->requestData['mobile'];
-        //                         $otp_login_track->otp = $this->requestData['otp'];
-        //                         $otp_login_track->otp_status = 'F';
-        //                         $otp_login_track->source = $source;
-        //                         $otp_login_track->url = 'websiteOtpVerify';
-        //                         $otp_login_track->type = '2';
-        //                         $otp_login_track->country_code = $country_code;
-        //                         $otp_login_track->save();
-        //                         // return code
-        //                         $data = ['error'=>true,
-        //                             'message'=>'Transaction unsuccessful. Please try again.'.$data1['e'],
-        //                             'data' => new \Illuminate\Database\Eloquent\Collection,];
-        //                         $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-        //                         gc_collect_cycles();
-        //                         return Response::json($data);
-        //                     }
-        //                 }
-        //                 else
-        //                 {
-        //                     $otp_login_track = new OtpLoginTrack();
-        //                     $otp_login_track->rejected_status = '1';
-        //                     $otp_login_track->merchant_id = $this->requestData['merchant_id'];
-        //                     $otp_login_track->mobile = $this->requestData['mobile'];
-        //                     $otp_login_track->otp = $this->requestData['otp'];
-        //                     $otp_login_track->otp_status = 'F';
-        //                     $otp_login_track->source = $source;
-        //                     $otp_login_track->url = 'websiteOtpVerify';
-        //                     $otp_login_track->type = '2';
-        //                     $otp_login_track->country_code = $country_code;
-        //                     $otp_login_track->save();
-        //                     // return code
-        //                     $data = ['error'=>true,
-        //                         'message'=>'Transaction unsuccessful. Please try again.'.$data['e'],
-        //                         'data' => new \Illuminate\Database\Eloquent\Collection,];
-        //                     $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-        //                     gc_collect_cycles();
-        //                     return Response::json($data);
-        //                 }
-        //                 // user need to add on
-        //             }
-        //             $cards = Cards::where('merchant_id',$this->requestData['merchant_id'])->where('user_id',$user->id)->first();
-        //             if($cards)
-        //             {
-        //               // Session::set('showProfile','yes');
-        //                 $cards->otp = $this->requestData['otp'];
-        //                 $cards->save();
-        //                 Session::put([
-        //                     'mobile'=>$this->requestData['mobile'],
-        //                     'otp'=>$this->requestData['otp'],
-        //                     'country_code'=>$country_code,
-        //                     'merchant_id' =>$this->requestData['merchant_id'],
-        //                     'merchantid'=>$this->requestData['merchantid'],
-        //                     'showmodallogin'=>1,
-        //                     'user_id'=>$user->id,
-        //                 ]);
-                       
-        //                 $data = ['error'=>false,
-        //                     'message'=>'success',
-        //                     'user_id' => $user->id,
-        //                     'data' => new \Illuminate\Database\Eloquent\Collection,];
-        //                 $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-        //                 gc_collect_cycles();
-        //                 return Response::json($data);
-        //             }
-        //        }
-        //        else
-        //        {
-        //             $otp_login_track = new OtpLoginTrack();
-        //             $otp_login_track->rejected_status = '1';
-        //             $otp_login_track->merchant_id = $this->requestData['merchant_id'];
-        //             $otp_login_track->mobile = $this->requestData['mobile'];
-        //             $otp_login_track->otp = $this->requestData['otp'];
-        //             $otp_login_track->otp_status = 'F';
-        //             $otp_login_track->source = $source;
-        //             $otp_login_track->url = 'websiteOtpVerify';
-        //             $otp_login_track->type = '2';
-        //             $otp_login_track->country_code = $country_code;
-        //             $otp_login_track->save();
-        //             $data = ['error'=>true,
-        //                 'message'=>'Invalid OTP',
-        //                 'data' => new \Illuminate\Database\Eloquent\Collection,];
-        //             $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-        //             gc_collect_cycles();
-        //             return Response::json($data);
-        //        }
-        //         // new code end
-        //     }
-        //     else
-        //     {
-        //         $data = ['error'=>true,
-        //             'message'=>'Incorrect Merchant Id',
-        //             'data' => new \Illuminate\Database\Eloquent\Collection,];
-        //         $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
-        //         gc_collect_cycles();
-        //         return Response::json($data);
-        //     }
-        // }
-    }
-
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());
     }
 
-    protected function respondWithToken($token,$user=null,$curl_res_data=null)
+    protected function respondWithToken($token,$otp=null,$user=null,$curl_res_data=null)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60,
             'user' => $user,
+            'otp' => $otp,
             'curl_res_data' => $curl_res_data
         ]);
     }
@@ -702,7 +427,10 @@ class OtpLoginController extends Controller
                 if (!$token = JWTAuth::fromUser($user)) {
                     return response()->json(['error' => 'Unable to generate token'], 500);
                 }
-                return response()->json(["error"=>false,"message"=>$this->respondWithToken($token,$user,json_decode($response, true))]);
+                if($user){
+                    $token = JWTAuth::claims(['merchant_id' => $request->merchant_id])->fromUser($user);
+                }
+                return response()->json(["error"=>false,"message"=>$this->respondWithToken($token,'',$user,json_decode($response, true))]);
             }
 
             return response()->json([
@@ -716,5 +444,132 @@ class OtpLoginController extends Controller
             ], $httpCode);
         }
 
+    }
+
+    public function onePageLoginResendOtp(Request $request)
+    {
+        $rules = [
+            'merchant_id'=>'Required',
+            'mobile'=>'required|numeric|between:1000,9999999999999999',
+            'otp_msg'=>'Required'
+        ];
+
+        $validator = Validator::make($request->input(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $master = Master::where('id',1)->first();
+        $ewards_url = $master->ewards_url;
+
+        $url = $ewards_url.'onepagewebsite/websiteResendOtp';
+
+        $data = [
+            'merchant_id'=> $request->merchant_id,
+            'mobile'=> $request->mobile,
+            'otp_msg'=> $request->otp_msg
+        ];
+
+        $otp_msg = base64_decode($request->otp_msg);
+        $otp = preg_match('/\d{6}/', $otp_msg, $matches);
+        $otp = $matches[0];
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data,
+        ));
+
+        //Execute the request
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+        if ($httpCode == 200) {
+            $curl_res = json_decode($response);
+            
+            if($curl_res->error == false){
+
+                return response()->json(array(
+                    'error'=>false,
+                    'message'=>'OTP sent successfully',
+                    'otp_msg' => $request->otp_msg,
+                    'curl_data' => $curl_res,
+                ));
+            }
+
+            return response()->json([
+                "error"=>true,"message"=> 'Somthing Went Worng'
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to verify OTP',
+                'error_code' => $httpCode
+            ], $httpCode);
+        }
+    }
+    public function onePageLogout()
+    {
+        // Check if token exists
+        $token = JWTAuth::getToken();
+
+        if (!$token) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Token not provided'
+            ], 400); // Bad Request
+        }
+
+        try {
+            // Validate the token
+            $user = JWTAuth::authenticate($token);
+
+            if (!$user) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'User not found'
+                ], 404); // Not Found
+            }
+
+            // Invalidate the token and log out the user
+            JWTAuth::invalidate($token);
+
+            return response()->json([
+                'error' => false,
+                'message' => 'Successfully logged out'
+            ], 200); // Success
+
+        } catch (TokenExpiredException $e) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Token expired'
+            ], 401); // Unauthorized
+
+        } catch (TokenInvalidException $e) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Token invalid'
+            ], 401); // Unauthorized
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Could not log out, please try again'
+            ], 500); // Internal Server Error
+        }
     }
 }
